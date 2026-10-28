@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Processos especiais — Física II</title>
+<style>
+:root{
+  --navy:#172f52;--blue:#3d76ab;--ink:#243a52;--muted:#70859c;
+  --line:#dce5ee;--bg:#f3f6fa;--green:#3c8b72;--orange:#c76d4b;--purple:#7188b7;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);font-family:Inter,Segoe UI,Arial,sans-serif;color:var(--ink)}
+header{
+  min-height:65px;background:var(--navy);color:#fff;padding:11px 23px;
+  display:flex;align-items:center;justify-content:space-between;gap:14px;
+  border-bottom:3px solid #719ac4;box-shadow:none
+}
+header h1{font-size:1.4rem;margin:0 0 3px;font-weight:700;letter-spacing:-.035em}
+header p{margin:0;font-size:.8rem;color:#c6d9ec}
+.index-link{
+  display:inline-flex;align-items:center;justify-content:center;padding:7px 11px;
+  border:1px solid rgba(255,255,255,.35);border-radius:7px;color:#fff;
+  text-decoration:none;font-size:.78rem;font-weight:600;white-space:nowrap
+}
+.index-link:hover{background:rgba(255,255,255,.12)}
+main{max-width:1500px;margin:auto;padding:12px 14px 20px;display:grid;gap:10px}
+.tabs{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:7px}
+.tab{
+  border:1px solid var(--line);border-radius:8px;background:#fff;color:var(--ink);
+  padding:10px 7px;font-size:.78rem;font-weight:650;cursor:pointer;box-shadow:none;
+  transition:background .15s,border-color .15s
+}
+.tab:hover{background:#f7fafd}
+.tab.active{background:#eaf2fb;border:1px solid var(--blue);color:#234f7a;padding:10px 7px;box-shadow:inset 3px 0 var(--blue)}
+.layout{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:10px;align-items:stretch}
+.card{background:#fff;border:1px solid var(--line);border-radius:10px;padding:13px;box-shadow:0 2px 10px rgba(20,45,75,.035);min-width:0}
+.card h2{font-size:.96rem;margin:0 0 4px;color:#1e426b}
+.sub{font-size:.75rem;color:var(--muted);margin:0 0 10px;line-height:1.45}
+.modelbox{background:#f8fbff;border:1px solid #e5edf4;border-radius:8px;padding:9px 10px}
+.modelhead{display:flex;justify-content:space-between;gap:8px;align-items:center;font-size:.68rem;color:var(--muted);font-weight:700;margin-bottom:6px}
+svg{width:100%;display:block}
+#pistonSvg{height:235px}
+.metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin-top:8px}
+.metric{border:1px solid #e5edf4;border-radius:7px;padding:8px;text-align:center;background:#f8fafc}
+.metric span{display:block;font-size:.62rem;color:#7d90a5;font-weight:700;text-transform:uppercase;letter-spacing:.04em;margin-bottom:4px}
+.metric strong{font-size:.84rem;color:#25486e}
+.metrics-single{grid-template-columns:minmax(0,1fr)}
+.model-note{font-size:.76rem;color:#526b85;margin:9px 2px 0;line-height:1.5}
+.chartcard{display:flex;flex-direction:column}
+.charttop{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
+.status{font-size:.68rem;font-weight:700;border-radius:6px;padding:5px 8px;background:#edf4f8;color:#386b8b;white-space:normal;text-align:center}
+#pvSvg{height:300px;max-height:38vh;min-height:230px}
+.legend{display:flex;gap:12px;flex-wrap:wrap;color:var(--muted);font-size:.69rem;margin-top:4px}
+.legend i{display:inline-block;width:14px;height:4px;margin-right:5px;vertical-align:middle;border-radius:2px}
+.bottom{display:grid;grid-template-columns:1.1fr 1fr 1fr;gap:10px}
+.law{background:#fff;border:1px solid var(--line);border-left:3px solid var(--blue);border-radius:9px;padding:12px}
+.law .eyebrow,.info .eyebrow{font-size:.65rem;color:#71859c;font-weight:750;text-transform:uppercase;letter-spacing:.07em}
+.formula{font-size:1.25rem;font-weight:700;color:#173c65;margin:7px 0}
+.law p,.info p{font-size:.76rem;line-height:1.5;color:#536985;margin:5px 0 0}
+.info{border:1px solid var(--line);border-radius:9px;padding:12px;background:#fff}
+.info strong{font-size:.86rem;color:#25486e}
+.controls{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}
+button.action{border:0;border-radius:7px;background:#285e92;color:#fff;padding:9px 12px;font-size:.76rem;font-weight:650;cursor:pointer}
+button.action:hover{background:#214f7d}
+button.secondary{background:#e9f0f7;color:#2b5279}
+button.secondary:hover{background:#dfe9f3}
+@media(max-width:900px){
+  .tabs{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .layout{grid-template-columns:1fr}.bottom{grid-template-columns:1fr}
+  #pvSvg{max-height:none}
+}
+@media(max-width:520px){
+  header{padding:10px 12px}header h1{font-size:1.08rem}header p{font-size:.7rem}
+  .index-link{font-size:.7rem;padding:7px 9px}
+  .tabs{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .metrics{grid-template-columns:1fr}main{padding:8px}.card{padding:11px}
+  #pistonSvg{height:205px}
+}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important}}
+.action.selected{background:#172f52;color:#fff;box-shadow:0 0 0 2px rgba(61,118,171,.25)}
+@keyframes heatArrowIn {
+  0%,100% { opacity: .55; }
+  50% { opacity: 1; }
+}
+#heatArrows .heatArrowPath { animation: heatArrowIn 1s ease-in-out infinite; }
+#modelState{display:none!important}
+</style>
+
+
+<script>
+window.MathJax = {
+  tex: {inlineMath: [['\\(','\\)']], displayMath: [['\\[','\\]']]},
+  options: {skipHtmlTags: ['script','noscript','style','textarea','pre','code']},
+  startup: {typeset: false}
+};
+</script>
+<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+<body>
+<header>
+ <div><h1>Processos especiais</h1><p>Calor, trabalho e Primeira Lei da Termodinâmica</p></div>
+ <a class="index-link" href="index.html">← Voltar</a>
+</header>
+<main>
+ <nav class="tabs" id="tabs" aria-label="Selecionar processo"></nav>
+ <section class="layout">
+  <article class="card">
+   <h2 id="processTitle">Processo isobárico</h2>
+   <p class="sub" id="processSubtitle">Pressão constante durante a transformação.</p>
+   <div class="modelbox">
+    <div class="modelhead"><span>MODELO FÍSICO · GÁS EM UM CILINDRO</span><span id="modelState">EXPANSÃO</span></div>
+    <svg id="pistonSvg" viewBox="0 0 560 245" role="img" aria-label="Ilustração de gás em um cilindro com pistão">
+      <defs><pattern id="dots" width="9" height="9" patternUnits="userSpaceOnUse"><circle cx="2" cy="2" r="1.1" fill="#4383f6" opacity=".28"/></pattern><clipPath id="gasClip"><rect id="particleClipRect" x="39" y="52" width="250" height="104"/></clipPath></defs>
+      <rect id="cylinderOuter" x="35" y="48" width="470" height="112" rx="4" fill="#fff" stroke="#33445e" stroke-width="4"/>
+      <rect id="gasFill" x="39" y="52" width="260" height="104" fill="#dbeafe"/>
+      <rect id="gasDots" x="39" y="52" width="260" height="104" fill="url(#dots)"/>
+      <rect id="piston" x="296" y="43" width="12" height="122" rx="2" fill="#475569" stroke="#26354a" stroke-width="2"/>
+      <rect id="isochoricWall" x="481" y="52" width="8" height="104" rx="1" fill="#475569" stroke="#26354a" stroke-width="2" style="display:none"/>
+      
+      <line id="rodOuter" x1="308" y1="104" x2="510" y2="104" stroke="#8ca0ba" stroke-width="8"/>
+      <line id="rodInner" x1="308" y1="104" x2="510" y2="104" stroke="#dce5ef" stroke-width="4"/>
+      <g id="gasParticles" clip-path="url(#gasClip)" aria-label="Partículas do gás em movimento aleatório"></g>
+      <rect id="freePartition" x="265" y="48" width="8" height="112" rx="1" fill="#475569" stroke="#26354a" stroke-width="2" opacity="1"/>
+      <text id="freeVacuumLabel" x="380" y="108" text-anchor="middle" fill="#7b8da5" font-size="15" font-weight="700" opacity="1">Vácuo</text>
+      <text id="freeCaption" x="270" y="28" text-anchor="middle" fill="#627894" font-size="12" font-weight="700" opacity="0">DIVISÓRIA REMOVIDA</text>
+      <path id="motionArrow" d="M 335 211 L 430 211 M 418 201 L 430 211 L 418 221" fill="none" stroke="#078b68" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+      <text id="motionText" x="380" y="235" text-anchor="middle" fill="#078b68" font-size="12" font-weight="700" style="display:none"> </text>
+      <g id="heatArrowsIn" style="display:none" fill="none" stroke="#d97736" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M 150 16 L 150 34 M 143 27 L 150 34 L 157 27"/>
+        <path d="M 270 16 L 270 34 M 263 27 L 270 34 L 277 27"/>
+        <path d="M 390 16 L 390 34 M 383 27 L 390 34 L 397 27"/>
+        <path d="M 150 192 L 150 174 M 143 181 L 150 174 L 157 181"/>
+        <path d="M 270 192 L 270 174 M 263 181 L 270 174 L 277 181"/>
+        <path d="M 390 192 L 390 174 M 383 181 L 390 174 L 397 181"/>
+        <path d="M 3 104 L 21 104 M 14 98 L 21 104 L 14 110"/>
+        <path d="M 3 144 L 21 144 M 14 138 L 21 144 L 14 150"/>
+      </g>
+      <g id="heatArrowsOut" style="display:none" fill="none" stroke="#d97736" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M 150 34 L 150 16 M 143 23 L 150 16 L 157 23"/>
+        <path d="M 270 34 L 270 16 M 263 23 L 270 16 L 277 23"/>
+        <path d="M 390 34 L 390 16 M 383 23 L 390 16 L 397 23"/>
+        <path d="M 150 174 L 150 192 M 143 185 L 150 192 L 157 185"/>
+        <path d="M 270 174 L 270 192 M 263 185 L 270 192 L 277 185"/>
+        <path d="M 390 174 L 390 192 M 383 185 L 390 192 L 397 185"/>
+        <path d="M 21 104 L 3 104 M 10 98 L 3 104 L 10 110"/>
+        <path d="M 21 144 L 3 144 M 10 138 L 3 144 L 10 150"/>
+      </g>
+    </svg>
+   </div>
+   <div class="metrics metrics-single"><div class="metric"><span>Condição do processo</span><strong id="condition">\\(P = \\text{constante}\\)</strong></div></div>
+   <p class="model-note" id="modelNote">Ao aquecer o gás, ele empurra o pistão para fora. O volume aumenta enquanto a pressão é mantida constante.</p>
+   <div class="controls" id="controls"><button class="action" id="expandBtn">↗ Expansão</button><button class="action secondary" id="compressBtn">↙ Compressão</button><button class="action" id="heatInBtn" style="display:none">＋ Q entrando</button><button class="action secondary" id="heatOutBtn" style="display:none">− Q saindo</button><button class="action" id="animateBtn" style="display:none">▶ Animar</button><button class="action secondary" id="resetBtn" style="display:none">↺ Reiniciar</button></div>
+  </article>
+  <article class="card chartcard">
+   <div class="charttop"><div><h2>Diagrama PV</h2><p class="sub">A área orientada sob o caminho representa o trabalho realizado pelo gás.</p></div><span class="status" id="signBadge">W &gt; 0</span></div>
+   <svg id="pvSvg" viewBox="0 0 560 320" role="img" aria-label="Diagrama pressão versus volume">
+    <defs><clipPath id="plotClip"><rect x="0" y="0" width="560" height="300"/></clipPath></defs>
+   <g id="grid"></g><path id="area" fill="#5c8fa6" opacity=".20" clip-path="url(#plotClip)"></path><path id="pathLine" d="" fill="none" stroke="#5c8fa6" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"></path>
+    <g id="points"></g><g id="axes"></g><g id="labels"></g>
+   </svg>
+   <div class="legend"><span><i style="background:#5c8fa6;height:9px;width:9px;opacity:.35"></i>Área de trabalho</span><span><i style="background:#5c8fa6"></i>Caminho termodinâmico</span><span><i style="background:#5c8fa6;height:9px;width:9px"></i>Estados</span></div>
+  </article>
+ </section>
+ <section class="bottom">
+  <article class="law"><div class="eyebrow">Primeira Lei</div><div class="formula" id="lawFormula">\\(\\Delta U = Q - W\\)</div><p id="lawExplanation">O calor recebido pode aumentar a energia interna e/ou ser convertido em trabalho realizado pelo gás.</p></article>
+  <article class="info"><div class="eyebrow">Trabalho</div><div class="formula" id="workFormula" style="color:#087b59">\(W = P\,\Delta V\)</div><p id="workExplanation">Em pressão constante, o trabalho é a pressão multiplicada pela variação do volume.</p></article>
+  <article class="info"><div class="eyebrow">Interpretação</div><strong id="physicalTitle">O que observar</strong><p id="physicalText">Compare o movimento do pistão com o caminho no diagrama P–V e veja qual termo da Primeira Lei se anula.</p></article>
+ </section>
+</main>
+<script>
+const processes = [
+ {id:'isobaric',name:'1. Isobárico',title:'Processo isobárico',subtitle:'A pressão permanece constante durante a transformação.',condition:'\\(P = \\text{constante}\\)',vi:1,vf:3,pi:3,pf:3,color:'#5c8fa6',sign:'Expansão \\(W>0\\) ; Compressão \\(W<0\\)',law:'\\(\\Delta U = Q - W\\)',lawText:'A energia interna varia conforme o calor recebido menos o trabalho realizado pelo gás.',work:'\\(W = P(V_f - V_i)\\)',workText:'Como a pressão é constante, o trabalho é a área retangular sob a linha horizontal no diagrama P–V.',note:'O gás se expande e empurra o pistão para fora. Em uma compressão, o trabalho realizado pelo gás seria negativo.',physicalTitle:'Pressão constante',physicalText:'A linha horizontal no diagrama P–V indica que a pressão não muda, mesmo com a mudança de volume.'},
+ {id:'isochoric',name:'2. Isovolumétrico',title:'Processo isovolumétrico (isocórico)',subtitle:'O volume do gás permanece constante.',condition:'\\(V = \\text{constante}\\)',vi:2,vf:2,pi:1.4,pf:4,color:'#5c8fa6',sign:'\\(W = 0\\)',law:'\\(\\Delta U = Q\\)',lawText:'Como o volume não varia, não há trabalho de expansão ou compressão. Todo o calor líquido recebido altera a energia interna.',work:'\\(W = \\int P\\,dV = 0\\)',workText:'\\(dV = 0\\) em todo o processo; por isso, a área orientada sob o caminho é nula.',note:'O pistão fica travado. O aquecimento eleva a pressão, mas não altera o volume nem produz trabalho P dV.',physicalTitle:'Pistão travado',physicalText:'O caminho é vertical no diagrama P–V: a pressão varia, mas o volume não.'},
+ {id:'adiabatic',name:'3. Adiabático',title:'Processo adiabático',subtitle:'Expansão sem troca de calor com o ambiente.',condition:'\\(Q = 0\\)',vi:1.6,vf:3,pi:4.2,pf:1.8,color:'#5c8fa6',sign:'Expansão \\(W>0\\) ; Compressão \\(W<0\\)',law:'\\(\\Delta U = -W\\)',lawText:'Como \\(Q = 0\\), a variação da energia interna é o oposto do trabalho realizado pelo gás.',work:'\\(W = \\int P\\,dV\\)',workText:'O trabalho é a área orientada sob a curva. Na expansão adiabática, o gás realiza trabalho e sua energia interna diminui.',note:'O cilindro é termicamente isolado. Na expansão, o gás realiza trabalho sem receber calor e as partículas ficam mais lentas.',physicalTitle:'Sem troca de calor',physicalText:'A curva segue da esquerda para a direita: o volume aumenta, a pressão e a temperatura diminuem durante a expansão.'},
+ {id:'cycle',name:'4. Ciclo fechado',title:'Ciclo termodinâmico (caminho fechado)',subtitle:'O sistema retorna ao estado inicial após percorrer diferentes etapas.',condition:'Estado final = inicial',vi:1,vf:1,pi:1.5,pf:1.5,color:'#5c8fa6',sign:'\\(Q = W\\)',law:'\\(\\Delta U = 0 \\Rightarrow Q = W\\)',lawText:'A energia interna é função de estado. Em um ciclo completo, o estado final coincide com o inicial, então a variação total de energia interna é zero.',work:'\\(W = \\oint P\\,dV\\)',workText:'O trabalho líquido é a área orientada delimitada pelo ciclo no diagrama P–V; seu sinal depende do sentido percorrido.',note:'O gás passa por uma expansão e uma compressão e retorna ao estado inicial. O trabalho líquido depende da área e do sentido do ciclo.',physicalTitle:'Ciclo completo',physicalText:'A curva forma um laço. O trabalho é a área encerrada.'},
+ {id:'free',name:'5. Expansão livre',title:'Expansão livre',subtitle:'Um recipiente isolado tem duas cavidades: o gás ocupa uma e a outra está evacuada.',condition:'\\(Q = 0\\) e \\(W = 0\\)',vi:1,vf:3,pi:3,pf:1,color:'#5c8fa6',sign:'\\(Q = W = 0\\)',law:'\\(\\Delta U = Q - W = 0\\)',lawText:'No recipiente isolado, \\(Q = 0\\). Como o gás se expande para o vácuo, \\(W = 0\\). Portanto, ΔU = 0; para um gás ideal, a temperatura final é igual à inicial.',work:'\\(W = 0\\) (expansão para o vácuo)',workText:'Não há pistão nem pressão externa sendo vencida. A fronteira externa do recipiente não se desloca; por isso, não há trabalho de expansão.',note:'A divisória entre as cavidades é removida e o gás ocupa espontaneamente todo o recipiente.',physicalTitle:'Divisória removível',physicalText:'Inicialmente, o gás ocupa apenas a cavidade esquerda e a direita está no vácuo. Ao retirar a divisória, o gás se espalha pelo volume total sem realizar trabalho e sem trocar calor.'},
+ {id:'isothermal',name:'6. Isotérmico',title:'Processo isotérmico',subtitle:'A temperatura permanece constante; considera-se um gás ideal.',condition:'\\(T = \\text{constante}\\)',vi:1,vf:3,pi:4.2,pf:1.4,color:'#5c8fa6',sign:'Expansão \\(W>0\\) ; Compressão \\(W<0\\)',law:'\\(\\Delta U = 0 \\Rightarrow Q = W\\)',lawText:'Para um gás ideal, a energia interna depende apenas da temperatura. Como ΔT = 0, ΔU = 0 e o calor líquido recebido iguala o trabalho realizado.',work:'\\(W = nRT\\ln\\!\\left(\\frac{V_f}{V_i}\\right)\\)',workText:'Para um gás ideal em uma transformação isotérmica reversível, \\(W = nRT\\ln(V_f/V_i)\\).',note:'O gás se expande lentamente em contato térmico com um reservatório, mantendo a temperatura constante enquanto a pressão diminui.',physicalTitle:'Temperatura constante',physicalText:'A curva hiperbólica representa P V = constante para uma quantidade fixa de gás ideal.'}
+];
+let current=0, animTimer=null, animProgress=1;
+let currentDirection='expansion';
+let currentHeatDirection='in';
+processes.forEach(p=>{p.baseVi=p.vi;p.baseVf=p.vf;p.basePi=p.pi;p.basePf=p.pf;});
+const reversibleIds=['isobaric','adiabatic','isothermal'];
+function setDirection(direction){
+  stopAnimation();
+  currentDirection=direction;
+  const p=processes[current];
+  p.vi=direction==='expansion'?p.baseVi:p.baseVf;
+  p.vf=direction==='expansion'?p.baseVf:p.baseVi;
+  p.pi=direction==='expansion'?p.basePi:p.basePf;
+  p.pf=direction==='expansion'?p.basePf:p.basePi;
+  animProgress=0;
+  render();
+  initParticles();
+}
+
+const $=id=>document.getElementById(id);
+function mathText(s){
+  return escapeMathText(s);
+}
+
+function escapeMathText(s){
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function typesetMath(){
+  if(!window.MathJax || !window.MathJax.typesetPromise) return;
+  const targets = ['condition','lawFormula','workFormula','signBadge','lawExplanation','workExplanation','physicalText','modelNote'];
+  const nodes = targets.map(id=>document.getElementById(id)).filter(Boolean);
+  if(window.MathJax.typesetClear) window.MathJax.typesetClear(nodes);
+  window.MathJax.typesetPromise(nodes).catch(err=>console.warn('MathJax render:',err));
+}
+window.addEventListener('load', ()=>{
+  if(window.MathJax && window.MathJax.startup && window.MathJax.startup.promise){
+    window.MathJax.startup.promise.then(()=>typesetMath()).catch(err=>console.warn('MathJax startup:',err));
+  }
+});
+
+function fmt(n){return n.toLocaleString('pt-BR',{maximumFractionDigits:1})}
+function renderTabs(){ $('tabs').innerHTML=processes.map((p,i)=>`<button class="tab ${i===current?'active':''}" data-i="${i}">${p.name}</button>`).join('');document.querySelectorAll('.tab').forEach(b=>b.addEventListener('click',()=>selectProcess(+b.dataset.i))); }
+function selectProcess(i){stopAnimation();current=i;currentDirection='expansion';animProgress=(processes[i].id==='free'||processes[i].id==='cycle'||processes[i].id==='adiabatic'||processes[i].id==='isochoric'||processes[i].id==='isobaric')?0:1;renderTabs();render();initParticles();startParticleAnimation();}
+
+// Modelo cinético ilustrativo: partículas movem-se aleatoriamente dentro do gás.
+// A rapidez é uma representação qualitativa da temperatura, não uma medição quantitativa.
+const particleGroup = $('gasParticles');
+const particleClipRect = $('particleClipRect');
+const particleData = [];
+const particleCount = 150;
+let particleAnimationFrame = null;
+let lastParticleTime = 0;
+let particleSpeedFactor = 1;
+let previousParticleWidth = 250;
+
+function initParticles(){
+  particleGroup.innerHTML = '';
+  particleData.length = 0;
+  const initGasWidth = Math.max(12, Number($('gasFill').getAttribute('width')) - 8);
+  for(let i=0;i<particleCount;i++){
+    const c=document.createElementNS('http://www.w3.org/2000/svg','circle');
+    c.setAttribute('r', i%5===0 ? '2.8' : (i%2===0 ? '2.3' : '2.5'));
+    c.setAttribute('fill', i%6===0 ? '#a83232' : (i%3===0 ? '#c7463b' : '#df6653'));
+    c.setAttribute('opacity', i%4===0 ? '.98' : '.88');
+    particleGroup.appendChild(c);
+    particleData.push({node:c,x:44+Math.random()*initGasWidth,y:58+Math.random()*92,
+      // Velocidades iniciais isotrópicas, sem direção preferencial.
+      vx:Math.cos(Math.random()*Math.PI*2)*45,
+      vy:Math.sin(Math.random()*Math.PI*2)*45});
+  }
+}
+function getSpeedFactor(proc, progress){
+  const t=Math.max(0,Math.min(1,progress));
+  if(proc.id==='isothermal') return 1.0; // temperatura constante: rapidez molecular média fixa durante todo o processo
+  if(proc.id==='adiabatic') return proc.vf>proc.vi ? 1.45-0.78*t : 0.67+0.78*t;
+  if(proc.id==='isochoric') return currentHeatDirection==='in' ? 0.58+1.30*t : 1.88-1.30*t;
+  if(proc.id==='isobaric') return proc.vf>proc.vi ? 0.72+1.05*t : 1.77-1.05*t;
+  if(proc.id==='free') return 1.0;
+  if(proc.id==='cycle'){
+    const phase=Math.min(3,Math.floor(Math.min(t,0.999999)*4));
+    const local=t*4-phase;
+    if(phase===0) return 0.78+0.48*local; // A→B: expansão isobárica, T aumenta
+    if(phase===1) return 1.26-0.48*local; // B→C: volume constante, T diminui
+    if(phase===2) return 0.78-0.22*local; // C→D: compressão isobárica, T diminui
+    return 0.56+0.22*local;               // D→A: volume constante, T aumenta
+  }
+  return 1.0;
+}
+function updateParticleBounds(){
+  const rect=$('gasFill');
+  const w=Math.max(12,Number(rect.getAttribute('width'))-3);
+  const oldW=Math.max(12,previousParticleWidth);
+  const xMin=42, xMax=39+w-4, oldXMin=42, oldXMax=39+oldW-4;
+  // Ao expandir, as partículas são redistribuídas proporcionalmente para ocupar
+  // imediatamente o novo volume disponível, em vez de ficarem concentradas à esquerda.
+  if(Math.abs(w-oldW)>0.5){
+    const oldSpan=Math.max(1,oldXMax-oldXMin), newSpan=Math.max(1,xMax-xMin);
+    particleData.forEach(a=>{a.x=xMin+((a.x-oldXMin)/oldSpan)*newSpan;});
+    previousParticleWidth=w;
+  }
+  particleClipRect.setAttribute('width',w);
+  particleData.forEach(a=>{
+    const radius = Number(a.node.getAttribute('r')) || 2.5;
+    a.x=Math.max(xMin+radius,Math.min(xMax-radius,a.x));
+    a.y=Math.max(55+radius,Math.min(153-radius,a.y));
+  });
+}
+function animateParticles(timestamp){
+  if(!lastParticleTime) lastParticleTime=timestamp;
+  const dt=Math.min(0.025,(timestamp-lastParticleTime)/1000);
+  lastParticleTime=timestamp;
+  const p=processes[current];
+  particleSpeedFactor=getSpeedFactor(p,animProgress);
+  updateParticleBounds();
+
+  const gasWidth=Math.max(12,Number($('gasFill').getAttribute('width'))-3);
+  const xMin=42, xMax=39+gasWidth-4, yMin=55, yMax=153;
+  const baseSpeed=54*particleSpeedFactor;
+
+  particleData.forEach(a=>{
+    const radius=Number(a.node.getAttribute('r'))||2.5;
+    const left=xMin+radius, right=xMax-radius;
+    const top=yMin+radius, bottom=yMax-radius;
+
+    // Randomly rotate velocity a little each frame while preserving its magnitude.
+    // This avoids a biased random walk that can slowly accumulate particles at a wall.
+    const speed=Math.max(1,Math.hypot(a.vx,a.vy));
+    const angle=Math.atan2(a.vy,a.vx)+(Math.random()-.5)*2.2*dt + (Math.random()-.5)*0.20;
+    const targetSpeed=baseSpeed*(p.id==='isothermal'?1:(0.58+0.84*Math.random()));
+    const blend=Math.min(1,dt*2.2);
+    const vxTarget=Math.cos(angle)*targetSpeed;
+    const vyTarget=Math.sin(angle)*targetSpeed;
+    a.vx+=(vxTarget-a.vx)*blend;
+    a.vy+=(vyTarget-a.vy)*blend;
+
+    a.x+=a.vx*dt;
+    a.y+=a.vy*dt;
+
+    // Specular wall/piston collisions. Reflect repeatedly if a frame crosses a boundary.
+    if(a.x<left){a.x=left+(left-a.x);a.vx=Math.abs(a.vx);}
+    if(a.x>right){a.x=right-(a.x-right);a.vx=-Math.abs(a.vx);}
+    if(a.y<top){a.y=top+(top-a.y);a.vy=Math.abs(a.vy);}
+    if(a.y>bottom){a.y=bottom-(a.y-bottom);a.vy=-Math.abs(a.vy);}
+
+    // Final safety clamp prevents particles from being drawn on top of the piston.
+    a.x=Math.max(left,Math.min(right,a.x));
+    a.y=Math.max(top,Math.min(bottom,a.y));
+    a.node.setAttribute('cx',a.x.toFixed(2));
+    a.node.setAttribute('cy',a.y.toFixed(2));
+  });
+
+  // Weak particle-particle repulsion removes visual overlaps/clumps without
+  // imposing an expensive hard-sphere simulation on all 150 particles.
+  for(let i=0;i<particleData.length;i++){
+    const a=particleData[i];
+    for(let j=i+1;j<particleData.length;j++){
+      const b=particleData[j];
+      let dx=b.x-a.x, dy=b.y-a.y;
+      const minDist=(Number(a.node.getAttribute('r'))||2.5)+(Number(b.node.getAttribute('r'))||2.5)+1.2;
+      const d2=dx*dx+dy*dy;
+      if(d2>0.01 && d2<minDist*minDist){
+        const d=Math.sqrt(d2), push=(minDist-d)*0.22;
+        dx/=d; dy/=d;
+        a.x-=dx*push; a.y-=dy*push;
+        b.x+=dx*push; b.y+=dy*push;
+      }
+    }
+  }
+
+  // Reapply bounds after the soft particle-particle separation.
+  particleData.forEach(a=>{
+    const r=Number(a.node.getAttribute('r'))||2.5;
+    const left=xMin+r, right=xMax-r, top=yMin+r, bottom=yMax-r;
+    if(a.x<left){a.x=left;a.vx=Math.abs(a.vx);}
+    if(a.x>right){a.x=right;a.vx=-Math.abs(a.vx);}
+    if(a.y<top){a.y=top;a.vy=Math.abs(a.vy);}
+    if(a.y>bottom){a.y=bottom;a.vy=-Math.abs(a.vy);}
+    a.node.setAttribute('cx',a.x.toFixed(2));
+    a.node.setAttribute('cy',a.y.toFixed(2));
+  });
+
+  particleAnimationFrame=requestAnimationFrame(animateParticles);
+}
+function startParticleAnimation(){
+  if(!particleData.length) initParticles();
+  if(!particleAnimationFrame){lastParticleTime=0;particleAnimationFrame=requestAnimationFrame(animateParticles);}
+}
+
+function render(){
+ const p=processes[current];$('processTitle').textContent=p.title;$('processSubtitle').textContent=p.subtitle;$('condition').innerHTML=mathText(p.condition);$('modelNote').innerHTML=escapeMathText(p.note);$('modelState').textContent=p.vf>=p.vi?'EXPANSÃO':'COMPRESSÃO';$('lawFormula').innerHTML=mathText(p.law);$('lawExplanation').innerHTML=escapeMathText(p.lawText);$('workFormula').innerHTML=mathText(p.work);$('workExplanation').innerHTML=escapeMathText(p.workText);$('physicalTitle').textContent=p.physicalTitle;
+ $('physicalText').innerHTML=escapeMathText(p.id==='isochoric'
+   ? (currentHeatDirection==='in'
+      ? 'O gás recebe calor (Q > 0). Como o volume permanece constante, não há trabalho de expansão; a energia interna e a temperatura aumentam, e as partículas ficam mais rápidas.'
+      : 'O gás cede calor (Q < 0). Como o volume permanece constante, não há trabalho de expansão; a energia interna e a temperatura diminuem, e as partículas ficam mais lentas.')
+   : p.physicalText);
+ if(p.id==='isochoric'){
+   $('modelState').textContent=currentHeatDirection==='in'?'AQUECIMENTO · Q ENTRANDO':'RESFRIAMENTO · Q SAINDO';
+   $('modelNote').innerHTML=escapeMathText(currentHeatDirection==='in'
+     ? 'O gás recebe energia térmica. A temperatura aumenta, mas o recipiente rígido impede qualquer variação de volume.'
+     : 'O gás transfere energia térmica para o ambiente. A temperatura diminui, mas o recipiente rígido mantém o volume constante.');
+ }$('signBadge').innerHTML=mathText(p.sign);$('signBadge').style.background=p.sign==='\\(W = 0\\)'?'#eef1f8':p.sign.includes('W <')?'#fbf0eb':'#edf5f2';$('signBadge').style.color=p.sign==='\\(W = 0\\)'?'#526b91':p.sign.includes('W <')?'#a85b3d':'#326e5d';
+ const mid=p.vf>=p.vi? 'M 335 211 L 430 211 M 418 201 L 430 211 L 418 221':'M 430 211 L 335 211 M 347 201 L 335 211 L 347 221';$('motionArrow').setAttribute('d',mid);$('motionArrow').setAttribute('stroke',p.color);$('motionText').setAttribute('fill',p.color);$('motionText').textContent=p.vf>=p.vi?'Expansão':'Compressão';const showMotion=p.id!=='isochoric'&&p.id!=='free';$('motionArrow').style.display='none';$('motionText').style.display='none';
+ const hasDirectionButtons=reversibleIds.includes(p.id);
+ const isIsochoric=p.id==='isochoric'; const isCycle=p.id==='cycle';
+ $('expandBtn').style.display=hasDirectionButtons?'inline-flex':'none';
+ $('compressBtn').style.display=hasDirectionButtons?'inline-flex':'none';
+ $('heatInBtn').style.display=isIsochoric?'inline-flex':'none';
+ $('heatOutBtn').style.display=isIsochoric?'inline-flex':'none';
+ $('expandBtn').classList.toggle('selected',currentDirection==='expansion');
+ $('compressBtn').classList.toggle('selected',currentDirection==='compression');
+ $('animateBtn').style.display=(hasDirectionButtons||isIsochoric)?'none':'inline-flex';
+ $('resetBtn').style.display=(hasDirectionButtons||isIsochoric||isCycle)?'none':'inline-flex';
+ if(isCycle) $('animateBtn').textContent=animProgress>=1?'↺ Reiniciar':'▶ Iniciar';
+ drawPiston(p,animProgress);drawPV(p);updateParticleBounds();typesetMath();
+}
+function drawPiston(p,progress){
+ const minW=85,maxW=410;let w=250,w0=minW+(p.vi/4.5)*(maxW-minW),w1=minW+(p.vf/4.5)*(maxW-minW);
+ const isFree=p.id==='free',isCycle=p.id==='cycle';
+ if(isCycle){
+   // a→b: expansão; b→c: volume constante; c→d: compressão; d→a: volume constante.
+   const phase=Math.min(3,Math.floor(Math.min(progress,0.999999)*4));
+   const t=Math.min(1,Math.max(0,progress*4-phase));
+   const low=145,high=365;
+   w=phase===0?low+(high-low)*t:phase===1?high:phase===2?high-(high-low)*t:low;
+   $('modelState').textContent=['A → B · EXPANSÃO','B → C · V CONSTANTE','C → D · COMPRESSÃO','D → A · V CONSTANTE'][phase];
+   $('motionArrow').style.display='none';
+   $('motionText').style.display='none';
+   $('motionText').textContent=phase===0?'Expansão':phase===2?'Compressão':'';
+   $('motionText').setAttribute('fill',phase===2?'#c2410c':'#078b68');$('motionArrow').setAttribute('stroke',phase===2?'#c2410c':'#078b68');
+ } else {w0=minW+(p.vi/4.5)*(maxW-minW);w1=minW+(p.vf/4.5)*(maxW-minW);if(p.id==='cycle')w0=w1=250;w=w0+(w1-w0)*progress;}
+ w=Math.max(70,Math.min(410,w));
+ const fixedVolume=p.id==='isochoric';$('isochoricWall').style.display=fixedVolume?'block':'none';$('piston').style.display=(isFree||fixedVolume)?'none':'block';$('rodOuter').style.display=(isFree||fixedVolume)?'none':'block';$('rodInner').style.display=(isFree||fixedVolume)?'none':'block';$('heatArrowsIn').style.display=fixedVolume&&currentHeatDirection==='in'?'block':'none';$('heatArrowsOut').style.display=fixedVolume&&currentHeatDirection==='out'?'block':'none'; 
+ if(!isCycle){$('motionArrow').style.display='none';$('motionText').style.display='none';}
+ $('freePartition').style.display=isFree?'block':'none';$('freeVacuumLabel').style.display=isFree?'block':'none';$('freeCaption').style.display=isFree?'block':'none';
+ $('heatArrowsIn').style.display=p.id==='isochoric'&&currentHeatDirection==='in'?'block':'none';$('heatArrowsOut').style.display=p.id==='isochoric'&&currentHeatDirection==='out'?'block':'none';$('motionText').style.display='none'; 
+ if(isFree){w=220+(462-220)*progress;$('freePartition').setAttribute('opacity',String(Math.max(0,1-progress*1.8)));$('freeVacuumLabel').setAttribute('opacity',String(Math.max(0,1-progress*1.8)));$('freeCaption').setAttribute('opacity',String(progress>.75?1:0));}
+ if(fixedVolume)w=444; $('gasFill').setAttribute('width',w);$('gasDots').setAttribute('width',w);const pistonX=39+w-6;$('piston').setAttribute('x',pistonX);$('rodOuter').setAttribute('x1',pistonX+12);$('rodInner').setAttribute('x1',pistonX+12);
+ if(!isCycle)$('modelState').textContent=isFree?'EXPANSÃO LIVRE':p.vf>=p.vi?'EXPANSÃO':'COMPRESSÃO';
+}
+function drawPV(p){
+ const svg=$('pvSvg'),W=560,H=320,L=48,R=18,T=18,B=42,pw=W-L-R,ph=H-T-B;
+ let points;
+ if(p.id==='cycle'){const full=[{v:1,p:1.4},{v:3.4,p:1.4},{v:3.4,p:3.5},{v:1,p:3.5},{v:1,p:1.4}];points=full;}
+ else if(p.id==='isochoric')points=[{v:2,p:1.4},{v:2,p:4}];
+ else if(p.id==='adiabatic')points=Array.from({length:26},(_,i)=>{let t=i/25,v=p.vi+(p.vf-p.vi)*t;let pr=p.pi*Math.pow(p.vi/v,1.35);return {v,p:pr}});
+ else if(p.id==='isothermal')points=Array.from({length:26},(_,i)=>{let t=i/25,v=p.vi+(p.vf-p.vi)*t;return {v,p:p.pi*p.vi/v}});
+ else if(p.id==='free')points=[{v:p.vi,p:p.pi},{v:p.vf,p:p.pf}];
+ else points=[{v:p.vi,p:p.pi},{v:p.vf,p:p.pf}];
+ let allV=points.map(q=>q.v),allP=points.map(q=>q.p);
+ // Margens simétricas ao redor do caminho para centralizá-lo no diagrama.
+ let rawMinV=Math.min(...allV),rawMaxV=Math.max(...allV),rawMinP=Math.min(...allP),rawMaxP=Math.max(...allP);
+ let spanV=Math.max(rawMaxV-rawMinV,0.5),spanP=Math.max(rawMaxP-rawMinP,0.5);
+ let minV=rawMinV-spanV*0.28,maxV=rawMaxV+spanV*0.28;
+ let minP=rawMinP-spanP*0.28,maxP=rawMaxP+spanP*0.28;
+ if(p.id==='cycle'){minV=0.5;maxV=3.9;minP=0.5;maxP=4.4;}if(maxV===minV)maxV=minV+1;if(maxP===minP)maxP=minP+1;
+ const X=v=>L+(v-minV)/(maxV-minV)*pw,Y=pr=>T+ph-(pr-minP)/(maxP-minP)*ph;
+ let grid='',labels='';for(let j=0;j<=4;j++){let y=T+j*ph/4;grid+=`<line x1="${L}" y1="${y}" x2="${W-R}" y2="${y}" stroke="#e5edf4" stroke-width="1"/>`}for(let j=0;j<=4;j++){let x=L+j*pw/4;grid+=`<line x1="${x}" y1="${T}" x2="${x}" y2="${T+ph}" stroke="#e5edf4" stroke-width="1"/>`}
+ $('grid').innerHTML=grid;$('axes').innerHTML=`<path d="M ${L} ${T} V ${T+ph} H ${W-R}" fill="none" stroke="#536780" stroke-width="1.5"/><path d="M ${W-R-7} ${T+ph-4} L ${W-R} ${T+ph} L ${W-R-7} ${T+ph+4}" fill="none" stroke="#536780" stroke-width="1.5"/>`; $('labels').innerHTML=labels+`<text x="12" y="15" font-size="12" font-weight="700" fill="#465a75">P</text><text x="${W-12}" y="${H-4}" font-size="12" font-weight="700" fill="#465a75">V</text>`;
+ let pathPoints=points;if(p.id==='cycle'){const full=[{v:1,p:1.4},{v:3.4,p:1.4},{v:3.4,p:3.5},{v:1,p:3.5},{v:1,p:1.4}];const u=Math.max(0,Math.min(1,animProgress))*4;pathPoints=[full[0]];for(let seg=0;seg<4;seg++){if(u>=seg+1)pathPoints.push(full[seg+1]);else if(u>seg){const t=u-seg;pathPoints.push({v:full[seg].v+(full[seg+1].v-full[seg].v)*t,p:full[seg].p+(full[seg+1].p-full[seg].p)*t});break;}else break;}}let path=pathPoints.map((q,i)=>(i?'L':'M')+' '+X(q.v).toFixed(2)+' '+Y(q.p).toFixed(2)).join(' ');
+ let area='';if(p.id!=='free'&&p.id!=='isochoric'&&(p.id!=='cycle'||animProgress>=1)){ area=path+` L ${X(points[points.length-1].v)} ${Y(minP)} L ${X(points[0].v)} ${Y(minP)} Z`;}
+ $('area').setAttribute('d',area);$('area').setAttribute('fill',p.color);$('pathLine').setAttribute('d',path);$('pathLine').setAttribute('stroke',p.color);$('pathLine').setAttribute('stroke-dasharray',p.id==='free'?'7 6':'none');
+ let marks='';if(p.id==='cycle'){const fixed=[{v:1,p:1.4,label:'a',dx:-8,anchor:'end'},{v:3.4,p:1.4,label:'b',dx:8,anchor:'start'},{v:3.4,p:3.5,label:'c',dx:8,anchor:'start'},{v:1,p:3.5,label:'d',dx:-8,anchor:'end'}];fixed.forEach(q=>{marks+=`<circle cx="${X(q.v)}" cy="${Y(q.p)}" r="4.5" fill="#5c8fa6" stroke="white" stroke-width="1.5"/><text x="${X(q.v)+q.dx}" y="${Y(q.p)-8}" text-anchor="${q.anchor}" font-size="11" font-weight="700" fill="#426c80">${q.label}</text>`});}else{let states=[points[0],points[points.length-1]];states.forEach((q,i)=>{const cycLabel=i===0?'i':'f';marks+=`<circle cx="${X(q.v)}" cy="${Y(q.p)}" r="4.5" fill="#5c8fa6" stroke="white" stroke-width="1.5"/><text x="${X(q.v)+(i===0?7:-7)}" y="${Y(q.p)-8}" text-anchor="${i===0?'start':'end'}" font-size="11" font-weight="700" fill="#426c80">${cycLabel}</text>`});}if(p.id==='free')marks+=`<text x="${X(p.vf)-3}" y="${Y(p.pf)+18}" text-anchor="end" font-size="10" fill="#c2410c"></text>`;$('points').innerHTML=marks;
+}
+function stopAnimation(){
+ if(animTimer){clearInterval(animTimer);animTimer=null;}
+ $('animateBtn').textContent=processes[current].id==='cycle'?(animProgress>=1?'↺ Reiniciar':'▶ Iniciar'):'▶ Animar';
+}
+function animate(){
+ if(animTimer){stopAnimation();return;}
+ if(animProgress>=1){
+   animProgress=0;
+   if(processes[current].id==='cycle'){drawPiston(processes[current],0);drawPV(processes[current]);}
+ }
+ animProgress=0;
+ $('animateBtn').textContent=processes[current].id==='cycle'?'Ⅱ Executando…':'Ⅱ Pausar';
+ let start=Date.now();
+ const duration=processes[current].id==='adiabatic'?650:3000;
+ animTimer=setInterval(()=>{
+   animProgress=Math.min(1,(Date.now()-start)/duration);
+   drawPiston(processes[current],animProgress);
+   updateParticleBounds();
+   if(processes[current].id==='cycle') drawPV(processes[current]);
+   if(animProgress>=1){
+     stopAnimation();
+     if(processes[current].id==='cycle') $('animateBtn').textContent='↺ Reiniciar';
+   }
+ },30);
+}
+$('expandBtn').addEventListener('click',()=>{setDirection('expansion');animate();});
+function setHeatDirection(direction){
+  stopAnimation();
+  currentHeatDirection=direction;
+  animProgress=0;
+  render();
+  initParticles();
+  animate();
+}
+$('heatInBtn').addEventListener('click',()=>setHeatDirection('in'));
+$('heatOutBtn').addEventListener('click',()=>setHeatDirection('out'));
+
+$('compressBtn').addEventListener('click',()=>{setDirection('compression');animate();});
+$('animateBtn').addEventListener('click',()=>{
+ if(processes[current].id==='cycle'){
+   if(animTimer) return;
+   if(animProgress>=1){animProgress=0;drawPiston(processes[current],0);drawPV(processes[current]);}
+   animate();
+   return;
+ }
+ if(animProgress>=1){animProgress=0;if(processes[current].id==='free'){drawPiston(processes[current],0);}animate();}else animate();
+});$('resetBtn').addEventListener('click',()=>{stopAnimation();animProgress=(processes[current].id==='free'||processes[current].id==='cycle')?0:1;render();});
+renderTabs();render();initParticles();startParticleAnimation();
+</script>
+</body>
+</html>

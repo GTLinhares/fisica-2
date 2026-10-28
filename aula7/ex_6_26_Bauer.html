@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Termodinâmica: Compressão Adiabática</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');
+body { font-family: 'Inter', sans-serif; }
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #f1f5f9; }
+::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+.gas-pattern {
+  background-color: #bfdbfe;
+  background-image: radial-gradient(#2563eb 1px, transparent 1px);
+  background-size: 10px 10px;
+  opacity: .9;
+}
+@media (min-width: 1024px) {
+  header h1 { font-size: 1.35rem; line-height: 1.5rem; }
+  .metric-number { font-size: 1.25rem; }
+}
+@media (max-height: 850px) and (min-width: 1024px) {
+  header { padding-top: .35rem; padding-bottom: .35rem; }
+  main { padding: .4rem; gap: .4rem; }
+  section, aside { gap: .4rem; }
+  #pvChart { min-height: 380px; }
+}
+@media (max-height: 500px) and (min-width: 1024px) {
+  header { padding-top: .35rem; padding-bottom: .35rem; }
+  main { padding: .5rem; gap: .5rem; }
+  section, aside { gap: .5rem; }
+  #pvChart { min-height: 300px; max-height: none; }
+}
+
+/* Identidade visual compartilhada com a página da Primeira Lei */
+:root { --lesson-navy:#173c65; --lesson-blue:#2563a6; --lesson-blue-soft:#eaf2fb; }
+header { background-color:var(--lesson-navy)!important; }
+header a.index-return { display:inline-flex; align-items:center; justify-content:center; gap:.45rem;
+  white-space:nowrap; color:#fff; background:rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.28);
+  border-radius:.55rem; padding:.55rem .8rem; font:700 .82rem Inter,Arial,sans-serif; text-decoration:none;
+  transition:background .15s ease; }
+header a.index-return:hover { background:rgba(255,255,255,.22); }
+button { transition:filter .15s ease, transform .15s ease; }
+button:hover { filter:brightness(.97); }
+.math-display { overflow-x:auto; padding:.2rem 0; }
+
+</style>
+
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['\\(','\\)'], ['$', '$']], displayMath: [['\\[','\\]'], ['$$','$$']] },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] },
+  chtml: { scale: 1.0 }
+};
+</script>
+<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+
+</head>
+<body class="h-screen w-full overflow-auto bg-slate-50 flex flex-col text-slate-800">
+<header class="bg-indigo-900 text-white px-4 py-2 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 shadow-md shrink-0">
+  <div><h1 class="text-xl font-bold tracking-tight">Exercício 6.26 · Compressão Adiabática</h1><p class="text-indigo-200 text-sm">Primeira Lei da Termodinâmica</p></div>
+<a class="index-return" href="index.html" aria-label="Voltar para o índice">← Voltar</a>
+</header>
+
+<main class="flex-1 min-h-0 w-full flex flex-col lg:flex-row p-2 gap-2 overflow-hidden">
+  <section class="flex-[0.98_1_0%] min-w-0 min-h-0 bg-white rounded-xl shadow-md p-1 flex flex-col gap-1 overflow-hidden">
+    <div class="bg-slate-50 rounded-lg border border-slate-200 p-2 shrink-0">
+      <div class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Gás dentro de um cilindro</div>
+      <div class="relative pt-2 pb-4">
+        <div class="w-full max-w-5xl mx-auto h-[155px] relative flex items-center">
+          <div class="absolute left-0 top-1 bottom-1 w-full border-y-4 border-l-4 border-slate-700 rounded-l-md bg-white overflow-hidden">
+            <div id="gasChamber" class="gas-pattern h-full absolute left-0 top-0 flex items-center justify-center border-r-8 border-slate-600" style="width:58%">
+              <span class="font-bold text-slate-800 bg-white/75 px-3 py-2 rounded text-2xl whitespace-nowrap">Gás</span>
+            </div>
+          </div>
+          <div id="pistonRod" class="absolute top-1/2 -translate-y-1/2 h-5 bg-slate-300 border-y border-slate-400" style="left:58%;width:30%"></div>
+          <div id="pistonHead" class="absolute top-1 bottom-1 w-3 bg-slate-600 rounded-sm shadow" style="left:calc(58% - 6px)"></div>
+          
+        </div>
+        <div class="flex justify-between text-xs font-semibold text-slate-500 mt-1"><span></span><span> &#8592; Compressão</span><span></span></div>
+      </div>
+
+    <div class="flex-[1.6_1_0%] min-h-[380px] border border-slate-100 rounded-lg p-2 relative flex flex-col">
+      <div class="text-sm font-bold text-slate-600 px-1 pt-0.5">Diagrama PV</div>
+      <div class="flex-1 min-h-0 relative w-full mx-auto"><canvas id="pvChart"></canvas></div>
+    </div>
+    <div class="bg-white border border-slate-200 rounded-lg p-1 shrink-0">
+      <div class="text-xs font-bold text-slate-600 mb-1">Para onde vai o trabalho?</div>
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-1 items-stretch text-center">
+        <div class="rounded-lg bg-amber-50 border border-amber-200 p-1 flex flex-col justify-center">
+          <div class="text-xs font-bold uppercase tracking-wide text-amber-700">Calor trocado</div>
+          <div class="text-lg font-black text-amber-800">\(Q=0\)</div>
+          <div class="text-xs text-amber-700">Processo adiabático</div>
+        </div>
+        <div class="rounded-lg bg-blue-50 border border-blue-200 p-1 flex flex-col justify-center">
+          <div class="text-xs font-bold uppercase tracking-wide text-blue-700">Trabalho sobre o gás</div>
+          <div id="energyWorkOnGas" class="text-lg font-black text-blue-800">+30,4 J</div>
+          <div class="text-xs text-blue-700">Energia transferida ao gás</div>
+        </div>
+        <div class="rounded-lg bg-emerald-50 border border-emerald-200 p-1 flex flex-col justify-center">
+          <div class="text-xs font-bold uppercase tracking-wide text-emerald-700">Aumento de U</div>
+          <div id="energyDeltaU" class="text-lg font-black text-emerald-800">+30,4 J</div>
+          <div id="energyUTransition" class="text-[10px] text-emerald-700">500 J → 530,4 J</div>
+        </div>
+      </div>
+      <div class="text-center text-lg md:text-xl font-semibold text-slate-700 mt-3 py-2 math-display">\(Q=0\;\Rightarrow\;\Delta U = W_{\text{sobre}}\;\Rightarrow\;U_f = U_i + W_{\text{sobre}}\)</div>
+    </div>
+  </section>
+
+  <aside class="w-full lg:w-[400px] xl:w-[400px] 2xl:w-[420px] bg-slate-100 flex flex-col gap-3 p-3 rounded-xl shadow-md border border-slate-200 shrink-0 overflow-y-auto">
+    <div class="flex flex-col gap-2 shrink-0">
+      <button onclick="startAnimation()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg shadow transition-colors">▶ Compressão</button>
+    </div>
+    <div class="bg-white shadow-sm rounded-lg p-4 border border-slate-200">
+      <div class="text-lg font-bold text-slate-400 uppercase tracking-widest mb-3">Parâmetros do processo</div>
+      <label for="pressureSlider" class="flex justify-between items-center gap-2 text-xl font-semibold text-slate-700">
+        <span>Pressão aplicada</span><span id="pressureValue" class="text-red-600 font-black">3,0 atm</span>
+      </label>
+      <input id="pressureSlider" class="w-full accent-red-600 mt-2" type="range" min="0.5" max="5" step="0.1" value="3" oninput="changeParameters()">
+      <div class="flex justify-between text-sm text-slate-500"><span>0,5 atm</span><span>5,0 atm</span></div>
+      <div class="mt-4"></div>
+      <label for="volumeSlider" class="flex justify-between items-center gap-2 text-xl font-semibold text-slate-700">
+        <span>Diminuição do volume</span><span id="volumeValue" class="text-blue-700 font-black">100 cm³</span>
+      </label>
+      <input id="volumeSlider" class="w-full accent-blue-600 mt-2" type="range" min="10" max="200" step="10" value="100" oninput="changeParameters()">
+      <div class="flex justify-between text-sm text-slate-500"><span>10 cm³</span><span>200 cm³</span></div>
+    </div>
+    <div class="bg-white shadow-sm rounded-lg p-4 border border-slate-200">
+      <span class="text-lg font-bold text-slate-400 uppercase tracking-widest">Trabalho realizado pelo gás</span>
+      <div class="flex items-baseline gap-1 mt-1"><span id="valWork" class="text-3xl font-black text-blue-600 font-mono">0,0</span><span class="font-bold text-blue-400">J</span></div>
+      <div class="text-sm text-slate-600 mt-2">\(W = P\,\Delta V\)</div>
+    </div>
+    <div class="bg-white shadow-sm rounded-lg p-4 border border-slate-200">
+      <span class="text-lg font-bold text-slate-400 uppercase tracking-widest">Variação da energia interna</span>
+      <div class="flex items-baseline gap-1 mt-1"><span id="valDeltaU" class="text-3xl font-black text-emerald-600 font-mono">0,0</span><span class="font-bold text-emerald-400">J</span></div>
+      <div class="text-sm text-slate-600 mt-2">\(\Delta U = -W\), pois \(Q=0\)</div>
+    </div>
+    <div class="bg-white shadow-sm rounded-lg p-4 border-l-4 border-indigo-500">
+      <span class="text-lg font-bold text-indigo-500 uppercase tracking-widest">Energia interna final</span>
+      <div class="flex items-baseline gap-1 mt-1"><span id="valUFinal" class="text-3xl font-black text-indigo-700 font-mono">500,0</span><span class="font-bold text-indigo-400">J</span></div>
+      <div class="text-sm text-slate-600 mt-2">\(U_f = U_i + \Delta U\)</div>
+    </div>
+  </aside>
+</main>
+
+<script>
+const ATM_TO_PA = 101000;
+const U_INITIAL = 500; // J
+const DURATION = 1000;
+let progress = 0, animating = false, startTime = null, frameId = null;
+let pressureAtm = 3.0;
+let volumeChangeCm3 = 100;
+
+const gasChamber = document.getElementById('gasChamber');
+const pistonRod = document.getElementById('pistonRod');
+const pistonHead = document.getElementById('pistonHead');
+const pressureSlider = document.getElementById('pressureSlider');
+const volumeSlider = document.getElementById('volumeSlider');
+
+const ctx = document.getElementById('pvChart').getContext('2d');
+const pvChart = new Chart(ctx, {
+  type: 'line',
+  data: { datasets: [
+    { label: 'Trabalho (área P × ΔV)', data: [{x:0,y:3}], backgroundColor:'rgba(59,130,246,.25)', borderColor:'transparent', fill:'origin', pointRadius:0, borderWidth:0, order:2 },
+    { label: 'Pressão', data: [{x:-100,y:3},{x:0,y:3}], borderColor:'#334155', borderWidth:4, pointRadius:0.5, fill:false, order:1 }
+  ]},
+  options: {
+    responsive:true, maintainAspectRatio:false, animation:false,
+    scales: {
+      x:{type:'linear', min:-220, max:10, title:{display:true,text:'Variação do volume ΔV (cm³)',font:{weight:'bold', size:18}}, ticks:{font:{size:14},callback:v=>v}},
+      y:{min:0,max:6,title:{display:true,text:'Pressão aplicada (atm)',font:{weight:'bold', size:18}}, ticks:{font:{size:14},callback:v=>v+' atm'}}
+    },
+    plugins:{legend:{position:'bottom'},tooltip:{enabled:false}}
+  }
+});
+
+function fmt(n) { return n.toLocaleString('pt-BR',{minimumFractionDigits:1,maximumFractionDigits:1}); }
+
+function changeParameters() {
+  pressureAtm = Number(pressureSlider.value);
+  volumeChangeCm3 = Number(volumeSlider.value);
+  document.getElementById('pressureValue').textContent = fmt(pressureAtm) + ' atm';
+  document.getElementById('volumeValue').textContent = volumeChangeCm3 + ' cm³';
+  // A alteração dos parâmetros reinicia a animação para manter o cálculo coerente.
+  if (animating) {
+    cancelAnimationFrame(frameId);
+    animating = false;
+  }
+  updateView(progress);
+}
+
+function updateView(value) {
+  progress = Math.max(0, Math.min(100, value));
+  const fraction = progress / 100;
+  const deltaVCm3 = -volumeChangeCm3 * fraction;
+  const deltaV = deltaVCm3 * 1e-6; // cm³ -> m³
+  const pressurePa = pressureAtm * ATM_TO_PA;
+  const workGas = pressurePa * deltaV;
+  const deltaU = -workGas;
+  const uFinal = U_INITIAL + deltaU;
+
+  // A câmara encolhe visualmente; desenho esquemático, sem escala absoluta.
+  const widthPct = 58 - 28 * fraction;
+  gasChamber.style.width = widthPct + '%';
+  pistonHead.style.left = 'calc(' + widthPct + '% - 6px)';
+  pistonRod.style.left = widthPct + '%';
+  pistonRod.style.width = (98 - widthPct) + '%';
+
+  document.getElementById('valWork').textContent = fmt(workGas);
+  document.getElementById('valDeltaU').textContent = (deltaU >= 0 ? '+' : '') + fmt(deltaU);
+  document.getElementById('valUFinal').textContent = fmt(uFinal);
+
+  // O diagrama de energia inferior acompanha os parâmetros e a animação.
+  document.getElementById('energyWorkOnGas').textContent = (deltaU >= 0 ? '+' : '') + fmt(deltaU) + ' J';
+  document.getElementById('energyDeltaU').textContent = (deltaU >= 0 ? '+' : '') + fmt(deltaU) + ' J';
+  document.getElementById('energyUTransition').textContent = fmt(U_INITIAL) + ' J → ' + fmt(uFinal) + ' J';
+
+  // Curva isobárica: a pressão permanece constante enquanto o volume diminui.
+  pvChart.options.scales.x.min = -(volumeChangeCm3 + 10);
+  pvChart.options.scales.x.max = 10;
+  pvChart.options.scales.y.max = Math.max(6, pressureAtm * 1.25);
+  pvChart.data.datasets[1].data = [
+    {x:-volumeChangeCm3,y:pressureAtm},
+    {x:0,y:pressureAtm}
+  ];
+  const filled = [{x:0,y:pressureAtm}];
+  if (deltaVCm3 < 0) filled.push({x:deltaVCm3,y:pressureAtm});
+  pvChart.data.datasets[0].data = filled;
+  pvChart.update();
+}
+
+function animationLoop(timestamp) {
+  if (startTime === null) startTime = timestamp;
+  const fraction = Math.min(1, (timestamp - startTime) / DURATION);
+  updateView(fraction * 100);
+  if (fraction < 1) frameId = requestAnimationFrame(animationLoop);
+  else animating = false;
+}
+
+function startAnimation() {
+  if (animating) return;
+  if (progress >= 100) updateView(0);
+  animating = true;
+  startTime = null;
+  frameId = requestAnimationFrame(animationLoop);
+}
+
+function resetAnimation() {
+  if (frameId !== null) cancelAnimationFrame(frameId);
+  animating = false;
+  startTime = null;
+  updateView(0);
+}
+changeParameters();
+updateView(0);
+</script>
+</body>
+</html>

@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Primeira Lei da Termodinâmica — Física II</title>
+<script>
+window.MathJax = {tex:{inlineMath:[['\\(','\\)']], displayMath:[['\\[','\\]']]}, options:{skipHtmlTags:['script','noscript','style','textarea','pre','code']}};
+</script>
+<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+:root{--navy:#172f52;--blue:#3d76ab;--ink:#243a52;--muted:#70859c;--line:#dce5ee;--pale:#f3f6fa;--soft:#f7f9fc;--lightblue:#eaf2fb;--heat:#c76d4b;--work:#3d76ab;--energy:#3c8b72}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;font-family:Inter,Arial,sans-serif;background:var(--pale);color:var(--ink)}
+header{background:var(--navy);color:#fff;padding:13px 24px;display:grid;grid-template-columns:1fr auto;align-items:center;gap:14px;border-bottom:3px solid #719ac4}
+.header-title h1{margin:0;font-size:clamp(1.15rem,2vw,1.5rem);letter-spacing:-.035em}
+.header-title p{margin:4px 0 0;color:#c6d9ec;font-size:.8rem}
+.index-link{display:inline-flex;align-items:center;justify-content:center;padding:8px 12px;border:1px solid rgba(255,255,255,.35);border-radius:7px;color:#fff;text-decoration:none;font-size:.78rem;font-weight:600;white-space:nowrap}
+.index-link:hover{background:rgba(255,255,255,.12)}
+.formula-banner{background:#fff;border:1px solid #d9e3ee;border-left:4px solid var(--blue);border-radius:10px;margin:12px auto 0;padding:13px 18px;display:flex;align-items:center;justify-content:center;gap:20px;max-width:1500px;width:calc(100% - 28px);flex-wrap:wrap}
+.formula-title{font-size:.72rem;font-weight:700;color:#52708f;text-transform:uppercase;letter-spacing:.08em}
+.main-equation{font-size:clamp(1.35rem,2.6vw,1.85rem);color:#173c65;font-weight:600}
+.formula-sub{font-size:.78rem;color:#617a94}
+main{max-width:1500px;margin:0 auto;padding:12px 14px 24px;display:grid;grid-template-columns:minmax(0,1.08fr) minmax(320px,.92fr);gap:12px}
+.col{display:flex;flex-direction:column;gap:12px;min-width:0}
+.card{background:#fff;border:1px solid var(--line);border-radius:11px;padding:14px 15px;box-shadow:0 2px 10px rgba(20,45,75,.035);min-width:0}
+.card h2{font-size:.98rem;margin:0 0 5px;color:#1e426b}
+.subtitle{font-size:.76rem;color:var(--muted);margin:0 0 11px;line-height:1.45}
+.explainer{font-size:.86rem;line-height:1.6;color:#405a75;margin:0}
+.legend{display:flex;gap:12px;flex-wrap:wrap;font-size:.72rem;color:#58708a;margin:7px 0 0}
+.dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:5px}
+.visual-wrap{background:#f8fbff;border:1px solid #e5edf4;border-radius:9px;padding:8px;overflow:hidden}
+svg{display:block;width:100%;height:auto;max-height:275px}
+.visual-caption{font-size:.73rem;color:#70859c;text-align:center;margin:5px 0 0}
+.energy-cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;margin-top:10px}
+.energy-card{background:var(--soft);border:1px solid #e6edf4;border-radius:8px;padding:9px;text-align:center}
+.energy-card small{display:block;color:#70859c;font-size:.68rem;margin-bottom:4px}
+.energy-card strong{font-size:1.03rem;color:#25486e}
+.energy-card .heat-value{color:var(--heat)}.energy-card .work-value{color:var(--work)}.energy-card .du-value{color:var(--energy)}
+.controls{display:grid;grid-template-columns:1fr;gap:13px;margin-top:10px}
+.control-line{display:grid;grid-template-columns:1fr auto;gap:5px 12px;align-items:center}
+.control-line label{font-size:.8rem;font-weight:600;color:#355575}
+.control-line output{font-size:.82rem;font-weight:700;color:#234d76;font-variant-numeric:tabular-nums}
+input[type=range]{grid-column:1 / -1;width:100%;accent-color:var(--blue);cursor:pointer}
+.range-scale{grid-column:1 / -1;display:flex;justify-content:space-between;font-size:.65rem;color:#8294a7;margin-top:-5px}
+.preset-row{display:flex;gap:6px;flex-wrap:wrap;margin-top:13px}
+.preset{background:#fff;border:1px solid #d6e1eb;border-radius:7px;color:#345675;padding:8px 10px;font:600 .73rem Inter,Arial,sans-serif;cursor:pointer;transition:.15s}
+.preset:hover{background:#f3f7fb}.preset.active{background:#eaf2fb;border-color:var(--blue);box-shadow:inset 3px 0 var(--blue)}
+.result-box{margin-top:12px;padding:12px;border-radius:8px;background:#f4f8fc;border:1px solid #e2ebf4}
+.result-top{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.result-top strong{font-size:.78rem;color:#3e5d7b}
+.result-number{font-size:1.18rem;color:#173c65;font-weight:800}
+.result-explanation{font-size:.78rem;color:#536e89;line-height:1.5;margin:6px 0 0}
+.sign-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:10px}
+.sign-item{border:1px solid #e3ebf3;background:#fbfcfe;border-radius:8px;padding:10px}
+.sign-item strong{display:block;color:#244c73;font-size:.78rem;margin-bottom:5px}
+.sign-item p{margin:0;font-size:.75rem;color:#58708a;line-height:1.5}
+.case-list{display:grid;gap:8px}
+.case{border:1px solid #dce5ee;border-radius:8px;padding:10px 11px;background:#fff}
+.case h3{margin:0 0 5px;font-size:.82rem;color:#254d75}
+.case .math{color:#173c65;font-size:.9rem;margin:4px 0}
+.case p{margin:4px 0 0;color:#5c738c;font-size:.75rem;line-height:1.5}
+.tag{display:inline-block;border-radius:5px;padding:3px 6px;background:#edf3f9;color:#46688a;font-size:.64rem;font-weight:700;margin-left:4px}
+.callout{padding:11px 12px;border-left:3px solid #719ac4;background:#f5f8fc;border-radius:0 7px 7px 0;font-size:.8rem;line-height:1.55;color:#4d6681}
+.footer-note{max-width:1500px;margin:0 auto;padding:0 15px 18px;color:#8294a7;font-size:.68rem}
+@media(max-width:850px){main{grid-template-columns:1fr}.formula-banner{gap:10px}.visual-wrap svg{max-height:300px}}
+@media(max-width:520px){header{padding:12px 14px}.header-title h1{font-size:1.05rem}.header-title p{font-size:.7rem}.index-link{padding:7px 9px;font-size:.7rem}main{padding:10px;gap:10px}.card{padding:12px}.energy-cards{gap:5px}.energy-card{padding:8px 3px}.energy-card strong{font-size:.9rem}.sign-grid{grid-template-columns:1fr}.formula-sub{width:100%;text-align:center}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important}}
+
+/* Layout em duas colunas, com tipografia ampliada e conteúdo ajustado a uma tela */
+header{padding:10px 24px}
+.header-title h1{font-size:clamp(1.35rem,1.8vw,1.7rem)}
+.header-title p{font-size:.9rem;margin-top:3px}
+.index-link{font-size:.85rem;padding:8px 12px}
+.formula-banner{max-width:1500px;margin:8px auto 0;padding:7px 14px;width:calc(100% - 28px);min-height:52px;gap:8px}
+.main-equation{font-size:clamp(2rem,3vw,2.5rem)}
+.formula-title,.formula-sub{display:none!important}
+main{max-width:1500px;display:grid;grid-template-columns:minmax(0,1.08fr) minmax(320px,.92fr);gap:10px;padding:8px 14px 10px}
+.col{gap:10px}
+.card{padding:12px 13px;border-radius:10px}
+.card h2{font-size:1.12rem;margin-bottom:5px}
+.subtitle{font-size:.88rem;margin-bottom:8px;line-height:1.4}
+.explainer{font-size:.94rem;line-height:1.48}
+.visual-wrap{padding:7px;margin-top:7px!important}
+.visual-wrap svg{max-height:225px}
+.visual-caption{font-size:.8rem;margin-top:4px}
+.legend{font-size:.78rem;gap:10px;margin-top:6px}
+.energy-cards{gap:7px;margin-top:8px}
+.energy-card{padding:8px}
+.energy-card small{font-size:.75rem}
+.energy-card strong{font-size:1.05rem}
+.controls{gap:10px;margin-top:8px}
+.control-line{gap:4px 10px}
+.control-line label{font-size:.9rem}
+.control-line output{font-size:.9rem}
+input[type=range]{height:18px}
+.range-scale{font-size:.72rem;margin-top:-4px}
+.preset-row{gap:6px;margin-top:9px}
+.preset{font-size:.8rem;padding:7px 9px}
+.result-box{margin-top:9px;padding:10px}
+.result-top strong{font-size:.86rem}
+.result-number{font-size:1.25rem}
+.result-explanation{font-size:.85rem;line-height:1.45;margin-top:5px}
+.sign-grid{gap:6px;margin-top:7px}
+.sign-item{padding:9px}
+.sign-item strong{font-size:.86rem;margin-bottom:4px}
+.sign-item p{font-size:.82rem;line-height:1.4}
+.callout{padding:10px 11px;font-size:.86rem;line-height:1.45}
+.footer-note{max-width:1500px;padding:0 15px 8px;font-size:.74rem}
+@media(max-width:850px){main{grid-template-columns:1fr}.formula-banner{gap:8px}.visual-wrap svg{max-height:260px}}
+@media(max-width:520px){header{padding:10px 14px}.header-title h1{font-size:1.15rem}.header-title p{font-size:.76rem}.index-link{padding:7px 9px;font-size:.72rem}main{padding:9px;gap:9px}.card{padding:11px}.energy-cards{gap:5px}.energy-card{padding:7px 3px}.energy-card strong{font-size:.9rem}.sign-grid{grid-template-columns:1fr}.formula-sub{width:100%;text-align:center}}
+
+</style>
+</head>
+<body>
+<header>
+  <div class="header-title">
+    <h1>Primeira Lei da Termodinâmica</h1>
+    <p>Física II · Conservação da energia</p>
+  </div>
+  <a class="index-link" href="index.html">← Voltar</a>
+</header>
+
+<section class="formula-banner" aria-label="Equação da primeira lei">
+  <span class="main-equation">\( \Delta U = Q - W \)</span>
+</section>
+
+<main>
+  <div class="col">
+    <section class="card">
+      <h2>A primeira lei é a conservação da energia</h2>
+      <p class="subtitle">Aplicada a um sistema termodinâmico.</p>
+      <p class="explainer">A energia não é criada nem destruída. Ela é transferida entre sistema e ambiente por calor e trabalho, alterando a energia interna, \(\Delta U\).</p>
+      <div class="visual-wrap" style="margin-top:12px">
+        <svg id="cylinderSvg" viewBox="0 0 620 290" role="img" aria-label="Gás trocando energia com o ambiente por calor e trabalho">
+          <defs>
+            <marker id="arrowHeat" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#c76d4b"/></marker>
+            <marker id="arrowWork" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#3d76ab"/></marker>
+            <linearGradient id="gasFill" x1="0" x2="1" y1="0" y2="1"><stop offset="0" stop-color="#eaf2fb"/><stop offset="1" stop-color="#d5e5f5"/></linearGradient>
+          </defs>
+          <text x="310" y="22" text-anchor="middle" font-size="13" fill="#607b96" font-weight="600">AMBIENTE</text>
+          <path d="M178 76 V226 Q178 240 192 240 H428 Q442 240 442 226 V76" fill="none" stroke="#8ca2b8" stroke-width="5" stroke-linecap="round"/>
+          <rect x="184" y="128" width="252" height="108" rx="4" fill="url(#gasFill)"/>
+          <rect id="piston" x="178" y="88" width="264" height="18" rx="3" fill="#8197ad" stroke="#58718a" stroke-width="1.5"/>
+          <path d="M310 88 V49" stroke="#8197ad" stroke-width="9" stroke-linecap="round"/>
+          <rect x="279" y="38" width="62" height="12" rx="3" fill="#8197ad"/>
+          <g id="particles" fill="#3d76ab">
+            <circle cx="216" cy="151" r="5"/><circle cx="265" cy="179" r="5"/><circle cx="321" cy="149" r="5"/><circle cx="382" cy="190" r="5"/><circle cx="235" cy="213" r="5"/><circle cx="353" cy="218" r="5"/><circle cx="402" cy="155" r="5"/><circle cx="294" cy="207" r="5"/><circle cx="372" cy="166" r="5"/>
+          </g>
+          <path id="heatArrow" d="M66 166 H155" stroke="#c76d4b" stroke-width="4" fill="none" marker-end="url(#arrowHeat)" stroke-linecap="round"/>
+          <text x="91" y="148" text-anchor="middle" font-size="14" fill="#b85d3c" font-weight="700">Q</text>
+          <text x="91" y="185" text-anchor="middle" font-size="11" fill="#a86a55">calor</text>
+          <path id="workArrow" d="M466 88 H548" stroke="#3d76ab" stroke-width="4" fill="none" marker-end="url(#arrowWork)" stroke-linecap="round"/>
+          <text x="509" y="69" text-anchor="middle" font-size="14" fill="#2e6596" font-weight="700">W</text>
+          <text x="509" y="111" text-anchor="middle" font-size="11" fill="#52799e">trabalho</text>
+          <text x="310" y="265" text-anchor="middle" font-size="14" fill="#244b72" font-weight="700">Sistema: gás</text>
+          <text x="310" y="282" text-anchor="middle" font-size="11" fill="#70859c">Energia interna \(U\)</text>
+        </svg>
+        <p class="visual-caption" id="visualCaption">O calor entra no gás e o gás realiza trabalho sobre o ambiente.</p>
+      </div>
+      <div class="legend">
+        <span><i class="dot" style="background:#c76d4b"></i>Calor \(Q\)</span>
+        <span><i class="dot" style="background:#3d76ab"></i>Trabalho \(W\)</span>
+        <span><i class="dot" style="background:#3c8b72"></i>Variação da energia interna \(\Delta U\)</span>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Explore a equação</h2>
+      <p class="subtitle">Altere \(Q\) e \(W\) para observar como muda a energia interna. Valores em joules (J).</p>
+      <div class="controls">
+        <div class="control-line">
+          <label for="qSlider">Calor transferido, \(Q\)</label>
+          <output id="qOutput" for="qSlider">+500 J</output>
+          <input id="qSlider" type="range" min="-2000" max="2000" step="100" value="500">
+          <div class="range-scale"><span>−2000 J · sai calor</span><span>+2000 J · entra calor</span></div>
+        </div>
+        <div class="control-line">
+          <label for="wSlider">Trabalho realizado pelo sistema, \(W\)</label>
+          <output id="wOutput" for="wSlider">+200 J</output>
+          <input id="wSlider" type="range" min="-2000" max="2000" step="100" value="200">
+          <div class="range-scale"><span>−2000 J · trabalho sobre o gás</span><span>+2000 J · trabalho pelo gás</span></div>
+        </div>
+      </div>
+      <div class="result-box" aria-live="polite">
+        <div class="result-top"><strong>Variação da energia interna</strong><span class="result-number" id="duOutput">+300 J</span></div>
+        <p class="result-explanation" id="resultExplanation">Entram 500 J como calor e saem 200 J como trabalho. A energia interna aumenta 300 J.</p>
+      </div>
+    </section>
+  </div>
+
+  <div class="col">
+    <section class="card">
+      <h2>Convenção de sinais</h2>
+      <p class="subtitle">Use sempre a mesma convenção ao aplicar a primeira lei.</p>
+      <div class="sign-grid">
+        <div class="sign-item">
+          <strong>\(Q&gt;0\) · calor recebido</strong>
+          <p>Energia entra no sistema na forma de calor.</p>
+        </div>
+        <div class="sign-item">
+          <strong>\(Q&lt;0\) · calor cedido</strong>
+          <p>Energia sai do sistema na forma de calor.</p>
+        </div>
+        <div class="sign-item">
+          <strong>\(W&gt;0\) · trabalho pelo sistema</strong>
+          <p>O sistema transfere energia ao ambiente.</p>
+        </div>
+        <div class="sign-item">
+          <strong>\(W&lt;0\) · trabalho sobre o sistema</strong>
+          <p>O ambiente transfere energia ao sistema.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>O significado físico</h2>
+      <p class="explainer">A variação da energia interna, \(\Delta U\), é determinada pelo calor transferido, \(Q\), e pelo trabalho realizado pelo sistema, \(W\): o calor recebido aumenta \(\Delta U\), enquanto o trabalho realizado pelo sistema a diminui.</p>
+      <div class="callout" style="margin-top:12px">
+        Calor e trabalho não são energia “armazenada”: são formas de transferir energia entre o sistema e o ambiente.
+      </div>
+      <p class="explainer" style="margin-top:12px">A primeira lei expressa a conservação da energia. Para descobrir quais processos ocorrem espontaneamente, precisamos de outros princípios — assunto da segunda lei.</p>
+    </section>
+  </div>
+</main>
+<div class="footer-note">Física II · Termodinâmica · Os casos especiais serão estudados na próxima página.</div>
+
+<script>
+(function(){
+  const qSlider=document.getElementById('qSlider');
+  const wSlider=document.getElementById('wSlider');
+  const qOutput=document.getElementById('qOutput');
+  const wOutput=document.getElementById('wOutput');
+  const duOutput=document.getElementById('duOutput');
+  const explanation=document.getElementById('resultExplanation');
+  const caption=document.getElementById('visualCaption');
+  const heatArrow=document.getElementById('heatArrow');
+  const workArrow=document.getElementById('workArrow');
+  const piston=document.getElementById('piston');
+  const fmt=n=>(n>0?'+':'')+n+' J';
+
+  function update(){
+    const q=Number(qSlider.value), w=Number(wSlider.value), du=q-w;
+    qOutput.textContent=fmt(q); wOutput.textContent=fmt(w); duOutput.textContent=fmt(du);
+    duOutput.style.color=du>0?'#3c8b72':du<0?'#b85d3c':'#173c65';
+    const qDesc=q>0?'Entram '+q+' J como calor':q<0?'Saem '+Math.abs(q)+' J como calor':'não há transferência líquida de calor';
+    const wDesc=w>0?'o sistema realiza '+w+' J de trabalho':w<0?'o ambiente realiza '+Math.abs(w)+' J de trabalho sobre o sistema':'não há trabalho líquido';
+    const change=du>0?'A energia interna aumenta '+du+' J.':du<0?'A energia interna diminui '+Math.abs(du)+' J.':'A energia interna não varia.';
+    explanation.textContent=qDesc+' e '+wDesc+'. '+change;
+    // Intensidade das setas proporcional ao valor dentro do intervalo de ±2000 J.
+    const qIntensity = Math.abs(q) / 2000;
+    const wIntensity = Math.abs(w) / 2000;
+    heatArrow.setAttribute('opacity', q===0 ? '.18' : String(.45 + .55*qIntensity));
+    heatArrow.setAttribute('stroke-width', String(2 + 3*qIntensity));
+    heatArrow.setAttribute('stroke-dasharray', q<0?'7 5':'none');
+    heatArrow.setAttribute('transform', q<0?'translate(221 0) scale(-1 1)':'');
+    workArrow.setAttribute('opacity', w===0 ? '.18' : String(.45 + .55*wIntensity));
+    workArrow.setAttribute('stroke-width', String(2 + 3*wIntensity));
+    workArrow.setAttribute('stroke-dasharray', w<0?'7 5':'none');
+    workArrow.setAttribute('transform', w<0?'translate(1014 0) scale(-1 1)':'');
+    // O deslocamento do pistão acompanha proporcionalmente W, até ±2000 J.
+    const pistonY = 88 - (w / 2000) * 18;
+    piston.setAttribute('y',String(pistonY));
+    if(q===0 && w<0) caption.textContent='Compressão adiabática: não há troca de calor; o trabalho sobre o gás aumenta U.';
+    else if(q===0 && w>0) caption.textContent='Expansão adiabática: sem calor recebido, o gás realiza trabalho à custa da energia interna.';
+    else if(w===0) caption.textContent='Sem trabalho de expansão: a transferência líquida de calor corresponde à variação de U.';
+    else if(du===0) caption.textContent='O calor recebido é igual ao trabalho realizado: a energia interna não varia.';
+    else caption.textContent='O balanço entre calor e trabalho determina a variação da energia interna.';
+  }
+  qSlider.addEventListener('input',update);
+  wSlider.addEventListener('input',update);
+  update();
+})();
+</script>
+</body>
+</html>

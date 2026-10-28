@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Exercício 6.23 — Sistema de polias</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+*{box-sizing:border-box}
+body{font-family:Inter,sans-serif}
+/* Layout compacto: resultados à esquerda, ilustração ao centro e controles à direita */
+main.exercise-layout{width:100%;max-width:1560px;margin:0 auto;grid-template-columns:minmax(420px, 1.55fr) minmax(245px, .86fr) minmax(285px, 1fr);grid-template-areas:"illustration controls results";align-items:stretch}
+.results-panel{grid-area:results}.illustration-panel{grid-area:illustration}.controls-panel{grid-area:controls}
+.panel{min-width:0}
+.panel h2{font-size:.95rem}
+.result-card{padding:.65rem!important}
+.result-card .result-number{font-size:clamp(1.15rem,1.5vw,1.55rem)!important;line-height:1.2}
+.result-card .formula{font-size:.82rem;line-height:1.35}
+#calculation{font-size:.78rem;line-height:1.35;overflow-x:auto}
+#calculation mjx-container[display="true"]{margin:.25em 0!important}
+@media(max-width:1050px){
+ body{height:auto!important;min-height:100vh;overflow:auto!important}
+ main.exercise-layout{grid-template-columns:minmax(0,1fr);grid-template-areas:"illustration" "controls" "results";overflow:visible!important}
+ .panel{overflow:visible!important}
+ .illustration-panel{min-height:440px}
+}
+@media(max-width:640px){header h1{font-size:1rem!important}.illustration-panel{min-height:340px}#scene{min-height:300px}}
+
+input[type=range]{accent-color:#4f46e5}
+@media(max-height:800px) and (min-width:900px){
+ header{padding-top:7px!important;padding-bottom:7px!important}
+ main{padding:8px!important;gap:8px!important}
+ .panel{padding:10px!important}
+ .small-card{padding:8px!important}
+}
+
+/* Identidade visual compartilhada com a página da Primeira Lei */
+:root { --lesson-navy:#173c65; --lesson-blue:#2563a6; --lesson-blue-soft:#eaf2fb; }
+header { background-color:var(--lesson-navy)!important; }
+header a.index-return { display:inline-flex; align-items:center; justify-content:center; gap:.45rem;
+  white-space:nowrap; color:#fff; background:rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.28);
+  border-radius:.55rem; padding:.55rem .8rem; font:700 .82rem Inter,Arial,sans-serif; text-decoration:none;
+  transition:background .15s ease; }
+header a.index-return:hover { background:rgba(255,255,255,.22); }
+button { transition:filter .15s ease, transform .15s ease; }
+button:hover { filter:brightness(.97); }
+.math-display { overflow-x:auto; padding:.2rem 0; }
+
+</style>
+
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['\\(','\\)'], ['$', '$']], displayMath: [['\\[','\\]'], ['$$','$$']] },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] },
+  chtml: { scale: 1.0 }
+};
+</script>
+<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+
+</head>
+<body class="h-screen w-screen overflow-hidden bg-slate-100 text-slate-800 flex flex-col">
+<header class="shrink-0 bg-indigo-900 text-white px-4 py-2 shadow-md flex items-center justify-between gap-3">
+ <div><h1 class="text-xl font-extrabold tracking-tight">Exercício 6.23 · Levantando um elefante</h1><p class="text-indigo-200 text-xs md:text-sm">Trabalho mecânico, polias e energia alimentar </p></div>
+<a class="index-return" href="index.html" aria-label="Voltar para o índice">← Voltar</a>
+</header>
+
+<main class="exercise-layout flex-1 min-h-0 p-2 md:p-3 grid gap-3 overflow-hidden">
+ <!-- Controls -->
+ <aside class="panel controls-panel min-h-0 overflow-y-auto bg-white rounded-xl border border-slate-200 shadow-sm p-3 flex flex-col gap-3">
+  <div><h2 class="font-extrabold text-slate-800">Parâmetros</h2></div>
+  <div class="rounded-lg bg-indigo-50 border border-indigo-100 p-3">
+   <div class="flex items-center justify-between gap-2"><label for="segments" class="text-sm font-bold text-indigo-900">Segmentos de corda (N)</label><span id="segmentsVal" class="rounded-md bg-indigo-200 text-indigo-800 font-black px-2 py-1">1</span></div>
+   <input id="segments" type="range" min="1" max="10" step="1" value="1" class="w-full mt-3">
+  </div>
+  <div>
+   <div class="flex justify-between items-center text-sm gap-2"><label for="mass" class="font-bold text-slate-600">Massa do elefante</label><b id="massVal" class="text-slate-700">5.000 kg</b></div>
+   <input id="mass" type="range" min="500" max="10000" step="100" value="5000" class="w-full mt-2">
+   <div class="flex justify-between text-[10px] text-slate-500"><span>500 kg</span><span>10.000 kg</span></div>
+  </div>
+  <div>
+   <div class="flex justify-between items-center text-sm gap-2"><label for="height" class="font-bold text-slate-600">Altura do levantamento</label><b id="heightVal" class="text-emerald-700">2,0 m</b></div>
+   <input id="height" type="range" min="0.5" max="3" step="0.5" value="2" class="w-full mt-2">
+   <div class="flex justify-between text-[10px] text-slate-500"><span>0,5 m</span><span>3,0 m</span></div>
+  </div>
+
+  <button id="liftBtn" onclick="animateLift()" class="rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-3 shadow-sm">▶ Levantar o elefante</button>
+  <div class="grid grid-cols-1 gap-2 mt-1">
+   <div class="small-card rounded-lg border border-slate-200 p-2 text-center bg-white"><div class="text-[10px] uppercase font-bold text-slate-400">Peso</div><div id="weightValue" class="text-lg font-black">49.000 N</div></div>
+   <div class="small-card rounded-lg border border-red-200 bg-red-50 p-2 text-center"><div class="text-[10px] uppercase font-bold text-red-500">Força ideal</div><div id="forceValue" class="text-lg font-black text-red-600">49.000 N</div></div>
+   <div class="small-card rounded-lg border border-orange-200 bg-orange-50 p-2 text-center"><div class="text-[10px] uppercase font-bold text-orange-500">Corda puxada</div><div id="distanceValue" class="text-lg font-black text-orange-600">2,0 m</div></div>
+  </div>
+  <div class="mt-auto rounded-lg bg-indigo-900 text-white p-3">
+   <div class="text-[10px] uppercase tracking-widest font-bold text-indigo-200">Ideia principal</div>
+   <p class="text-xs leading-relaxed mt-1">A polia reduz a força necessária, mas aumenta a distância de corda puxada. Em um sistema ideal, o trabalho total não muda.</p>
+  </div>
+ </aside>
+
+ <!-- Illustration -->
+ <section class="panel illustration-panel min-h-0 bg-white rounded-xl border border-slate-200 shadow-sm p-3 flex flex-col gap-2 overflow-hidden">
+  <div class="flex justify-between items-start gap-2 shrink-0"><div><h2 class="font-extrabold text-slate-800">Modelo físico: sistema de polias</h2>
+    </div></div>
+  <div class="flex-1 min-h-0 rounded-lg border border-slate-200 bg-gradient-to-b from-blue-50 to-slate-50 overflow-hidden">
+   <svg id="scene" viewBox="0 0 720 520" class="w-full h-full" role="img" aria-label="Elefante levantado por um sistema de polias; a corda à direita é puxada para baixo e o vetor azul à esquerda indica a elevação">
+    <defs>
+     <marker id="arrowBlue" markerWidth="7" markerHeight="7" refX="5" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 Z" fill="#2563eb"/></marker>
+     <marker id="arrowOrange" markerWidth="7" markerHeight="7" refX="5" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 Z" fill="#ea580c"/></marker>
+    </defs>
+    <rect x="30" y="8" width="660" height="20" rx="3" fill="#334155"/>
+    <rect x="45" y="28" width="630" height="7" fill="#64748b"/>
+    <text x="40" y="-1" font-size="13" font-weight="700" fill="#64748b">SUPORTE FIXO</text>
+    <g id="ropeLayer"></g>
+    <g id="pulleyLayer"></g>
+    <g id="movingLoad">
+     <rect id="loadBase" x="260" y="258" width="200" height="22" rx="6" fill="#475569" stroke="#1e293b" stroke-width="2.5"/>
+     <g id="elephant" transform="translate(0 28)">
+      <text x="355" y="322" font-size="88" text-anchor="middle" font-family="Apple Color Emoji, Segoe UI Emoji, Noto Color Emoji, sans-serif">🐘</text>
+     </g>
+     <rect id="lowerBase" x="270" y="365" width="180" height="28" rx="5" fill="#1e293b" stroke="#0f172a" stroke-width="1.5"/>
+     <text id="visualMass" x="360" y="384" font-size="15" font-weight="800" fill="#ffffff" text-anchor="middle">m = 5.000 kg</text>
+    </g>
+    <line x1="45" y1="485" x2="675" y2="485" stroke="#64748b" stroke-width="4"/>
+    <text x="45" y="504" font-size="13" fill="#64748b">Nível inicial</text>
+    <line id="heightArrow" x1="235" y1="425" x2="235" y2="425" stroke="#2563eb" stroke-width="4" marker-end="url(#arrowBlue)"/>
+    <text id="heightText" x="248" y="405" font-size="16" font-weight="800" fill="#2563eb">0,0 m</text>
+    <!-- Corda livre à direita: tracejado = posição inicial; linha sólida = posição atual/final -->
+    <g id="pullCord">
+     <line id="pullCordMoving" x1="590" y1="86" x2="590" y2="250" stroke="#ea580c" stroke-width="4" stroke-linecap="round"/>
+     <circle id="pullHandle" cx="590" cy="250" r="6" fill="#ea580c" stroke="#fff" stroke-width="2"/>
+     <g id="pullHand" transform="translate(590 250)" aria-label="Mão segurando a corda">
+      <!-- Mão fechada em torno da corda -->
+      <path d="M-10 7 L-10 -4 Q-10 -9 -6 -9 Q-2 -9 0 -4 L2 -18 Q3 -22 7 -21 Q11 -20 10 -15 L9 -5 L12 -14 Q14 -18 18 -16 Q21 -14 19 -9 L17 0 L21 -7 Q24 -10 27 -7 Q30 -4 27 2 L20 16 Q18 20 13 20 L-2 20 Q-8 18 -10 12 Z"
+       fill="#f4c9a8" stroke="#995b3c" stroke-width="2.2" stroke-linejoin="round"/>
+      <path d="M-5 1 Q1 6 8 1 M2 -4 L4 7 M10 -4 L12 5" fill="none" stroke="#b87550" stroke-width="1.7" stroke-linecap="round"/>
+      <path d="M-9 18 L19 18 L19 29 L-9 29 Z" fill="#2563eb" stroke="#1d4ed8" stroke-width="1.5"/>
+     </g>
+     <line id="pullLine" x1="630" y1="250" x2="630" y2="290" stroke="#ea580c" stroke-width="4" marker-end="url(#arrowOrange)"/>
+     <text id="pullText" x="605" y="70" font-size="14" font-weight="800" fill="#ea580c">Puxar corda ↓</text>
+    </g>
+    <text id="ropeDistLabel" x="470" y="435" font-size="14" font-weight="800" fill="#ea580c">Corda puxada: 2,0 m</text>
+   </svg>
+  </div>
+ </section>
+
+ <!-- Results -->
+ <aside class="panel results-panel min-h-0 overflow-y-auto bg-slate-100 rounded-xl border border-slate-200 shadow-sm p-3 flex flex-col gap-3">
+  <div><h2 class="font-extrabold text-slate-800">Resultado</h2></div>
+  <div class="result-card rounded-lg bg-blue-50 border border-blue-200 p-3">
+   <div class="text-[10px] uppercase font-bold tracking-wide text-blue-700">Trabalho mecânico</div>
+   <div id="workValue" class="result-number text-2xl md:text-3xl font-black text-blue-800">98.000 J</div>
+   <div class="formula text-xs text-blue-700 mt-1">\(W=Fd=mgh\)</div>
+  </div>
+  <div class="result-card rounded-lg bg-emerald-50 border border-emerald-200 p-3">
+   <div class="text-[10px] uppercase font-bold tracking-wide text-emerald-700">Aumento da energia potencial</div>
+   <div id="energyValue" class="result-number text-2xl md:text-3xl font-black text-emerald-800">98.000 J</div>
+   <div class="formula text-xs text-emerald-700 mt-1">\(\Delta U_g=mgh\)</div>
+  </div>
+  <div class="result-card rounded-lg bg-orange-50 border border-orange-200 p-3">
+   <div class="text-[10px] uppercase font-bold tracking-wide text-orange-700">Energia alimentar equivalente</div>
+   <div id="kcalValue" class="result-number text-2xl font-black text-orange-700">23,4 kcal</div>
+   <div class="formula text-xs text-orange-700 mt-1">\(E_{\mathrm{kcal}}=W/(4184\,\text{J/kcal})\)</div>
+  </div>
+  <div class="rounded-lg bg-white border border-slate-200 p-3">
+   <div class="text-xs uppercase tracking-wide font-bold text-slate-400">Cálculo do trabalho</div>
+   <p id="calculation" class="text-sm leading-relaxed mt-1">\(W=mgh=(5{.}000\,\text{kg})(9{,}8\,\text{m/s}^2)(2{,}0\,\text{m})=98{.}000\,\text{J}\).</p>
+  </div>
+  <div class="rounded-lg bg-white border border-slate-200 p-3">
+   <div class="text-xs uppercase tracking-wide font-bold text-slate-500">Força e distância em função de N</div>
+   <p class="text-xs text-slate-600 mt-1">Para um sistema ideal com <span class="font-bold">N segmentos de corda sustentando a carga</span>:</p>
+   <div id="pulleyCalculation" class="formula mt-2 text-sm">\\[\\begin{aligned}F&=\\frac{mg}{N}\\\\d&=Nh\\end{aligned}\\]</div>
+   <p class="text-xs text-slate-600 mt-1">A força diminui por um fator N, enquanto a distância puxada aumenta pelo mesmo fator.</p>
+  </div>
+  <div class="rounded-lg bg-indigo-900 text-white p-3 mt-auto">
+   <div class="text-xs uppercase tracking-widest font-bold text-indigo-200">Conclusão</div>
+   <p class="text-xs leading-relaxed mt-1">Aumentar o número de segmentos diminui a força, mas aumenta a distância puxada. Para uma polia ideal, o trabalho total permanece igual.</p>
+   <p class="text-[10px] text-indigo-200 mt-2">23,4 kcal é o equivalente ideal do trabalho; o gasto metabólico real é maior.</p>
+  </div>
+ </aside>
+</main>
+
+<script>
+const g=9.8,JperKcal=4184;
+let m=5000,N=1,h=2,progress=0,raf=null,startTime=null;
+const $=id=>document.getElementById(id);
+function fmt(n,d=0){return n.toLocaleString('pt-BR',{minimumFractionDigits:d,maximumFractionDigits:d});}
+function update(){
+ N=Number($('segments').value); h=Number($('height').value); m=Number($('mass').value);
+ $('massVal').textContent=fmt(m)+' kg';
+ $('segmentsVal').textContent=N; $('heightVal').textContent=fmt(h,1)+' m';
+ const weight=m*g, force=weight/N, ropeDist=N*h, work=weight*h;
+ $('weightValue').textContent=fmt(weight)+' N';
+ $('forceValue').textContent=fmt(force)+' N';
+ $('distanceValue').textContent=fmt(ropeDist,1)+' m';
+ $('workValue').textContent=fmt(Math.round(work))+' J';
+ $('energyValue').textContent=fmt(Math.round(work))+' J';
+ $('kcalValue').textContent=fmt(work/JperKcal,1)+' kcal';
+ if (window.MathJax?.typesetClear) MathJax.typesetClear([$('calculation')]);
+ $('calculation').innerHTML=`\\[\\begin{aligned}W&=Fd=\\left(${fmt(force)}\\,\\text{N}\\right)\\left(${fmt(ropeDist,1)}\\,\\text{m}\\right)=${fmt(Math.round(work))}\\,\\text{J},\\\\[3pt]W&=mgh=\\left(${fmt(m)}\\,\\text{kg}\\right)\\left(9{,}8\\,\\text{m/s}^2\\right)\\left(${fmt(h,1)}\\,\\text{m}\\right)=${fmt(Math.round(work))}\\,\\text{J}.\\end{aligned}\\]`;
+ if (window.MathJax?.typesetPromise) MathJax.typesetPromise([$('calculation')]);
+ if (window.MathJax?.typesetClear) MathJax.typesetClear([$('pulleyCalculation')]);
+ $('pulleyCalculation').innerHTML=`\\[\\begin{aligned}F&=\\frac{mg}{N}=\\frac{(${fmt(m)}\\,\\text{kg})(${fmt(g,1)}\\,\\text{m/s}^2)}{${N}}=${fmt(force)}\\,\\text{N},\\\\[3pt]d&=Nh=(${N})(${fmt(h,1)}\\,\\text{m})=${fmt(ropeDist,1)}\\,\\text{m}.\\end{aligned}\\]`;
+ if (window.MathJax?.typesetPromise) MathJax.typesetPromise([$('pulleyCalculation')]);
+ $('ropeDistLabel').textContent='Corda puxada: '+fmt(progress*ropeDist,1)+' m';
+ drawScene();
+}
+function drawScene(){
+ const rope=$('ropeLayer'), pulleys=$('pulleyLayer');
+ rope.innerHTML=''; pulleys.innerHTML='';
+ const topY=35;
+ const loadShift=-progress*h*48;
+ const baseY=258+loadShift;
+ const centerX=360;
+ const pulleyCount=Math.max(1,Math.ceil(N/2));
+ const pulleySpacing=Math.min(30,120/Math.max(1,pulleyCount-1));
+ const firstX=centerX-(pulleyCount-1)*pulleySpacing/2;
+ // Polias móveis e cordas permanecem centradas na base que sustenta o elefante.
+ for(let i=0;i<pulleyCount;i++){
+  const x=firstX+i*pulleySpacing;
+  const wheel=document.createElementNS('http://www.w3.org/2000/svg','circle');
+  wheel.setAttribute('cx',x); wheel.setAttribute('cy',baseY-2);
+  wheel.setAttribute('r',Math.max(7,Math.min(13,19-pulleyCount)));
+  wheel.setAttribute('fill','#cbd5e1'); wheel.setAttribute('stroke','#334155'); wheel.setAttribute('stroke-width','2');
+  pulleys.appendChild(wheel);
+ }
+ const strandCount=Math.max(1,N);
+ for(let j=0;j<strandCount;j++){
+  const spread=Math.min(14,90/Math.max(1,strandCount-1));
+  const xTop=centerX+(j-(strandCount-1)/2)*spread;
+  const xBottom=centerX+(j-(strandCount-1)/2)*Math.min(12,70/Math.max(1,strandCount-1));
+  const line=document.createElementNS('http://www.w3.org/2000/svg','line');
+  line.setAttribute('x1',xTop); line.setAttribute('y1',topY+((j%2)*5));
+  line.setAttribute('x2',xBottom); line.setAttribute('y2',baseY-2);
+  line.setAttribute('stroke','#b45309'); line.setAttribute('stroke-width','2.5');
+  rope.appendChild(line);
+ }
+ $('movingLoad').setAttribute('transform',`translate(0 ${loadShift})`);
+ const y1=485, y2=485-Math.max(0.5,progress*h)*48;
+ $('heightArrow').setAttribute('x1',210); $('heightArrow').setAttribute('x2',210);
+ $('heightArrow').setAttribute('y1',y1); $('heightArrow').setAttribute('y2',y2);
+ $('heightText').setAttribute('x',223);
+ $('heightText').setAttribute('y',Math.min(430,Math.max(315,(y1+y2)/2)));
+ $('heightText').textContent=fmt(progress*h,1)+' m';
+ const ropeTravel=progress*N*h;
+ const cordTop=35, cordEndInitial=178;
+ const cordEndFinal=Math.min(325,cordEndInitial+ropeTravel*24);
+ const handleY=cordEndInitial+(cordEndFinal-cordEndInitial)*progress;
+ $('pullCordMoving').setAttribute('y1',cordTop);
+ $('pullCordMoving').setAttribute('y2',handleY);
+ $('pullHandle').setAttribute('cy',handleY);
+ $('pullHand').setAttribute('transform',`translate(590 ${handleY+2})`);
+ $('pullLine').setAttribute('y1',handleY+12);
+ $('pullLine').setAttribute('y2',Math.min(365,handleY+48));
+ $('pullText').textContent='Puxar corda ↓';
+ $('pullText').setAttribute('y',70);
+ $('ropeDistLabel').setAttribute('x','470');
+ $('ropeDistLabel').setAttribute('y','470');
+ $('ropeDistLabel').textContent='Corda puxada: '+fmt(ropeTravel,1)+' m';
+ $('visualMass').textContent='m = '+fmt(m)+' kg';
+}
+function animateLift(){
+ if(raf){cancelAnimationFrame(raf);raf=null;}
+ if(progress>=1)progress=0;
+ startTime=null;
+ $('liftBtn').textContent='⏳ Levantando…';
+ const duration=2800;
+ function frame(ts){
+  if(startTime===null)startTime=ts;
+  progress=Math.min(1,(ts-startTime)/duration);
+  drawScene();
+  if(progress<1)raf=requestAnimationFrame(frame);
+  else{raf=null;$('liftBtn').textContent='✓ Elefante levantado';}
+ }
+ raf=requestAnimationFrame(frame);
+}
+function resetLift(){
+ if(raf)cancelAnimationFrame(raf);
+ raf=null;progress=0;startTime=null;
+ $('liftBtn').textContent='▶ Levantar o elefante';
+ drawScene();
+}
+$('segments').addEventListener('input',()=>{resetLift();update();});
+$('height').addEventListener('input',()=>{resetLift();update();});
+$('mass').addEventListener('input',()=>{resetLift();update();});
+update();
+</script>
+</body>
+</html>

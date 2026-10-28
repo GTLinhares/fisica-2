@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Calor e Trabalho — Trabalho termodinâmico</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+*{box-sizing:border-box}html,body{margin:0;height:100%}body{font-family:Inter,Arial,sans-serif;background:#f3f6fa;color:#243a52;display:flex;flex-direction:column;overflow:hidden}
+.index-link{display:inline-flex;align-items:center;justify-content:center;padding:7px 11px;border:1px solid rgba(255,255,255,.35);border-radius:7px;color:#fff;text-decoration:none;font-size:.78rem;font-weight:600;white-space:nowrap}.index-link:hover{background:rgba(255,255,255,.12)}header{background:#172f52;color:white;padding:11px 23px;display:grid;grid-template-columns:1fr auto 1fr;justify-content:space-between;align-items:center;gap:12px;flex-shrink:0;min-height:65px;border-bottom:3px solid #719ac4}
+.header-title{justify-self:start}.convention{justify-self:center;text-align:center}.index-link{justify-self:end}
+header h1{margin:0;font-size:1.45rem;letter-spacing:-.035em}header p{margin:3px 0 0;color:#c6d9ec;font-size:.8rem}.convention{font-size:.77rem;color:#d9e6f3;text-align:right}
+.formula-banner{background:#fff;border:1px solid #d9e3ee;border-left:4px solid #3d76ab;border-radius:10px;margin:10px 12px 0;padding:9px 16px;display:flex;align-items:center;justify-content:center;gap:25px;flex-shrink:0}
+.formula-banner .formula-title{font-size:.75rem;font-weight:700;color:#52708f;text-transform:uppercase;letter-spacing:.08em}.formula-banner .main-equation{font-size:1.5rem;color:#173c65;font-weight:600}
+main{min-height:0;flex:1;display:grid;grid-template-columns:minmax(0,1.13fr) minmax(0,1.08fr) minmax(260px,.68fr);gap:10px;padding:10px 12px 8px}
+.col{display:flex;flex-direction:column;min-height:0;gap:10px;min-width:0}.card{background:white;border:1px solid #dce5ee;border-radius:11px;padding:11px 12px;min-height:0;box-shadow:0 2px 10px rgba(20,45,75,.035)}
+.card h2{font-size:.91rem;margin:0 0 4px;color:#1e426b}.subtitle{font-size:.73rem;color:#70859c;margin:0 0 8px;line-height:1.35}
+.visual{display:flex;flex-direction:column;flex:1;min-height:0}.canvas-box{height:clamp(260px,36vh,350px);min-height:260px;flex:0 0 auto;margin-block:auto;border:1px solid #e5edf4;border-radius:8px;overflow:hidden;background:#f8fbff}
+canvas{display:block;width:100%;height:100%;min-height:0;flex:1;margin:auto}.info-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin-top:8px}.mini{background:#f7f9fc;border:1px solid #e6edf4;border-radius:7px;text-align:center;padding:7px 3px}.mini small{display:block;font-size:.62rem;color:#7a8ea4}.mini strong{font-size:.82rem;color:#25486e}
+.scenarios{display:grid;grid-template-columns:1fr 1fr;gap:6px}.scenario{border:1px solid #dce5ee;border-radius:8px;background:#fff;text-align:left;padding:7px;cursor:pointer;color:#244667;font:inherit;transition:.15s}.scenario:hover{background:#f3f7fb}.scenario.active{background:#eaf2fb;border-color:#3d76ab;box-shadow:inset 3px 0 #3d76ab}.scenario b{display:block;font-size:.74rem}.scenario span{display:block;font-size:.65rem;color:#71859b;margin-top:3px;line-height:1.3}
+.actions{display:flex;gap:7px;margin-top:9px}.actions button{border:0;border-radius:7px;padding:9px 8px;font-weight:700;font-size:.78rem;cursor:pointer}.primary{flex:1;background:#285e92;color:white}.secondary{background:#e9f0f7;color:#2b5279}
+.description{margin-top:8px;padding:8px 10px;background:#f4f8fc;border-radius:7px;font-size:.74rem;line-height:1.4;color:#4b647f}
+.below-note{font-size:.95rem;line-height:1.6;min-height:230px;height:230px;flex:0 0 230px;overflow:auto}.below-note h2{font-size:1.05rem;margin-bottom:9px}.below-note p,.below-note .signs{font-size:.94rem;line-height:1.6}.below-note .signs{gap:10px}.below-note .signs>div{padding:10px 11px}\n.diagram-interpretation{margin-top:9px;padding:14px 14px;min-height:76px;border:1px solid #e4ebf2;border-radius:8px;background:#f7f9fc;display:flex;flex-direction:column;justify-content:center;gap:7px}.interpretation-label{font-size:.68rem;color:#71849b;font-weight:600;white-space:nowrap}.diagram-interpretation .note{margin:0!important}\n.results{display:grid;grid-template-columns:1fr 1fr;gap:7px}.result{background:#f7f9fc;border:1px solid #e4ebf2;border-radius:8px;padding:9px}.result small{font-size:.65rem;color:#71849b;display:block}.result strong{font-size:1.38rem;color:#285e92}.result .unit{font-size:.65rem;color:#6c8095}
+.note{font-size:.73rem;line-height:1.5;color:#536b82}.note p{margin:5px 0}.note h2{margin-bottom:6px}.signs{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:7px}.signs div{background:#f5f8fc;padding:8px;border-radius:7px;font-size:.72rem;line-height:1.4}
+.equation-line{font-size:.93rem;color:#244f7a;margin:8px 0;text-align:center}.tiny{font-size:.65rem;color:#7d8ea0}
+footer{font-size:.62rem;color:#7a8da0;padding:0 15px 8px;text-align:center}
+@media(max-height:760px) and (min-width:1000px){header{min-height:56px;padding:7px 20px}.formula-banner{margin-top:7px;padding:6px}.card{padding:8px}.col{gap:7px}main{gap:7px;padding-top:7px}.scenario{padding:6px}.scenario span{font-size:.61rem}.note{font-size:.69rem}}
+@media(max-width:999px){header{grid-template-columns:1fr auto}.convention{grid-column:1/-1;grid-row:2;justify-self:center}.index-link{grid-column:2;grid-row:1}body{height:auto;overflow:auto}main{display:grid;grid-template-columns:1fr 1fr}.col:last-child{grid-column:1/-1}.visual{min-height:370px}.canvas-box{min-height:280px;min-height:260px}}
+@media(max-width:650px){header{flex-direction:column;align-items:flex-start}.convention{text-align:left}.formula-banner{flex-direction:column;gap:4px}main{grid-template-columns:1fr}.col:last-child{grid-column:auto}.visual{min-height:350px}}
+</style>
+<script>window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},options:{skipHtmlTags:['script','noscript','style','textarea','pre','code']}};</script>
+<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+<body>
+<header><div class="header-title"><h1>Calor e Trabalho</h1><p>Trabalho termodinâmico · Gás em um pistão</p></div><div class="convention">Convenção: trabalho realizado pelo gás<br><strong>\(W>0\)</strong> expansão &nbsp;·&nbsp; <strong>\(W<0\)</strong> compressão</div><a class="index-link" href="index.html">← Voltar</a></header>
+<section class="formula-banner"><span class="formula-title">Trabalho termodinâmico</span><span class="main-equation">\(\displaystyle W=\int_{V_i}^{V_f}P\,\mathrm{d}V\)</span></section>
+<main>
+<div class="col">
+<section class="card visual"><h2>Modelo físico: gás em um cilindro</h2><p class="subtitle">O pistão desloca-se conforme o volume do gás varia. <span id="pistonState">Estado inicial</span></p><div class="canvas-box"><canvas id="pistonCanvas" aria-label="Gás em um cilindro com pistão animado"></canvas></div></section>
+<section class="card note below-note"><h2>Calor e trabalho</h2><p>O deslocamento do pistão transfere energia por trabalho. Calor e trabalho são modos distintos de transferência de energia: calor ocorre por diferença de temperatura; o trabalho, neste modelo, pela variação de volume sob pressão.</p></section>
+</div>
+<div class="col">
+<section class="card visual"><div style="display:flex;justify-content:space-between;align-items:start;gap:8px"><div><h2>Diagrama \(P\)–\(V\)</h2></div><strong id="workSignBadge" style="white-space:nowrap;font-size:.76rem;color:#28704d">W &gt; 0</strong></div><div class="canvas-box"><canvas id="pvCanvas" aria-label="Diagrama pressão por volume"></canvas></div>
+<span id="workValue" hidden>+5,5</span><span id="workFormula" hidden>Área orientada sob a curva.</span></section>
+<section class="card note below-note"><h2>Interpretação física</h2><div class="signs"><div><strong>\(W>0\)</strong><br>Expansão: o gás realiza trabalho sobre a vizinhança.</div><div><strong>\(W<0\)</strong><br>Compressão: a vizinhança realiza trabalho sobre o gás.</div></div><p>Se o volume não muda, \(\mathrm{d}V=0\), portanto o trabalho nesse trecho é nulo.</p><p>No diagrama \(P\)-\(V\), o trabalho é a área orientada abaixo da curva do processo.</p><p>O trabalho depende do <strong>caminho</strong> percorrido, não apenas dos estados inicial e final.</p></section>
+</div>
+<div class="col">
+<section class="card"><h2>Processos</h2><p class="subtitle">Compare os caminhos de expansão e compressão.</p><div class="scenarios" id="scenarioButtons" style="display:grid;grid-template-columns:1fr 1fr;grid-template-rows:repeat(3,auto);grid-auto-flow:column;gap:8px">
+<button class="scenario active" data-process="expA"><b>Expansão (a)</b><span>Pressão e volume variam</span></button>
+<button class="scenario" data-process="expB"><b>Expansão (b)</b><span>Expansão, depois \(V\) constante</span></button>
+<button class="scenario" data-process="expC"><b>Expansão (c)</b><span>\(V\) constante, depois expansão</span></button>
+<button class="scenario" data-process="compA"><b>Compressão (a)</b><span>Retorno pela diagonal</span></button>
+<button class="scenario" data-process="compB"><b>Compressão (b)</b><span>Retorno em dois trechos</span></button>
+<button class="scenario" data-process="compC"><b>Compressão (c)</b><span>Compressão em dois trechos</span></button>
+</div><div class="actions"><button id="animateBtn" class="primary">▶ Iniciar processo</button><button id="resetBtn" class="secondary">↻ Reiniciar</button></div><div class="description" id="processDescription">O gás se expande; o volume aumenta e o trabalho realizado pelo gás é positivo.</div></section>
+
+</div>
+</main>
+
+<script>
+const pistonCanvas = document.getElementById('pistonCanvas');
+const pctx = pistonCanvas.getContext('2d');
+const pvCanvas = document.getElementById('pvCanvas');
+const vctx = pvCanvas.getContext('2d');
+const $ = id => document.getElementById(id);
+
+const processes = {
+  expA: {name:'Expansão (a)', direction:'exp', points:[[1,4],[3,1.5]], curve:true, description:'O gás se expande ao longo de um caminho curvo. O volume aumenta e o trabalho realizado pelo gás é positivo.', work:4.9},
+  expB: {name:'Expansão (b)', direction:'exp', points:[[1,4],[3,4],[3,1.5]], description:'Primeiro o gás expande a pressão constante (trecho horizontal); depois a pressão diminui a volume constante. O trecho vertical não realiza trabalho.', work:8},
+  expC: {name:'Expansão (c)', direction:'exp', points:[[1,4],[1,1.5],[3,1.5]], description:'Primeiro a pressão diminui a volume constante, sem trabalho. Depois o gás expande a pressão mais baixa e realiza trabalho positivo.', work:3},
+  compA: {name:'Compressão (a)', direction:'comp', points:[[3,1.5],[1,4]], curve:true, description:'O gás é comprimido ao longo de um caminho curvo. O volume diminui e o trabalho realizado pelo gás é negativo.', work:-4.9},
+  compB: {name:'Compressão (b)', direction:'comp', points:[[3,1.5],[3,4],[1,4]], description:'O gás sofre primeiro uma mudança de pressão a volume constante, que não realiza trabalho, e depois é comprimido a pressão alta. O trabalho do gás é negativo.', work:-8},
+  compC: {name:'Compressão (c)', direction:'comp', points:[[3,1.5],[1,1.5],[1,4]], description:'O gás é comprimido a pressão baixa; em seguida, a pressão aumenta a volume constante. Só o trecho horizontal contribui para o trabalho, que é negativo.', work:-3}
+};
+let particleClock = 0;
+let selected = 'expA', progress = 0, running = false, raf = null, lastTime = 0;
+
+function fmt(n, decimals=1){return n.toLocaleString('pt-BR',{minimumFractionDigits:decimals,maximumFractionDigits:decimals});}
+function resizeCanvas(canvas,ctx){
+  const r=canvas.getBoundingClientRect(), dpr=window.devicePixelRatio||1;
+  const w=Math.max(1,Math.floor(r.width*dpr)), h=Math.max(1,Math.floor(r.height*dpr));
+  if(canvas.width!==w||canvas.height!==h){canvas.width=w;canvas.height=h;}
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  return {w:r.width,h:r.height};
+}
+function currentPathPoint(t){
+ const pts=processes[selected].points;
+ if(pts.length===2 && processes[selected].curve){
+   const a=pts[0], b=pts[1], q=Math.max(0,Math.min(1,t));
+   // Curva suave entre os estados; x acompanha o volume e y a pressão.
+   const bend=-0.42;
+   return [a[0]+(b[0]-a[0])*q, a[1]+(b[1]-a[1])*q + bend*4*q*(1-q)];
+ }
+ const lens=[];let total=0;
+ for(let i=0;i<pts.length-1;i++){const l=Math.hypot(pts[i+1][0]-pts[i][0],pts[i+1][1]-pts[i][1]);lens.push(l);total+=l;}
+ let d=Math.max(0,Math.min(1,t))*total;
+ for(let i=0;i<lens.length;i++){
+   if(d<=lens[i]||i===lens.length-1){const a=pts[i],b=pts[i+1],q=lens[i]?d/lens[i]:0;return [a[0]+(b[0]-a[0])*q,a[1]+(b[1]-a[1])*q];}
+   d-=lens[i];
+ }
+ return pts[pts.length-1];
+}
+function drawPiston(){
+ const {w,h}=resizeCanvas(pistonCanvas,pctx), c=pctx;
+ c.clearRect(0,0,w,h);
+ c.fillStyle='#f8fafc'; c.fillRect(0,0,w,h);
+ const left=w*.22, right=w*.78, top=h*.12, bottom=h*.83;
+ const proc=processes[selected];
+ const f=running?progress:(progress>=1?1:0);
+ // A posição do pistão é determinada pelo volume instantâneo no caminho P–V.
+ const state=currentPathPoint(f);
+ const v=state[0];
+ const minVisibleWidth=(right-left)*0.28;
+ const pistonX=left+minVisibleWidth+(v-1)/2*((right-left)-minVisibleWidth);
+ const chamberL=left, chamberR=right, chamberW=Math.max(80,pistonX-chamberL);
+ // Chamber and gas
+ c.fillStyle='#ffffff'; c.strokeStyle='#334155'; c.lineWidth=4;
+ c.beginPath(); c.moveTo(chamberL,top); c.lineTo(chamberR,top); c.lineTo(chamberR,bottom); c.lineTo(chamberL,bottom); c.lineTo(chamberL,top); c.stroke();
+ // Tampa superior do cilindro: uma linha metálica contínua, interrompida apenas pelo pistão móvel.
+ c.strokeStyle='#64748b'; c.lineWidth=5; c.beginPath(); c.moveTo(chamberL,top); c.lineTo(chamberR,top); c.stroke();
+ c.fillStyle=proc.direction==='exp'?'rgba(16,185,129,.22)':'rgba(249,115,22,.20)';
+ c.fillRect(chamberL+3,top+3,Math.max(0,Math.min(chamberR-chamberL-4,pistonX-chamberL-3)),bottom-top-6);
+ // particles in gas
+ const gasRight=Math.max(chamberL+12,Math.min(chamberR-8,pistonX-9));
+ // As bolinhas representam partículas: sua rapidez acompanha a temperatura estimada
+ // pelo gás ideal, T proporcional a P·V. O número de partículas permanece constante.
+ const gasWidth=Math.max(8,gasRight-(chamberL+13));
+ const gasHeight=Math.max(20,bottom-top-30);
+ const temperatureProxy=Math.max(0.2,state[0]*state[1]);
+ const initialPV=Math.max(0.2,proc.points[0][0]*proc.points[0][1]);
+ const speedFactor=Math.max(0.42,Math.min(1.9,Math.sqrt(temperatureProxy/initialPV)));
+ for(let i=0;i<24;i++){
+  const phaseX=((particleClock*0.00020*speedFactor*(0.72+(i%5)*0.14)+i*0.173)%2);
+  const phaseY=((particleClock*0.00015*speedFactor*(0.75+(i%4)*0.16)+i*0.239)%2);
+  const fx=1-Math.abs(phaseX-1), fy=1-Math.abs(phaseY-1);
+  const x=chamberL+13+fx*gasWidth;
+  const y=top+15+fy*gasHeight;
+  // Small motion trail makes changes in particle speed easier to see.
+  const trail=2+5*speedFactor;
+  c.strokeStyle=i%2?'rgba(245,158,11,.42)':'rgba(251,113,133,.42)';
+  c.lineWidth=1.5;c.beginPath();c.moveTo(x-trail*(0.35+(i%3)*0.2),y-trail*0.22);c.lineTo(x,y);c.stroke();
+  c.beginPath();c.arc(x,y,2.7,0,Math.PI*2);c.fillStyle=i%2?'#f59e0b':'#fb7185';c.fill();
+ }
+ // piston block
+ c.fillStyle='#475569';c.strokeStyle='#1e293b';c.lineWidth=3;
+ c.beginPath();c.roundRect(Math.max(chamberL+8,Math.min(chamberR-15,pistonX-8)),top-7,16,bottom-top+14,4);c.fill();c.stroke();
+ // Rod and force arrow
+ const px=Math.max(chamberL+8,Math.min(chamberR-15,pistonX));
+ c.strokeStyle='#64748b';c.lineWidth=6;c.beginPath();c.moveTo(px,top-7);c.lineTo(px,top-31);c.stroke();
+ c.fillStyle='#2563eb';c.beginPath();
+ const arrowY=top-45, arrowDir=proc.direction==='exp'?1:-1;
+ c.moveTo(px,arrowY+arrowDir*12);c.lineTo(px-8,arrowY-arrowDir*1);c.lineTo(px+8,arrowY-arrowDir*1);c.closePath();c.fill();
+ // Labels
+ c.fillStyle='#334155';c.font='600 13px Inter';c.textAlign='left';c.fillText('Gás',chamberL+12,top+22);
+ c.fillStyle='#64748b';c.font='12px Inter';c.fillText('Cilindro',chamberL,bottom+25);
+ c.textAlign='center';c.fillStyle=proc.direction==='exp'?'#047857':'#c2410c';c.font='bold 13px Inter';
+ c.fillText(proc.direction==='exp'?'Expansão: pistão desloca-se para fora':'Compressão: pistão desloca-se para dentro',w/2,h-12);
+}
+function drawPV(){
+ const {w,h}=resizeCanvas(pvCanvas,vctx),c=vctx;c.clearRect(0,0,w,h);
+ const m={l:47,r:18,t:18,b:36}, pw=w-m.l-m.r, ph=h-m.t-m.b;
+ const X=v=>m.l+(v-0.5)/3.1*pw, Y=p=>m.t+(4.7-p)/4.7*ph;
+ c.fillStyle='#fff';c.fillRect(0,0,w,h);
+ // grid and axes
+ c.font='11px Inter';c.textAlign='center';c.textBaseline='top';
+ for(let v=1;v<=3.5;v+=.5){const x=X(v);c.strokeStyle='#e2e8f0';c.lineWidth=1;c.beginPath();c.moveTo(x,m.t);c.lineTo(x,h-m.b);c.stroke();}
+ c.textAlign='right';c.textBaseline='middle';
+ for(let p=0;p<=4;p++){const y=Y(p);c.strokeStyle='#e2e8f0';c.beginPath();c.moveTo(m.l,y);c.lineTo(w-m.r,y);c.stroke();}
+ c.strokeStyle='#475569';c.lineWidth=1.5;c.beginPath();c.moveTo(m.l,m.t);c.lineTo(m.l,h-m.b);c.lineTo(w-m.r,h-m.b);c.stroke();
+ c.fillStyle='#334155';c.font='bold 12px Inter';c.textAlign='left';c.fillText('P',10,12);c.textAlign='right';c.fillText('V',w-5,h-14);
+ const pts=processes[selected].points;
+ // area under the path (closed along P=0)
+ const shown=[];
+ let segments=Math.max(2,Math.ceil(pts.length*2*progress));
+ if(!running&&progress===0) segments=0;
+ const n=80, full=progress>=1||!running&&progress===0;
+ const endT=running?progress:(progress===0?1:progress);
+ const pathPts=[];
+ for(let i=0;i<=n;i++){const t=i/n*endT;pathPts.push(currentPathPoint(t));}
+ if(pathPts.length){
+  c.beginPath();c.moveTo(X(pathPts[0][0]),Y(0));c.lineTo(X(pathPts[0][0]),Y(pathPts[0][1]));
+  for(let i=1;i<pathPts.length;i++)c.lineTo(X(pathPts[i][0]),Y(pathPts[i][1]));
+  c.lineTo(X(pathPts[pathPts.length-1][0]),Y(0));c.closePath();
+  c.fillStyle=processes[selected].direction==='exp'?'rgba(16,185,129,.22)':'rgba(249,115,22,.20)';c.fill();
+ }
+ // Exibe somente o caminho termodinâmico selecionado.
+ if(pathPts.length){c.beginPath();c.moveTo(X(pathPts[0][0]),Y(pathPts[0][1]));for(let i=1;i<pathPts.length;i++)c.lineTo(X(pathPts[i][0]),Y(pathPts[i][1]));
+ c.strokeStyle=processes[selected].direction==='exp'?'#059669':'#ea580c';c.lineWidth=3;c.lineJoin='round';c.stroke();
+  // Uma seta maior no meio de cada segmento entre dois estados.
+  const arrowColor=processes[selected].direction==='exp'?'#059669':'#ea580c';
+  const segmentStarts=[0];
+  for(let j=1;j<pts.length;j++){
+    const target=pts[j];
+    let best=0,bestD=Infinity;
+    for(let k=0;k<pathPts.length;k++){
+      const d=Math.hypot(pathPts[k][0]-target[0],pathPts[k][1]-target[1]);
+      if(d<bestD){bestD=d;best=k;}
+    }
+    segmentStarts.push(best);
+  }
+  c.fillStyle=arrowColor;
+  for(let j=0;j<segmentStarts.length-1;j++){
+    const lo=segmentStarts[j], hi=segmentStarts[j+1];
+    if(hi-lo<2) continue;
+    const mi=Math.floor((lo+hi)/2);
+    const mid=pathPts[mi], bef=pathPts[Math.max(lo,mi-2)], aft=pathPts[Math.min(hi,mi+2)];
+    const ax=X(mid[0]), ay=Y(mid[1]), dx=X(aft[0])-X(bef[0]), dy=Y(aft[1])-Y(bef[1]);
+    const ang=Math.atan2(dy,dx), al=17, aw=8;
+    c.beginPath();
+    c.moveTo(ax+Math.cos(ang)*al,ay+Math.sin(ang)*al);
+    c.lineTo(ax+Math.cos(ang+2.55)*aw,ay+Math.sin(ang+2.55)*aw);
+    c.lineTo(ax+Math.cos(ang-2.55)*aw,ay+Math.sin(ang-2.55)*aw);
+    c.closePath();c.fill();
+  }}
+ // state dots and labels
+ pts.forEach((p,i)=>{c.beginPath();c.arc(X(p[0]),Y(p[1]),4.5,0,Math.PI*2);c.fillStyle='#4f46e5';c.fill();c.strokeStyle='#fff';c.lineWidth=1.5;c.stroke();});
+ c.font='bold 12px Inter';c.fillStyle='#3730a3';c.textAlign='left';c.fillText('i',X(pts[0][0])+7,Y(pts[0][1])-9);c.fillText('f',X(pts[pts.length-1][0])+7,Y(pts[pts.length-1][1])-9);
+ // moving marker
+ if(running&&pathPts.length){const p=pathPts[pathPts.length-1];c.beginPath();c.arc(X(p[0]),Y(p[1]),6,0,Math.PI*2);c.fillStyle='#312e81';c.fill();c.strokeStyle='#fff';c.lineWidth=2;c.stroke();}
+}
+function updateUI(){
+ const p=processes[selected], exp=p.direction==='exp';
+ document.querySelectorAll('.scenario').forEach(b=>b.classList.toggle('active',b.dataset.process===selected));
+ $('pistonState').textContent=progress>=1?'Processo concluído':running?'Processo em andamento':'Pronto para iniciar';
+ $('processDescription').textContent=p.description;
+ $('workSignBadge').textContent=exp?'W > 0':'W < 0';
+ $('workSignBadge').className='text-xs font-extrabold px-3 py-1 rounded-full '+(exp?'bg-emerald-50 text-emerald-700':'bg-orange-50 text-orange-700');
+ $('workValue').textContent=(p.work>0?'+':'−')+fmt(Math.abs(p.work));
+ $('workValue').className='text-3xl md:text-4xl font-extrabold '+(exp?'text-emerald-700':'text-orange-700');
+ $('workFormula').textContent='Área orientada sob o caminho P–V.';
+ $('animateBtn').textContent=progress>=1?'↻ Reiniciar processo':running?'Ⅱ Pausar processo':'▶ Iniciar processo';
+ $('resetBtn').textContent='↻ Reiniciar';
+ drawPiston();drawPV();
+}
+function stopAnimation(){running=false;if(raf)cancelAnimationFrame(raf);raf=null;lastTime=0;}
+function tick(ts){
+ if(!running)return;
+ if(!lastTime)lastTime=ts;
+ const dt=Math.min(40,ts-lastTime);lastTime=ts;
+ particleClock+=dt;
+ progress=Math.min(1,progress+dt/3600);
+ if(progress>=1){stopAnimation();}
+ updateUI();
+ if(running)raf=requestAnimationFrame(tick);
+}
+document.querySelectorAll('.scenario').forEach(b=>b.addEventListener('click',()=>{
+ stopAnimation();selected=b.dataset.process;progress=0;updateUI();
+}));
+$('animateBtn').addEventListener('click',()=>{
+ if(progress>=1){progress=0;running=true;lastTime=0;updateUI();raf=requestAnimationFrame(tick);}
+ else if(running){stopAnimation();updateUI();}
+ else{running=true;lastTime=0;updateUI();raf=requestAnimationFrame(tick);}
+});
+$('resetBtn').addEventListener('click',()=>{stopAnimation();progress=0;updateUI();});
+window.addEventListener('resize',()=>{drawPiston();drawPV();});
+if(!CanvasRenderingContext2D.prototype.roundRect){
+ CanvasRenderingContext2D.prototype.roundRect=function(x,y,w,h,r){this.beginPath();this.moveTo(x+r,y);this.lineTo(x+w-r,y);this.quadraticCurveTo(x+w,y,x+w,y+r);this.lineTo(x+w,y+h-r);this.quadraticCurveTo(x+w,y+h,x+w-r,y+h);this.lineTo(x+r,y+h);this.quadraticCurveTo(x,y+h,x,y+h-r);this.lineTo(x,y+r);this.quadraticCurveTo(x,y,x+r,y);this.closePath();return this;};
+}
+updateUI();
+function redrawCanvases(){
+  if(pistonCanvas.clientWidth>0 && pistonCanvas.clientHeight>0) drawPiston();
+  if(pvCanvas.clientWidth>0 && pvCanvas.clientHeight>0) drawPV();
+}
+requestAnimationFrame(()=>requestAnimationFrame(redrawCanvases));
+window.addEventListener('load',redrawCanvases);
+window.addEventListener('resize',()=>requestAnimationFrame(redrawCanvases));
+window.addEventListener('error',()=>requestAnimationFrame(redrawCanvases));
+</script>
+</body>
+</html>

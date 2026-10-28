@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Termodinâmica — Trabalho e calor no diagrama P–V</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+* { box-sizing: border-box; }
+body { font-family: Inter, sans-serif; }
+.route { fill:none; stroke-linecap:round; stroke-linejoin:round; transition:stroke-width .2s, opacity .2s; }
+.route-muted { opacity:.25; stroke-width:3; }
+.route-active { opacity:1; stroke-width:6; }
+@media (max-height: 800px) and (min-width: 1024px) {
+  header { padding-top:.4rem!important; padding-bottom:.4rem!important; }
+  main { padding:.55rem!important; gap:.55rem!important; }
+  .diagram-card { padding:.6rem!important; }
+  .diagram-svg { max-height: min(48vh, 390px); }
+  .compact-card { padding:.65rem!important; }
+}
+
+/* Identidade visual compartilhada com a página da Primeira Lei */
+:root { --lesson-navy:#173c65; --lesson-blue:#2563a6; --lesson-blue-soft:#eaf2fb; }
+header { background-color:var(--lesson-navy)!important; }
+header a.index-return { display:inline-flex; align-items:center; justify-content:center; gap:.45rem;
+  white-space:nowrap; color:#fff; background:rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.28);
+  border-radius:.55rem; padding:.55rem .8rem; font:700 .82rem Inter,Arial,sans-serif; text-decoration:none;
+  transition:background .15s ease; }
+header a.index-return:hover { background:rgba(255,255,255,.22); }
+button { transition:filter .15s ease, transform .15s ease; }
+button:hover { filter:brightness(.97); }
+.math-display { overflow-x:auto; padding:.2rem 0; min-width:0; }\n#selectedPathCard { min-width:0; }\n#calculation { overflow-wrap:anywhere; }
+
+</style>
+
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['\\(','\\)'], ['$', '$']], displayMath: [['\\[','\\]'], ['$$','$$']] },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] },
+  chtml: { scale: 1.0 }
+};
+</script>
+<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+
+</head>
+<body class="h-screen w-full overflow-hidden bg-slate-100 text-slate-800 flex flex-col">
+<header class="shrink-0 bg-indigo-900 text-white px-5 py-3 flex items-center justify-between shadow-md">
+  <div>
+    <h1 class="text-xl md:text-2xl font-extrabold tracking-tight">Exercício 8.18 (Moyses) ·Trabalho e calor em um diagrama P–V</h1>
+    <p class="text-indigo-200 text-sm">Primeira Lei da Termodinâmica</p>
+  </div>
+<a class="index-return" href="index.html" aria-label="Voltar para o índice">← Voltar</a>
+</header>
+
+<main class="flex-1 min-h-0 p-3 flex flex-col lg:flex-row gap-3 overflow-hidden">
+  <section class="flex-1 min-w-0 min-h-0 bg-white rounded-xl border border-slate-200 shadow-sm p-3 flex flex-col gap-3 overflow-hidden">
+    <div class="diagram-card bg-slate-50 border border-slate-200 rounded-lg p-3 shrink-0">
+      <div class="flex items-start justify-between gap-3 mb-1">
+        <div><h2 class="font-bold text-slate-700">Diagrama P–V</h2></div>
+        <div class="text-xl text-slate-700 text-center">Trabalho = área sob a curva<br><span class="font-semibold">\(W=\int P\,\mathrm{d}V\)</span></div>
+      </div>
+      <svg class="diagram-svg w-full" style="height:auto;max-height: min(47vh, 410px)" viewBox="0 0 640 360" role="img" aria-label="Diagrama pressão-volume com os caminhos ibf, iaf e o retorno diagonal fci">
+        <defs>
+          <marker id="arrowBlue" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#2563eb"/></marker>
+          <marker id="arrowGreen" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#059669"/></marker>
+          <marker id="arrowOrange" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#ea580c"/></marker>
+          <marker id="arrowPurple" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#7c3aed"/></marker>
+        </defs>
+        <!-- axes -->
+        <path d="M70 25 V300 H600" fill="none" stroke="#334155" stroke-width="2.5"/>
+        <path d="M63 34 L70 20 L77 34" fill="none" stroke="#334155" stroke-width="2.5"/>
+        <path d="M590 293 L604 300 L590 307" fill="none" stroke="#334155" stroke-width="2.5"/>
+        <text x="39" y="30" font-size="22" font-style="italic" fill="#334155">P</text>
+        <text x="605" y="309" font-size="22" font-style="italic" fill="#334155">V</text>
+        <text x="51" y="321" font-size="15" fill="#64748b">0</text>
+        <!-- guides -->
+        <path d="M170 105 H475 M170 225 H475 M170 105 V300 M475 105 V300" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="6 6" opacity=".7"/>
+        <!-- subtle work area -->
+        <path id="areaIBF" d="M170 225 L475 225 L475 300 L170 300 Z" fill="#2563eb" opacity=".08"/>
+        <path id="areaIAF" d="M170 105 L475 105 L475 300 L170 300 Z" fill="#059669" opacity=".08"/>
+        <path id="areaDiag" d="M170 225 L475 105 L475 300 L170 300 Z" fill="#7c3aed" opacity=".10"/>
+        <!-- route segments, default muted -->
+        <path id="segIA" class="route route-muted" d="M170 225 L170 105" stroke="#059669"/>
+        <path id="segAF" class="route route-muted" d="M170 105 L475 105" stroke="#059669" marker-end="url(#arrowGreen)"/>
+        <path id="segIB" class="route route-muted" d="M170 225 L475 225" stroke="#2563eb"/>
+        <path id="segBF" class="route route-muted" d="M475 225 L475 105" stroke="#2563eb" marker-end="url(#arrowBlue)"/>
+        <path id="segIF" class="route route-muted" d="M170 225 L475 105" stroke="#7c3aed" marker-end="url(#arrowPurple)"/>
+        <path id="segFI" class="route route-muted" d="M475 105 L170 225" stroke="#ea580c" marker-end="url(#arrowOrange)"/>
+        <!-- state points -->
+        <g fill="#0f172a" stroke="white" stroke-width="2">
+          <circle cx="170" cy="225" r="7"/><circle cx="170" cy="105" r="7"/>
+          <circle cx="475" cy="105" r="7"/><circle cx="475" cy="225" r="7"/>
+        </g>
+        <g font-size="21" font-style="italic" font-weight="700" fill="#1e293b">
+          <text x="145" y="246">i</text><text x="151" y="92">a</text>
+          <text x="490" y="112">f</text><text x="489" y="245">b</text>
+          <text x="312" y="145" fill="#7c3aed">c</text>
+        </g>
+        <g font-size="13" fill="#64748b">
+          <text x="80" y="112">P alta</text><text x="80" y="232">P baixa</text>
+          <text x="145" y="340">V inicial</text><text x="438" y="340">V final</text>
+        </g>
+      </svg>
+      <div class="flex flex-wrap gap-2 text-xs font-semibold">
+        <span class="inline-flex items-center gap-1 rounded-full bg-blue-50 text-blue-700 px-2.5 py-1"><span class="w-2 h-2 rounded-full bg-blue-600"></span>Caminho ibf</span>
+        <span class="inline-flex items-center gap-1 rounded-full bg-emerald-50 text-emerald-700 px-2.5 py-1"><span class="w-2 h-2 rounded-full bg-emerald-600"></span>Caminho iaf</span>
+        <span class="inline-flex items-center gap-1 rounded-full bg-purple-50 text-purple-700 px-2.5 py-1"><span class="w-2 h-2 rounded-full bg-purple-600"></span>Caminho icf</span>
+        <span class="inline-flex items-center gap-1 rounded-full bg-orange-50 text-orange-700 px-2.5 py-1"><span class="w-2 h-2 rounded-full bg-orange-600"></span>Retorno fci</span>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 shrink-0">
+      <div class="rounded-lg border border-slate-200 p-3 bg-white">
+        <div class="text-xs uppercase tracking-wide font-bold text-slate-400">Variação da energia interna</div>
+        <div class="text-2xl font-black text-indigo-700 mt-1">\(\Delta U_{if}=+50\,\text{J}\)</div>
+        <div class="text-xs text-slate-500 mt-1">Dado do enunciado</div>
+      </div>
+      <div class="rounded-lg border border-slate-200 p-3 bg-white">
+        <div class="text-xs uppercase tracking-wide font-bold text-slate-400">Trabalho no trecho ib</div>
+        <div class="text-2xl font-black text-blue-700 mt-1">\(W_{ib}=+100\,\text{J}\)</div>
+        <div class="text-xs text-slate-500 mt-1">Dado do enunciado</div>
+      </div>
+      <div class="rounded-lg border border-slate-200 p-3 bg-white">
+        <div class="text-xs uppercase tracking-wide font-bold text-slate-400">Trabalho no ciclo iafbi</div>
+        <div class="text-2xl font-black text-emerald-700 mt-1">\(W_{\text{ciclo}}=+200\,\text{J}\)</div>
+        <div class="text-xs text-slate-500 mt-1">Dado do enunciado</div>
+      </div>
+    </div>
+  </section>
+
+  <aside class="w-full lg:w-[470px] xl:w-[500px] 2xl:w-[520px] shrink-0 min-h-0 overflow-y-auto bg-slate-100 rounded-xl border border-slate-200 shadow-sm p-3 flex flex-col gap-3">
+    <div>
+      <h2 class="text-lg font-extrabold text-slate-800">Caminhos</h2>
+    </div>
+
+    <div class="grid grid-cols-2 gap-2">
+      <button id="btn-ibf" class="path-choice rounded-lg px-3 py-2.5 text-sm font-bold border border-blue-200 bg-white text-blue-700 hover:bg-blue-50" onclick="showPath('ibf')">Caminho ibf</button>
+      <button id="btn-iaf" class="path-choice rounded-lg px-3 py-2.5 text-sm font-bold border border-emerald-200 bg-white text-emerald-700 hover:bg-emerald-50" onclick="showPath('iaf')">Caminho iaf</button>
+      <button id="btn-diag" class="path-choice rounded-lg px-3 py-2.5 text-sm font-bold border border-purple-200 bg-white text-purple-700 hover:bg-purple-50" onclick="showPath('diag')">Caminho icf</button>
+      <button id="btn-return" class="path-choice rounded-lg px-3 py-2.5 text-sm font-bold border border-orange-200 bg-white text-orange-700 hover:bg-orange-50" onclick="showPath('return')">Retorno fci</button>
+    </div>
+
+    <div id="selectedPathCard" class="bg-white rounded-xl border border-slate-200 p-4">
+      <div id="pathTitle" class="text-xs uppercase tracking-widest font-extrabold text-blue-600">Caminho ibf</div>
+      <div class="mt-2 grid grid-cols-2 gap-3">
+        <div><div class="text-xs text-slate-500 font-semibold">Trabalho W</div><div id="resultW" class="text-2xl font-black text-slate-800">+100 J</div></div>
+        <div><div class="text-xs text-slate-500 font-semibold">Calor Q</div><div id="resultQ" class="text-2xl font-black text-slate-800">+150 J</div></div>
+      </div>
+      <div class="mt-3 bg-slate-50 border border-slate-200 rounded-lg p-3">
+        <div class="text-xs uppercase font-bold tracking-wide text-slate-400 mb-1">Cálculo</div>
+        <div id="calculation" class="text-sm leading-relaxed text-slate-700 math-display break-words">\(W=100\,\text{J}\); \(Q=\Delta U+W=50\,\text{J}+100\,\text{J}=+150\,\text{J}\).</div>
+      </div>
+      <p id="interpretation" class="text-sm text-slate-600 mt-3">O sistema se expande no trecho ib; no trecho bf o volume é constante. O sistema absorve 150 J de calor.</p>
+    </div>
+
+    <div class="bg-indigo-900 text-white rounded-xl p-4 compact-card">
+      <div class="text-xs uppercase tracking-widest font-bold text-indigo-200">Primeira Lei</div>
+      <div class="text-xl font-extrabold mt-1">\(Q=\Delta U+W\)</div>
+      <p class="text-sm text-indigo-100 mt-2">W positivo: trabalho feito pelo sistema. Q positivo: calor absorvido pelo sistema.</p>
+    </div>
+  </aside>
+</main>
+
+<script>
+const routes = {
+  ibf: {
+    title: 'Caminho ibf',
+    color: 'text-blue-600',
+    border: 'border-blue-200',
+    W: 100,
+    Q: 150,
+    calc: '\\(W=W_{ib}+W_{bf}=100\\,\\text{J}+0=+100\\,\\text{J}.\\) Então \\(Q=\\Delta U+W=50\\,\\text{J}+100\\,\\text{J}=+150\\,\\text{J}.\\)',
+    interpretation: 'O sistema se expande no trecho ib; no trecho bf o volume é constante. O sistema absorve 150 J de calor.',
+    segments: ['segIB','segBF'],
+    area: 'areaIBF'
+  },
+  iaf: {
+    title: 'Caminho iaf',
+    color: 'text-emerald-600',
+    border: 'border-emerald-200',
+    W: 300,
+    Q: 350,
+    calc: '\\(W_{af}=W_{\\text{ciclo}}-W_{bi}=200\\,\\text{J}-(-100\\,\\text{J})=+300\\,\\text{J}.\\) Então \\(Q=50\\,\\text{J}+300\\,\\text{J}=+350\\,\\text{J}.\\)',
+    interpretation: 'O trecho ia tem volume constante e não realiza trabalho. Na expansão af, o sistema realiza 300 J de trabalho e absorve 350 J de calor.',
+    segments: ['segIA','segAF'],
+    area: 'areaIAF'
+  },
+  diag: {
+    title: 'Caminho icf',
+    color: 'text-purple-600',
+    border: 'border-purple-200',
+    W: 200,
+    Q: 250,
+    calc: 'A pressão varia linearmente: \\(W_{icf}=W_{ib}+\\frac{W_{\\text{ciclo}}}{2}=100\\,\\text{J}+\\frac{200\\,\\text{J}}{2}=+200\\,\\text{J}.\\) Então \\(Q=50\\,\\text{J}+200\\,\\text{J}=+250\\,\\text{J}.\\)',
+    interpretation: 'Na diagonal, a pressão aumenta linearmente com o volume. O trabalho é a área sob a reta; o sistema absorve 250 J de calor.',
+    segments: ['segIF'],
+    area: 'areaDiag'
+  },
+  return: {
+    title: 'Retorno fci',
+    color: 'text-orange-600',
+    border: 'border-orange-200',
+    W: -200,
+    Q: -250,
+    calc: '\\(W_{fci}=-W_{icf}=-200\\,\\text{J};\quad \\Delta U=-50\\,\\text{J}.\\) Então \\(Q=\\Delta U+W=-50\\,\\text{J}-200\\,\\text{J}=-250\\,\\text{J}.\\)',
+    interpretation: 'O volume diminui durante o retorno, então o trabalho realizado pelo sistema é negativo. O sistema libera 250 J de calor.',
+    segments: ['segFI'],
+    area: 'areaDiag'
+  }
+};
+
+function showPath(key) {
+  const d = routes[key];
+  document.getElementById('pathTitle').textContent = d.title;
+  document.getElementById('pathTitle').className = 'text-xs uppercase tracking-widest font-extrabold ' + d.color;
+  document.getElementById('resultW').textContent = (d.W > 0 ? '+' : '') + d.W + ' J';
+  document.getElementById('resultQ').textContent = (d.Q > 0 ? '+' : '') + d.Q + ' J';
+  if (window.MathJax?.typesetClear) MathJax.typesetClear([document.getElementById('calculation')]);
+  document.getElementById('calculation').innerHTML = d.calc;
+  if (window.MathJax?.typesetPromise) MathJax.typesetPromise([document.getElementById('calculation')]);
+  document.getElementById('interpretation').textContent = d.interpretation;
+
+  const card = document.getElementById('selectedPathCard');
+  card.className = 'bg-white rounded-xl border p-4 ' + d.border;
+
+  ['segIA','segAF','segIB','segBF','segIF','segFI'].forEach(id => {
+    const el = document.getElementById(id);
+    el.classList.remove('route-active');
+    el.classList.add('route-muted');
+  });
+  d.segments.forEach(id => {
+    const el = document.getElementById(id);
+    el.classList.remove('route-muted');
+    el.classList.add('route-active');
+  });
+  ['areaIBF','areaIAF','areaDiag'].forEach(id => {
+    document.getElementById(id).setAttribute('opacity', id === d.area ? '.16' : '0');
+  });
+
+  document.querySelectorAll('.path-choice').forEach(btn => {
+    btn.classList.remove('ring-2','ring-offset-1','ring-indigo-400');
+  });
+  document.getElementById('btn-' + key).classList.add('ring-2','ring-offset-1','ring-indigo-400');
+}
+showPath('ibf');
+</script>
+</body>
+</html>

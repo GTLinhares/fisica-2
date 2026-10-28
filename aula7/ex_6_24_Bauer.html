@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Termodinâmica: Expansão do Gás e Trabalho</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        
+        /* Ocultar barra de rolagem geral para manter a tela limpa */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        
+        /* Textura do Gás para o pistão */
+        .gas-pattern {
+            background-color: #fef08a; /* yellow-200 */
+            background-image: radial-gradient(#d97706 1px, transparent 1px);
+            background-size: 10px 10px;
+            opacity: 0.8;
+        }
+    
+/* Identidade visual compartilhada com a página da Primeira Lei */
+:root { --lesson-navy:#173c65; --lesson-blue:#2563a6; --lesson-blue-soft:#eaf2fb; }
+header { background-color:var(--lesson-navy)!important; }
+header a.index-return { display:inline-flex; align-items:center; justify-content:center; gap:.45rem;
+  white-space:nowrap; color:#fff; background:rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.28);
+  border-radius:.55rem; padding:.55rem .8rem; font:700 .82rem Inter,Arial,sans-serif; text-decoration:none;
+  transition:background .15s ease; }
+header a.index-return:hover { background:rgba(255,255,255,.22); }
+button { transition:filter .15s ease, transform .15s ease; }
+button:hover { filter:brightness(.97); }
+.math-display { overflow-x:auto; padding:.2rem 0; }
+
+</style>
+
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['\\(','\\)'], ['$', '$']], displayMath: [['\\[','\\]'], ['$$','$$']] },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] },
+  chtml: { scale: 1.0 }
+};
+</script>
+<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+
+</head>
+<body class="h-screen w-full overflow-hidden bg-slate-50 flex flex-col text-slate-800">
+
+    <!-- Cabeçalho -->
+    <header class="bg-indigo-900 text-white px-4 py-2 flex justify-between items-center shadow-md z-10 shrink-0">
+        <div>
+            <h1 class="text-xl font-bold tracking-tight">Exercício 6.24 · Trabalho de um Gás</h1>
+        </div>
+    <a class="index-return" href="index.html" aria-label="Voltar para o índice">← Voltar</a>
+</header>
+
+    <!-- Layout Principal -->
+    <main class="flex-1 w-full flex flex-col lg:flex-row p-2 lg:p-3 gap-2 lg:gap-3 min-h-0 overflow-hidden">
+        
+        <!-- Painel Esquerdo: Visualização Físico-Matemática -->
+        <section class="flex-1 min-w-0 bg-white rounded-xl shadow-md p-3 flex flex-col gap-2 overflow-hidden relative">
+            
+            <!-- Animação do Pistão (Topo) -->
+            <div class="h-28 shrink-0 bg-slate-50 rounded-lg border border-slate-200 flex flex-col justify-center p-3 relative">
+                <div class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Cilindro / Pistão Físico</div>
+                
+                <div class="w-full max-w-4xl mx-auto h-16 border-y-4 border-l-4 border-slate-700 bg-white rounded-l-md relative flex items-center shadow-inner overflow-visible">
+                    <!-- Câmara de Gás -->
+                    <div id="gasChamber" class="h-full gas-pattern flex items-center justify-center border-r-8 border-slate-600 relative" style="width: 28.57%;">
+                        <span id="pistonLabelP" class="absolute font-bold text-slate-800 bg-white/60 px-2 py-0.5 rounded text-sm mix-blend-luminosity">\(P=32\) </span>
+                        
+                        <!-- Haste do Pistão (Cabo) -->
+                        <div class="absolute left-full top-1/2 -translate-y-1/2 h-2 w-[800px] bg-slate-300 border-y border-slate-400"></div>
+                    </div>
+                    
+                    <!-- Marcadores de Volume no Cilindro -->
+                    <div id="cylinderStartMarker" class="absolute -bottom-6 left-[28.57%] -translate-x-1/2 text-xs font-bold text-slate-500">2 m³</div>
+                    <div id="cylinderEndMarker" class="absolute -bottom-6 left-[85.71%] -translate-x-1/2 text-xs font-bold text-slate-500">6 m³</div>
+                </div>
+            </div>
+
+            <!-- Gráfico Chart.js (Diagrama P-V) -->
+            <div class="flex-1 w-full bg-white relative min-h-0 border border-slate-100 rounded-lg p-2">
+                <canvas id="pvChart"></canvas>
+            </div>
+
+        </section>
+
+        <!-- Painel Direito: Controles e Métricas -->
+        <aside class="w-full lg:w-72 xl:w-80 bg-slate-100 flex flex-col gap-2 overflow-y-auto p-3 rounded-xl shadow-md shrink-0 border border-slate-200 border-l-0">
+
+            <!-- Modificadores dos volumes inicial e final -->
+            <div class="bg-white shadow-sm rounded-lg p-3 border border-slate-200 flex flex-col gap-3">
+                <div>
+                    <div class="flex justify-between items-center gap-2">
+                        <label for="startVolume" class="text-xs font-bold text-slate-500 uppercase tracking-wide">Volume inicial</label>
+                        <span id="startVolumeVal" class="font-mono font-bold text-slate-800">2,00 m³</span>
+                    </div>
+                    <input id="startVolume" type="range" min="0.5" max="11.9" step="0.1" value="2"
+                           class="w-full mt-2 accent-indigo-600">
+                </div>
+                <div>
+                    <div class="flex justify-between items-center gap-2">
+                        <label for="endVolume" class="text-xs font-bold text-slate-500 uppercase tracking-wide">Volume final</label>
+                        <span id="endVolumeVal" class="font-mono font-bold text-slate-800">6,00 m³</span>
+                    </div>
+                    <input id="endVolume" type="range" min="0.6" max="12" step="0.1" value="6"
+                           class="w-full mt-2 accent-indigo-600">
+                </div>
+                <div>
+                    <div class="flex justify-between items-center gap-2">
+                        <label for="alphaInput" class="text-xs font-bold text-slate-500 uppercase tracking-wide">Parâmetro \(\alpha\)</label>
+                        <span id="alphaVal" class="font-mono font-bold text-slate-800">4,00 N/m¹¹</span>
+                    </div>
+                    <input id="alphaInput" type="range" min="0.5" max="10" step="0.1" value="4"
+                           class="w-full mt-2 accent-indigo-600">
+                    <p class="text-[10px] text-slate-500 mt-1">\(P=\alpha V^3\); \(\alpha\) pode ser alterado para observar a mudança da curva e do trabalho.</p>
+                </div>  
+            </div>
+
+            <!-- Botões -->
+            <div class="flex flex-col gap-2">
+                <button onclick="startAnimation()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-3 rounded-lg shadow transition-colors flex justify-center items-center gap-2">
+                    <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                    Expansão
+                </button>
+            </div>
+
+            <hr class="border-slate-300 my-2">
+
+            <!-- Cards de Dados -->
+            <div class="flex flex-col gap-2 flex-1">
+                
+                <!-- Volume -->
+                <div class="bg-white shadow-sm rounded-lg p-3 border border-slate-200 flex flex-col">
+                    <span class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Volume (V)</span>
+                    <div class="flex items-baseline gap-1">
+                        <span id="valVol" class="text-2xl font-black text-slate-800 font-mono">2.00</span>
+                        <span class="text-sm font-bold text-slate-500">m³</span>
+                    </div>
+                </div>
+
+                <!-- Pressão -->
+                <div class="bg-white shadow-sm rounded-lg p-3 border border-slate-200 flex flex-col relative overflow-hidden">
+                    <div class="absolute top-0 right-0 bg-red-100 text-red-700 text-[10px] font-bold px-2 py-1 rounded-bl-lg">\(P=\alpha V^3\)</div>
+                    <span class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Pressão (P)</span>
+                    <div class="flex items-baseline gap-1">
+                        <span id="valPress" class="text-2xl font-black text-red-600 font-mono">32</span>
+                        <span class="text-sm font-bold text-red-400">N/m²</span>
+                    </div>
+                </div>
+
+                <!-- Trabalho -->
+                <div class="bg-white shadow-sm rounded-lg p-2 border-l-4 border-blue-500 flex flex-col relative overflow-hidden flex-none">
+                    <div class="absolute right-[-10px] bottom-[-10px] text-blue-100/50 text-6xl">⚙️</div>
+                    <span class="text-xs font-bold text-blue-500 uppercase tracking-widest mb-1 relative z-10">Trabalho (Área)</span>
+                    <div class="flex items-baseline gap-1 relative z-10">
+                        <span id="valWork" class="text-2xl font-black text-blue-600 font-mono">0</span>
+                        <span class="text-base font-bold text-blue-400">J</span>
+                    </div>
+                    <div class="mt-2 text-[10px] font-mono text-slate-400 bg-slate-50 p-1 rounded relative z-10">
+                        \(W=\int_{V_i}^{V_f}P(V)\,dV=\int_{V_i}^{V_f}\alpha V^3\,dV=\frac{\alpha}{4}\left(V_f^4-V_i^4\right)\)
+                    </div>
+                </div>
+
+            </div>
+
+        </aside>
+
+    </main>
+
+    <script>
+        // DOM Elements
+        const valVol = document.getElementById('valVol');
+        const valPress = document.getElementById('valPress');
+        const valWork = document.getElementById('valWork');
+        const gasChamber = document.getElementById('gasChamber');
+        const pistonLabelP = document.getElementById('pistonLabelP');
+        
+        // Physics constants
+        let V_START = 2.0;
+        let V_END = 6.0;
+        const MIN_V_SCALE = 0.0; // O eixo não mostra volumes negativos
+        let ALPHA = 4.0;
+        let MAX_V_SCALE = V_END + 1; // Uma unidade acima do volume final
+        const startVolumeInput = document.getElementById('startVolume');
+        const endVolumeInput = document.getElementById('endVolume');
+        const startVolumeVal = document.getElementById('startVolumeVal');
+        const endVolumeVal = document.getElementById('endVolumeVal');
+        const alphaInput = document.getElementById('alphaInput');
+        const alphaVal = document.getElementById('alphaVal');
+        const cylinderStartMarker = document.getElementById('cylinderStartMarker');
+        const cylinderEndMarker = document.getElementById('cylinderEndMarker');
+        
+        // State
+        let currentV = V_START;
+        let isAnimating = false;
+        let animationFrame;
+        let startTime;
+        const ANIMATION_DURATION = 4000; // 4 segundos
+
+        // Configurar a Curva Base Fixa (P = αV³)
+        const baseCurve = [];
+        for(let v = Math.max(0, V_START - 1); v <= MAX_V_SCALE; v += 0.05) { // Maior resolução
+            baseCurve.push({ x: v, y: ALPHA * Math.pow(v, 3) });
+        }
+
+        // Initialize Chart.js
+        const ctx = document.getElementById('pvChart').getContext('2d');
+        const pvChart = new Chart(ctx, {
+            type: 'line', // Mudado de 'scatter' para 'line' para correção impecável do preenchimento da área
+            data: {
+                datasets: [
+                    {
+                        label: 'Trabalho (Área sob a curva)',
+                        data: [{x: 2.0, y: 32}], 
+                        backgroundColor: 'rgba(59, 130, 246, 0.4)', // bg-blue-500/40
+                        borderColor: 'transparent',
+                        fill: 'origin', // Preenche perfeitamente até o eixo X=0
+                        pointRadius: 0,
+                        borderWidth: 0, // Zero bordas para não criar linhas de atalho
+                        order: 2,
+                        tension: 0.4
+                    },
+                    {
+                        label: 'Curva de Pressão P = αV³',
+                        data: baseCurve,
+                        borderColor: '#334155', // text-slate-700
+                        borderWidth: 3,
+                        fill: false,
+                        pointRadius: 0,
+                        order: 1,
+                        tension: 0.4
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                animation: false, // Controlado manualmente via requestAnimationFrame
+                scales: {
+                    x: {
+                        type: 'linear',
+                        min: Math.max(0, V_START - 1),
+                        max: MAX_V_SCALE,
+                        title: { display: true, text: 'Volume V (m³)', font: { weight: 'bold', size: 14 } }
+                    },
+                    y: {
+                        type: 'linear',
+                        min: 0,
+                        max: 18000,
+                        title: { display: true, text: 'Pressão P (N/m²)', font: { weight: 'bold', size: 14 } }
+                    }
+                },
+                plugins: {
+                    legend: { position: 'top' },
+                    tooltip: { enabled: false } // Desabilitado para focar nas métricas ao lado
+                }
+            }
+        });
+
+        // Função de Atualização da View
+        function updatePhysicsView(v) {
+            // Cálculos
+            const P = ALPHA * Math.pow(v, 3);
+            const W = (ALPHA / 4) * (Math.pow(v, 4) - Math.pow(V_START, 4)); 
+
+            // Atualiza Painel da Direita (Cards)
+            valVol.innerText = v.toFixed(2);
+            valPress.innerText = Math.round(P);
+            valWork.innerText = Math.round(W);
+            
+            // Atualiza Pistão Físico
+            // Convertendo V (0 a 7) para largura em % do container do cilindro
+            const pistonWidthPct = Math.max(5, (v / MAX_V_SCALE) * 100);
+            gasChamber.style.width = `${pistonWidthPct}%`;
+            pistonLabelP.innerText = `P = ${Math.round(P)}`;
+            cylinderStartMarker.style.left = `${(V_START / MAX_V_SCALE) * 100}%`;
+            cylinderEndMarker.style.left = `${(V_END / MAX_V_SCALE) * 100}%`;
+            cylinderStartMarker.innerText = `${V_START.toFixed(1)} m³`;
+            cylinderEndMarker.innerText = `${V_END.toFixed(1)} m³`;
+
+            // Atualiza a curva de trabalho entre os volumes escolhidos.
+            const filledAreaData = [];
+            
+            // Força a criação de todos os pontos intermediários na hora de desenhar a área
+            for (let stepV = V_START; stepV <= v; stepV += 0.05) {
+                filledAreaData.push({ x: stepV, y: ALPHA * Math.pow(stepV, 3) });
+            }
+            
+            // Garante a presença exata do volume atual no array
+            if(filledAreaData.length === 0 || Math.abs(filledAreaData[filledAreaData.length-1].x - v) > 0.01) {
+                filledAreaData.push({ x: v, y: P });
+            }
+            
+            pvChart.data.datasets[0].data = filledAreaData;
+            pvChart.data.datasets[1].data = [];
+            for (let curveV = Math.max(0, V_START - 1); curveV <= MAX_V_SCALE; curveV += 0.05) {
+                pvChart.data.datasets[1].data.push({ x: curveV, y: ALPHA * Math.pow(curveV, 3) });
+            }
+            pvChart.options.scales.x.min = Math.max(0, V_START - 1);
+            pvChart.options.scales.x.max = MAX_V_SCALE;
+            pvChart.options.scales.y.max = Math.max(100, ALPHA * Math.pow(MAX_V_SCALE, 3) * 1.05);
+            pvChart.update();
+        }
+
+        // Loop de Animação
+        function animationLoop(timestamp) {
+            if (!startTime) startTime = timestamp;
+            const elapsed = timestamp - startTime;
+            
+            // Progresso de 0 a 1
+            let progress = elapsed / ANIMATION_DURATION;
+            if (progress > 1) progress = 1;
+
+            // Interpolação linear do volume
+            currentV = V_START + (V_END - V_START) * progress;
+            updatePhysicsView(currentV);
+
+            if (progress < 1) {
+                animationFrame = requestAnimationFrame(animationLoop);
+            } else {
+                isAnimating = false;
+            }
+        }
+
+        // Ações dos Botões
+        function startAnimation() {
+            if (isAnimating) return;
+            
+            // Se já estiver no final, reseta silenciosamente antes de tocar
+            if (currentV >= V_END) {
+                currentV = V_START;
+            }
+            
+            isAnimating = true;
+            startTime = null; // Reseta timer
+            animationFrame = requestAnimationFrame(animationLoop);
+        }
+
+        function resetAnimation() {
+            cancelAnimationFrame(animationFrame);
+            isAnimating = false;
+            currentV = V_START;
+            updatePhysicsView(currentV);
+        }
+
+        function updateVolumeControls() {
+            let vi = Number(startVolumeInput.value);
+            let vf = Number(endVolumeInput.value);
+
+            // Garante expansão e mantém os valores dentro dos limites dos controles.
+            if (vf <= vi) {
+                if (document.activeElement === startVolumeInput) {
+                    vf = Math.min(12, vi + 0.1);
+                    endVolumeInput.value = vf.toFixed(1);
+                } else {
+                    vi = Math.max(0.5, vf - 0.1);
+                    startVolumeInput.value = vi.toFixed(1);
+                }
+            }
+
+            V_START = vi;
+            V_END = vf;
+            MAX_V_SCALE = V_END + 1;
+            ALPHA = Number(alphaInput.value);
+
+            alphaVal.textContent = `${ALPHA.toFixed(2).replace('.', ',')} N/m¹¹`;
+            startVolumeVal.textContent = `${vi.toFixed(2).replace('.', ',')} m³`;
+            endVolumeVal.textContent = `${vf.toFixed(2).replace('.', ',')} m³`;
+
+            const workFormula = document.querySelector('.font-mono.text-slate-400');
+            if (workFormula) {
+                if (window.MathJax?.typesetClear) MathJax.typesetClear([workFormula]);
+                workFormula.innerHTML = `\\(W=\\frac{\\alpha}{4}\\left(${vf.toFixed(1)}^4-${vi.toFixed(1)}^4\\right)\\)`;
+                if (window.MathJax?.typesetPromise) MathJax.typesetPromise([workFormula]);
+            }
+
+            // Stop any active animation, reset to the selected initial volume,
+            // and redraw all dependent values/axes using the new parameters.
+            if (animationFrame) cancelAnimationFrame(animationFrame);
+            isAnimating = false;
+            currentV = V_START;
+            startTime = null;
+            updatePhysicsView(currentV);
+        }
+
+        startVolumeInput.addEventListener('input', updateVolumeControls);
+        endVolumeInput.addEventListener('input', updateVolumeControls);
+        alphaInput.addEventListener('input', updateVolumeControls);
+
+        // Inicialização
+        updateVolumeControls();
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Experimento de Joule - Equivalente Mecânico do Calor</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+      * { box-sizing: border-box; }
+      html, body { margin:0; width:100%; height:100%; }
+      body { font-family:Inter,system-ui,sans-serif; background:#f3f6fa; color:#172b45; overflow:hidden; }
+      .page-header { min-height:78px; padding:14px 28px; display:flex; align-items:center; justify-content:space-between; gap:20px; background:#172f52; color:#fff; border-bottom:3px solid #6e9ac8; }
+      .page-header h1 { margin:0; font-size:clamp(1.25rem,2vw,1.8rem); line-height:1.15; font-weight:700; letter-spacing:-.035em; }
+      .page-header p { margin:5px 0 0; font-size:.88rem; color:#c4d7ec; }
+      .header-constants { text-align:right; white-space:nowrap; font-size:.83rem; line-height:1.55; color:#d5e3f2; }
+      .header-constants strong { color:#fff; font-weight:600; }
+      main { height:calc(100vh - 78px); min-height:0; display:grid; grid-template-columns:minmax(0,1.55fr) minmax(350px,.9fr); gap:14px; padding:14px; overflow:hidden; }
+      .simulation-panel, .side-panel { min-width:0; min-height:0; background:#fff; border:1px solid #d9e2ec; border-radius:14px; box-shadow:0 4px 16px rgba(26,50,79,.05); }
+      .simulation-panel { display:flex; flex-direction:column; padding:12px; overflow:hidden; }
+      .panel-kicker { color:#637a95; font-size:.7rem; text-transform:uppercase; letter-spacing:.12em; font-weight:700; margin:0 0 5px; }
+      .simulation-title { margin:0; color:#1d3d63; font-size:1rem; font-weight:700; }
+      .simulation-caption { margin:3px 0 8px; color:#6b7f96; font-size:.78rem; }
+      #simulationCanvas { width:100%; height:100%; min-height:0; display:block; flex:1; object-fit:contain; border:0; border-radius:9px; background:linear-gradient(180deg,#fbfdff,#f5f8fc); }
+      .side-panel { padding:13px; display:flex; flex-direction:column; gap:10px; overflow:auto; }
+      .section-heading { margin:0 0 8px; padding-bottom:6px; border-bottom:1px solid #e2e8f0; color:#1d3d63; font-size:.92rem; font-weight:700; }
+      .controls-card, .data-card, .conclusion-card { background:#fff; border:1px solid #dce5ef; border-radius:10px; padding:10px 12px; }
+      .control-row { margin:0 0 9px; }
+      .control-row:last-of-type { margin-bottom:8px; }
+      .control-labels { display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:3px; }
+      .control-labels label { color:#344d69; font-size:.78rem; font-weight:600; }
+      .control-value { color:#285d91; font-size:.83rem; font-weight:700; white-space:nowrap; }
+      input[type=range] { -webkit-appearance:none; appearance:none; width:100%; height:5px; background:#d9e3ef; border-radius:999px; outline:none; margin:5px 0; }
+      input[type=range]::-webkit-slider-thumb { -webkit-appearance:none; width:15px; height:15px; border-radius:50%; background:#2f659d; border:2px solid #fff; box-shadow:0 0 0 1px #2f659d; cursor:pointer; }
+      input[type=range]::-moz-range-thumb { width:12px; height:12px; border-radius:50%; background:#2f659d; border:2px solid #fff; cursor:pointer; }
+      .small-note { margin:0; font-size:.68rem; color:#77899d; }
+      #actionBtn { width:100%; border:0; border-radius:8px; padding:9px 12px; background:#285d91; color:white; font-size:.85rem; font-weight:700; letter-spacing:.025em; cursor:pointer; box-shadow:0 3px 8px rgba(40,93,145,.16); transition:background .2s, transform .2s; }
+      #actionBtn:hover { background:#1d4b78; }
+      #actionBtn:active { transform:scale(.99); }
+      .data-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+      .data-card { padding:9px 10px; min-width:0; }
+      .data-card.temp-card { grid-column:1 / -1; }
+      .data-card p { margin:0; color:#6b7f96; font-size:.65rem; font-weight:700; text-transform:uppercase; letter-spacing:.045em; line-height:1.35; }
+      .data-value-line { display:flex; align-items:baseline; gap:5px; margin-top:4px; flex-wrap:wrap; }
+      .data-value { color:#203c5c; font-size:clamp(1.25rem,2vw,1.65rem); line-height:1; font-weight:800; font-variant-numeric:tabular-nums; }
+      .data-unit { color:#61758b; font-size:.72rem; font-weight:600; }
+      .temp-details { display:flex; justify-content:space-between; gap:12px; margin-top:6px; font-size:.72rem; color:#647991; }
+      .temp-details strong { color:#b8443c; }
+      .conclusion-card { background:#f6f9fc; border-left:3px solid #4d7fae; padding:10px 12px; }
+      .conclusion-card h2 { margin:0 0 5px; font-size:.9rem; color:#1d3d63; font-weight:700; }
+      .conclusion-card p { margin:0; color:#465d76; font-size:.9rem; line-height:1.55; }
+      .equation { display:block; margin-top:8px; color:#214e7a; font-size:.95rem; font-weight:600; line-height:1.5; }
+      @media (max-height:760px) and (min-width:850px) {
+        .page-header { min-height:68px; padding:10px 22px; }
+        main { height:calc(100vh - 68px); padding:10px; gap:10px; }
+        .simulation-panel { padding:9px; }
+        .side-panel { padding:9px; gap:7px; }
+        .controls-card,.data-card,.conclusion-card { padding:8px 9px; }
+        .control-row { margin-bottom:6px; }
+        .section-heading { margin-bottom:6px; padding-bottom:4px; }
+      }
+      @media (max-width:849px) {
+        body { overflow:auto; }
+        .page-header { padding:14px 16px; align-items:flex-start; }
+        .header-constants { white-space:normal; font-size:.72rem; }
+        main { height:auto; min-height:calc(100vh - 78px); grid-template-columns:1fr; overflow:visible; }
+        .simulation-panel { min-height:430px; }
+        #simulationCanvas { min-height:370px; }
+        .side-panel { overflow:visible; }
+      }
+    
+        /* Botão de retorno ao índice — padrão 3_Work_academico_v19 */
+        .page-header { display:grid; grid-template-columns:minmax(180px,1fr) auto auto; align-items:center; gap:16px; }
+        .index-link { display:inline-flex; align-items:center; justify-content:center; justify-self:end; padding:7px 11px; border:1px solid rgba(255,255,255,.35); border-radius:7px; color:#fff; text-decoration:none; font-size:.78rem; font-weight:600; white-space:nowrap; }
+        .index-link:hover { background:rgba(255,255,255,.12); }
+        @media (max-width:849px) { .page-header { display:flex; flex-wrap:wrap; } .index-link { margin-left:auto; } }
+        
+
+        /* Cabeçalho simplificado após remover as constantes do modelo */
+        .page-header { grid-template-columns: minmax(0, 1fr) auto; }
+
+</style>
+    <script>
+      window.MathJax = {
+        tex: { inlineMath: [['\\(', '\\)']], displayMath: [['\\[', '\\]']] },
+        options: { skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'] }
+      };
+    </script>
+    <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+<body class="h-screen w-screen overflow-hidden flex flex-col">
+
+    <!-- Cabeçalho acadêmico -->
+    <header class="page-header">
+      <div>
+        <h1>Equivalente mecânico do calor</h1>
+        <p>Experimento de Joule · 1843</p>
+      </div>
+      <a href="index.html" class="index-link" aria-label="Voltar ao índice da aula">← Voltar</a>
+    </header>
+
+    <main>
+      <section class="simulation-panel">
+        <h2 class="simulation-title">Do trabalho mecânico ao aquecimento da água</h2>
+        <p class="simulation-caption">Ao cair, o peso movimenta as pás dentro da água, transferindo energia ao sistema.</p>
+        <canvas id="simulationCanvas" aria-label="Simulação do experimento de Joule com peso, polia, pás e recipiente com água"></canvas>
+      </section>
+
+      <aside class="side-panel">
+        <section class="controls-card">
+          <h2 class="section-heading">Parâmetros do experimento</h2>
+          <div class="control-row">
+            <div class="control-labels">
+              <label for="weightSlider">Massa do peso (m)</label>
+              <span class="control-value" id="weightVal">10 kg</span>
+            </div>
+            <input type="range" id="weightSlider" min="1" max="500" value="10" step="1" oninput="updateUI()">
+          </div>
+          <div class="control-row">
+            <div class="control-labels">
+              <label for="heightSlider">Altura da queda (h)</label>
+              <span class="control-value" id="heightVal">5.0 m</span>
+            </div>
+            <input type="range" id="heightSlider" min="1.0" max="25.0" value="5.0" step="0.5" oninput="updateUI()">
+          </div>
+          <div class="control-row">
+            <div class="control-labels">
+              <label for="waterSlider">Massa da água</label>
+              <span class="control-value" id="waterVal">1.0 kg</span>
+            </div>
+            <input type="range" id="waterSlider" min="0.1" max="50.0" value="1.0" step="0.1" oninput="updateUI()">
+            <p class="small-note">Calor específico adotado: 1 cal/(g·°C).</p>
+          </div>
+          <button id="actionBtn" onclick="toggleSimulation()">SOLTAR PESO</button>
+        </section>
+
+        <section>
+          <h2 class="section-heading">Energia e temperatura</h2>
+          <div class="data-grid">
+            <div class="data-card">
+              <p>Trabalho mecânico · W = mgh</p>
+              <div class="data-value-line">
+                <span id="workDisplay" class="data-value">0.0</span>
+                <span class="data-unit">J</span>
+              </div>
+            </div>
+            <div class="data-card">
+              <p>Calor equivalente · Q = W/4,186</p>
+              <div class="data-value-line">
+                <span id="heatDisplay" class="data-value">0.0</span>
+                <span class="data-unit">cal</span>
+              </div>
+            </div>
+            <div class="data-card temp-card">
+              <p>Variação de temperatura · ΔT = Q/(mágua·c)</p>
+              <div class="data-value-line">
+                <span id="deltaTDisplay" class="data-value">0.000</span>
+                <span class="data-unit">°C</span>
+              </div>
+              <div class="temp-details">
+                <span>Temperatura inicial: 20,000 °C</span>
+                <span>Final: <strong id="finalTDisplay">20.000 °C</strong></span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="conclusion-card">
+          <h2>Conclusão: o equivalente mecânico do calor</h2>
+          <p>O experimento de Joule mostrou que o trabalho mecânico realizado ao agitar a água pode produzir o mesmo efeito de aquecimento que uma transferência de calor. Assim, trabalho e calor são formas de transferência de energia: a energia mecânica dissipada pelas pás aumenta a energia interna da água. O equivalente mecânico quantifica essa relação: aproximadamente <strong>4,186 J de trabalho correspondem a 1 caloria</strong>.</p>
+          <span class="equation">\(W=mgh,\qquad Q=\dfrac{W}{4{,}186}\)</span>
+        </section>
+      </aside>
+    </main>
+
+    <script>
+        // Constantes da Física
+        const G = 9.8; // Aceleração da gravidade m/s^2
+        const JOULE_CONST = 4.186; // Equivalente mecânico do calor (J/cal)
+        const C_WATER = 1.0; // Calor específico da água (cal/g°C)
+        const T_INITIAL = 20.0; // Temperatura inicial em °C
+
+        // Variáveis de Estado
+        let animProgress = 0; // 0.0 (início) até 1.0 (fim)
+        let isAnimating = false;
+        let isFinished = false;
+        let animationFrameId = null;
+        let startTime = null;
+        const ANIMATION_DURATION = 3500; // ms de queda
+
+        // Elementos do DOM
+        const weightSlider = document.getElementById('weightSlider');
+        const heightSlider = document.getElementById('heightSlider');
+        const waterSlider = document.getElementById('waterSlider');
+        const weightVal = document.getElementById('weightVal');
+        const heightVal = document.getElementById('heightVal');
+        const waterVal = document.getElementById('waterVal');
+        const workDisplay = document.getElementById('workDisplay');
+        const heatDisplay = document.getElementById('heatDisplay');
+        const deltaTDisplay = document.getElementById('deltaTDisplay');
+        const finalTDisplay = document.getElementById('finalTDisplay');
+        const actionBtn = document.getElementById('actionBtn');
+        const canvas = document.getElementById('simulationCanvas');
+        const ctx = canvas.getContext('2d');
+
+        // Inicializar Canvas Tamanho Lógico Fixado para Proporção
+        canvas.width = 1000;
+        canvas.height = 800;
+
+        function getCalculatedValues() {
+            const mWeight = parseFloat(weightSlider.value); // kg
+            const height = parseFloat(heightSlider.value); // m
+            const mWaterKg = parseFloat(waterSlider.value); // kg
+            const mWaterG = mWaterKg * 1000; // convertendo para gramas
+            
+            // Cálculos Totais (100% da queda)
+            const maxWork = mWeight * G * height; // Joules
+            const maxHeat = maxWork / JOULE_CONST; // cal
+            const maxDeltaT = maxHeat / (mWaterG * C_WATER); // °C
+
+            return {
+                mWeight,
+                height,
+                mWaterKg,
+                maxWork,
+                maxHeat,
+                maxDeltaT
+            };
+        }
+
+        function updateUI() {
+            if (isAnimating) return; // Não atualizar sliders durante a queda
+            if (isFinished) {
+                resetSimulation();
+            }
+
+            const vals = getCalculatedValues();
+            
+            // Atualizar Rótulos dos Sliders
+            weightVal.textContent = vals.mWeight.toFixed(0) + " kg";
+            heightVal.textContent = vals.height.toFixed(1) + " m";
+            waterVal.textContent = vals.mWaterKg.toFixed(1) + " kg";
+
+            // Se o progresso for 0, mostra 0 na UI.
+            // A UI de dados mostra os valores em TEMPO REAL durante a animação,
+            // mas quando a animação não está rodando, ela deve refletir o estado atual (0).
+            updateDisplays(animProgress);
+            drawCanvas(animProgress);
+        }
+
+        function updateDisplays(progress) {
+            const vals = getCalculatedValues();
+            
+            const currentWork = vals.maxWork * progress;
+            const currentHeat = vals.maxHeat * progress;
+            const currentDeltaT = vals.maxDeltaT * progress;
+
+            workDisplay.textContent = currentWork.toFixed(1);
+            heatDisplay.textContent = currentHeat.toFixed(1);
+            deltaTDisplay.textContent = currentDeltaT.toFixed(3);
+            finalTDisplay.textContent = (T_INITIAL + currentDeltaT).toFixed(3) + " °C";
+        }
+
+        function toggleSimulation() {
+            if (isFinished) {
+                resetSimulation();
+                return;
+            }
+
+            if (!isAnimating) {
+                // Iniciar
+                isAnimating = true;
+                weightSlider.disabled = true;
+                heightSlider.disabled = true;
+                waterSlider.disabled = true;
+                actionBtn.textContent = "ANIMANDO...";
+                actionBtn.classList.remove('bg-blue-600', 'hover:bg-blue-700');
+                actionBtn.classList.add('bg-slate-400', 'cursor-not-allowed');
+                
+                startTime = performance.now() - (animProgress * ANIMATION_DURATION);
+                animationFrameId = requestAnimationFrame(animate);
+            }
+        }
+
+        function animate(currentTime) {
+            if (!startTime) startTime = currentTime;
+            const elapsed = currentTime - startTime;
+            
+            // Simulando aceleração (movimento uniformemente variado) simplificada usando um ease-in
+            // Para ser mais fiel à física: h = 0.5 * a * t^2. 
+            // Como a = g (reduzida pelo atrito da água/massa da água), vamos usar um ease quad para simular a queda
+            let linearProgress = elapsed / ANIMATION_DURATION;
+            if (linearProgress > 1) linearProgress = 1;
+            
+            // Ease in quad para simular aceleração da gravidade
+            animProgress = Math.pow(linearProgress, 2); 
+
+            updateDisplays(animProgress);
+            drawCanvas(animProgress);
+
+            if (linearProgress < 1) {
+                animationFrameId = requestAnimationFrame(animate);
+            } else {
+                finishSimulation();
+            }
+        }
+
+        function finishSimulation() {
+            isAnimating = false;
+            isFinished = true;
+            animProgress = 1.0;
+            updateDisplays(1.0);
+            drawCanvas(1.0);
+            
+            actionBtn.textContent = "RESETAR SISTEMA";
+            actionBtn.classList.remove('bg-slate-400', 'cursor-not-allowed');
+            actionBtn.classList.add('bg-red-600', 'hover:bg-red-700');
+            weightSlider.disabled = false;
+            heightSlider.disabled = false;
+            waterSlider.disabled = false;
+        }
+
+        function resetSimulation() {
+            isFinished = false;
+            animProgress = 0.0;
+            
+            actionBtn.textContent = "SOLTAR PESO";
+            actionBtn.classList.remove('bg-red-600', 'hover:bg-red-700', 'bg-slate-400', 'cursor-not-allowed');
+            actionBtn.classList.add('bg-blue-600', 'hover:bg-blue-700');
+            
+            updateUI();
+        }
+
+        // --- Lógica de Desenho no Canvas (Onde a Mágica Visual Acontece) ---
+        function drawCanvas(progress) {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Parâmetros do sistema visual
+            const tankX = 250;
+            const tankY = 450;
+            const tankW = 300;
+            const tankH = 300;
+            
+            const pulleyX = 750;
+            const pulleyY = 150;
+            const pulleyR = 40;
+            
+            const axisX = tankX + tankW/2; // 400
+            
+            // Constantes de estilo
+            const colorTank = "#94a3b8";
+            const colorWaterBase = "#38bdf8";
+            const colorRope = "#475569";
+            const colorWood = "#854d0e";
+            
+            // 1. Desenhar a Água (com cor mudando do azul para vermelho/laranja)
+            const vals = getCalculatedValues();
+            const maxDeltaT = vals.maxDeltaT;
+            const currentT = T_INITIAL + (maxDeltaT * progress);
+            
+            // Mapeando a temperatura para uma transição clara de azul para vermelho.
+            // Como a variação real em graus no experimento é pequena, usamos um limite visual
+            // baixo (0.2 °C) para que a mudança para o vermelho seja bem evidente e didática.
+            const visualTempThreshold = 0.2; 
+            const colorProgress = Math.min((maxDeltaT * progress) / visualTempThreshold, 1.0); 
+            
+            // Transição RGB: de Azul (56, 189, 248) para Vermelho (239, 68, 68)
+            const r = Math.round(56 + (239 - 56) * colorProgress);
+            const g = Math.round(189 + (68 - 189) * colorProgress);
+            const b = Math.round(248 + (68 - 248) * colorProgress);
+            
+            ctx.fillStyle = `rgba(${r}, ${g}, ${b}, 0.8)`;
+            
+            // Água baseada na massa da água.
+            // Vamos encher o tanque proporcionalmente de acordo com o slider máximo.
+            const minWaterHeight = 100;
+            const maxWaterHeight = tankH - 20;
+            const maxSliderWater = parseFloat(document.getElementById('waterSlider').max);
+            const waterFillHeight = minWaterHeight + ((vals.mWaterKg - 0.1) / (maxSliderWater - 0.1)) * (maxWaterHeight - minWaterHeight);
+            const waterY = (tankY + tankH) - waterFillHeight;
+            
+            ctx.fillRect(tankX + 10, waterY, tankW - 20, waterFillHeight);
+            
+            // Efeito de movimento da água
+            if (isAnimating) {
+                ctx.fillStyle = `rgba(255, 255, 255, 0.3)`;
+                for(let i=0; i<5; i++) {
+                    const waveX = tankX + 20 + Math.random() * (tankW - 40);
+                    const waveY = waterY + 10 + Math.random() * (waterFillHeight - 20);
+                    ctx.beginPath();
+                    ctx.arc(waveX, waveY, 5 + Math.random()*15, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            }
+
+            // 2. Desenhar o Tanque
+            // Recipiente com contorno metálico e acabamento mais limpo
+            ctx.strokeStyle = "#7890a8";
+            ctx.lineWidth = 8;
+            ctx.lineJoin = "round";
+            ctx.beginPath();
+            ctx.moveTo(tankX, tankY);
+            ctx.lineTo(tankX, tankY + tankH);
+            ctx.lineTo(tankX + tankW, tankY + tankH);
+            ctx.lineTo(tankX + tankW, tankY);
+            ctx.stroke();
+
+            // 3. Desenhar Eixo Central e Pás (Rotor) com simulação 3D (rotação no eixo vertical)
+            // Centraliza o rotor dentro do volume de água, mantendo todas as pás submersas.
+            // A margem impede que as pás atravessem a superfície mesmo com pouca água.
+            const rotorYCenter = waterY + Math.min(waterFillHeight * 0.52, waterFillHeight - 58);
+            const angle = progress * Math.PI * 40; // Muitas voltas baseadas no progresso
+            const cosAngle = Math.cos(angle);
+            
+            ctx.save();
+            ctx.translate(axisX, rotorYCenter);
+            
+            // Eixo Vertical (sempre visível e fixo no centro)
+            ctx.fillStyle = "#64748b";
+            ctx.fillRect(-8, -150, 16, 300);
+            
+            // Pás Horizontais (Largura variando pelo Cosseno para simular rotação 3D)
+            const maxBladeWidth = 200;
+            const currentWidth = maxBladeWidth * Math.abs(cosAngle);
+            const bladeX = -currentWidth / 2;
+            
+            // Sombra e Luz dependendo de qual lado a pá está (Cosseno positivo = vindo para frente)
+            ctx.fillStyle = cosAngle > 0 ? "#1e293b" : "#94a3b8"; 
+            
+            // Três palhetas compactas, inteiramente abaixo da superfície da água.
+            const bladeGap = Math.min(48, Math.max(20, (waterFillHeight - 64) / 2));
+            ctx.fillRect(bladeX, -bladeGap, currentWidth, 18);
+            ctx.fillRect(bladeX, -9, currentWidth, 18);
+            ctx.fillRect(bladeX, bladeGap - 18, currentWidth, 18);
+            
+            ctx.restore();
+
+            // Extensão do eixo central para cima (até a polia central)
+            ctx.fillStyle = "#64748b";
+            ctx.fillRect(axisX - 8, 150, 16, tankY - 150 + (tankH - waterFillHeight/2 - 150));
+            
+            // Carretel no topo do eixo central
+            ctx.fillStyle = colorWood;
+            ctx.fillRect(axisX - 25, 120, 50, 60);
+
+            // 4. Desenhar Polia Lateral
+            // Base da polia
+            ctx.fillStyle = "#cbd5e1";
+            ctx.fillRect(pulleyX - 10, pulleyY, 20, 100);
+            
+            // Roda da polia
+            ctx.save();
+            ctx.translate(pulleyX, pulleyY);
+            ctx.rotate(progress * Math.PI * 15); // Roda gira junto com a corda
+            
+            ctx.beginPath();
+            ctx.arc(0, 0, pulleyR, 0, Math.PI * 2);
+            ctx.fillStyle = "#94a3b8";
+            ctx.fill();
+            ctx.lineWidth = 4;
+            ctx.strokeStyle = "#475569";
+            ctx.stroke();
+            // Pinos da roda para ver girar
+            ctx.beginPath();
+            ctx.moveTo(0, -pulleyR);
+            ctx.lineTo(0, pulleyR);
+            ctx.moveTo(-pulleyR, 0);
+            ctx.lineTo(pulleyR, 0);
+            ctx.stroke();
+            
+            ctx.restore();
+
+            // 5. Desenhar Cordas
+            ctx.strokeStyle = colorRope;
+            ctx.lineWidth = 4;
+            ctx.beginPath();
+            // Corda horizontal do carretel central até o topo da polia lateral
+            ctx.moveTo(axisX + 25, 150);
+            ctx.lineTo(pulleyX, 150 - pulleyR);
+            ctx.stroke();
+
+            // Corda vertical da polia até o peso
+            const dropDist = 450; // Pixels visuais equivalentes a 5m
+            const currentDrop = progress * dropDist;
+            const weightYStart = pulleyY + pulleyR;
+            
+            ctx.beginPath();
+            ctx.moveTo(pulleyX + pulleyR, pulleyY);
+            ctx.lineTo(pulleyX + pulleyR, weightYStart + currentDrop);
+            ctx.stroke();
+
+            // 6. Desenhar o Peso (Massa)
+            // O tamanho visual do peso reflete sutilmente a massa (crescimento suavizado com raiz quadrada para não vazar da tela)
+            const weightScale = Math.sqrt(vals.mWeight);
+            const weightW = 50 + (weightScale * 5); 
+            const weightH = 50 + (weightScale * 6);
+            const wX = pulleyX + pulleyR - weightW/2;
+            const wY = weightYStart + currentDrop;
+
+            ctx.fillStyle = "#334155";
+            ctx.fillRect(wX, wY, weightW, weightH);
+            
+            // Textura metálica básica para o peso
+            ctx.strokeStyle = "#1e293b";
+            ctx.lineWidth = 3;
+            ctx.strokeRect(wX, wY, weightW, weightH);
+            
+            // Texto indicando a massa no peso
+            ctx.fillStyle = "white";
+            ctx.font = "bold 20px Inter";
+            ctx.textAlign = "center";
+            ctx.textBaseline = "middle";
+            ctx.fillText(`${vals.mWeight} kg`, wX + weightW/2, wY + weightH/2);
+            
+            // Linha de Referência de Altura (Mostrando os 5m)
+            ctx.strokeStyle = "#ef4444";
+            ctx.lineWidth = 2;
+            ctx.setLineDash([5, 5]);
+            ctx.beginPath();
+            ctx.moveTo(wX - 20, weightYStart);
+            ctx.lineTo(wX + weightW + 40, weightYStart);
+            ctx.moveTo(wX - 20, weightYStart + dropDist + weightH);
+            ctx.lineTo(wX + weightW + 40, weightYStart + dropDist + weightH);
+            ctx.stroke();
+            ctx.setLineDash([]);
+            
+            // Seta e rótulo dinâmico da altura
+            ctx.fillStyle = "#ef4444";
+            ctx.font = "bold 18px Inter";
+            ctx.textAlign = "left";
+            ctx.fillText("h = " + vals.height.toFixed(1) + "m", wX + weightW + 50, weightYStart + dropDist/2 + weightH/2);
+
+            // 7. Desenhar o Termômetro
+            const thermoX = 80;
+            const thermoY = 300;
+            const thermoW = 20;
+            const thermoH = 250;
+            const bulbR = 25;
+            
+            // Haste de vidro
+            ctx.fillStyle = "white";
+            ctx.strokeStyle = "#94a3b8";
+            ctx.lineWidth = 4;
+            
+            ctx.beginPath();
+            ctx.roundRect(thermoX - thermoW/2, thermoY, thermoW, thermoH, 10);
+            ctx.fill();
+            ctx.stroke();
+            
+            // Bulbo do termômetro
+            ctx.beginPath();
+            ctx.arc(thermoX, thermoY + thermoH, bulbR, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.stroke();
+            
+            // Liquido Vermelho (Mercúrio/Álcool)
+            ctx.fillStyle = "#ef4444";
+            ctx.beginPath();
+            ctx.arc(thermoX, thermoY + thermoH, bulbR - 4, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // Altura da coluna dependente da temperatura
+            const baseLevel = thermoY + thermoH - 10;
+            const minTempHeight = 40; // Altura em T inicial
+            
+            // A escala visual agora se adapta dinamicamente ao Delta T máximo da configuração atual
+            // garantindo que sempre vejamos o termômetro subir, independente de quão pequena ou grande seja a variação.
+            const dynamicScaleRange = Math.max(1.0, vals.maxDeltaT * 1.2); 
+            const scaleHeight = (thermoH - 40); // Espaço disponivel para subir
+            
+            const currentRise = minTempHeight + ((currentT - T_INITIAL) / dynamicScaleRange) * scaleHeight;
+            
+            ctx.fillRect(thermoX - (thermoW/2) + 4, baseLevel - currentRise, thermoW - 8, currentRise);
+
+            // Marcas no termômetro e rótulos da escala dinâmica
+            ctx.fillStyle = "#1e293b";
+            ctx.font = "bold 14px Inter";
+            ctx.textAlign = "right";
+            for(let i=0; i<=5; i++) {
+                const tickY = baseLevel - minTempHeight - (i/5)*scaleHeight;
+                ctx.fillRect(thermoX - (thermoW/2) - 10, tickY, 10, 3);
+                
+                // Desenhar valores da escala no lado esquerdo do termômetro
+                const tickTemp = T_INITIAL + (i/5) * dynamicScaleRange;
+                ctx.fillText(tickTemp.toFixed(1) + "°", thermoX - (thermoW/2) - 15, tickY + 5);
+            }
+            
+            // Rótulo dinâmico da temperatura atual acima do termômetro
+            ctx.fillStyle = "#ef4444";
+            ctx.font = "bold 26px Inter";
+            ctx.textAlign = "center";
+            ctx.fillText(currentT.toFixed(2) + " °C", thermoX, thermoY - 50);
+        }
+
+        // Inicializar no carregamento
+        window.onload = function() {
+            updateUI(); // Calcula estado inicial e desenha o canvas estático
+        };
+
+    </script>
+</body>
+</html>
