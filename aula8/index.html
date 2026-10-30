@@ -1,1 +1,527 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Índice da Aula 8 de Física II: gases ideais, processos termodinâmicos e teoria cinética.">
+  <meta name="theme-color" content="#17365d">
+  <title>Aula 8 — Calor e Gases Ideais</title>
 
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['\\(', '\\)']],
+        displayMath: [['\\[', '\\]']],
+        processEscapes: true
+      },
+      options: {
+        skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    };
+  </script>
+  <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+  <style>
+    :root {
+      color-scheme: light;
+      --page: #f5f7fb;
+      --surface: #ffffff;
+      --ink: #17283f;
+      --muted: #64748b;
+      --line: #e1e7ef;
+      --navy: #17365d;
+      --blue: #2e649f;
+      --blue-soft: #eaf2fb;
+      --green: #28664b;
+      --green-soft: #e9f5ee;
+      --shadow: 0 12px 30px rgba(23, 54, 93, .08);
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; scroll-padding-top: 20px; }
+    body {
+      margin: 0;
+      background: var(--page);
+      color: var(--ink);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+    a { color: inherit; }
+    .hero {
+      position: relative;
+      isolation: isolate;
+      overflow: hidden;
+      color: #fff;
+      background: linear-gradient(120deg, #122a49 0%, #17365d 62%, #214c78 100%);
+      padding: 38px 24px 43px;
+    }
+    .hero::before {
+      content: "";
+      position: absolute;
+      z-index: -1;
+      width: 410px;
+      height: 410px;
+      right: -95px;
+      top: -230px;
+      border: 1px solid rgba(222, 237, 255, .16);
+      border-radius: 50%;
+      box-shadow: 0 0 0 42px rgba(222,237,255,.035), 0 0 0 86px rgba(222,237,255,.025);
+    }
+    .hero-inner, main, footer {
+      width: min(1040px, calc(100% - 40px));
+      margin-inline: auto;
+    }
+    .course-back {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      width: fit-content;
+      margin-bottom: 15px;
+      padding: 7px 11px;
+      border: 1px solid rgba(255,255,255,.3);
+      border-radius: 9px;
+      background: rgba(255,255,255,.08);
+      color: #f4f8fd;
+      font-size: .8rem;
+      font-weight: 700;
+      text-decoration: none;
+      transition: background .18s ease, border-color .18s ease;
+    }
+    .course-back:hover, .course-back:focus-visible {
+      background: rgba(255,255,255,.16);
+      border-color: rgba(255,255,255,.55);
+      outline: none;
+    }
+    .course-back:focus-visible { box-shadow: 0 0 0 3px rgba(191,214,241,.25); }
+    .brand { display: flex; align-items: center; gap: 11px; }
+    .brand-mark {
+      display: grid;
+      place-items: center;
+      width: 42px;
+      height: 42px;
+      border: 1px solid rgba(255,255,255,.22);
+      border-radius: 12px;
+      background: rgba(255,255,255,.08);
+      color: #eaf2fb;
+    }
+    .brand-title { font-size: .84rem; font-weight: 800; letter-spacing: .13em; text-transform: uppercase; }
+    .brand-subtitle { color: #c7d8eb; font-size: .76rem; }
+    .hero-copy { max-width: 760px; margin-top: 31px; }
+    .eyebrow {
+      color: #bfd6f1;
+      font-size: .74rem;
+      font-weight: 800;
+      letter-spacing: .15em;
+      text-transform: uppercase;
+    }
+    h1 {
+      margin: 10px 0 12px;
+      font-size: clamp(2rem, 5vw, 3.35rem);
+      letter-spacing: -.05em;
+      line-height: 1.09;
+      font-weight: 760;
+    }
+    .hero-copy p { max-width: 650px; margin: 0; color: #d9e5f3; font-size: 1rem; }
+    .equation-strip { display: flex; flex-wrap: wrap; gap: 9px; margin-top: 23px; }
+    .equation {
+      padding: 6px 11px;
+      border: 1px solid rgba(255,255,255,.17);
+      border-radius: 9px;
+      background: rgba(255,255,255,.055);
+      color: #f1f6fc;
+      font-size: .91rem;
+    }
+
+    main { padding-top: 30px; padding-bottom: 42px; }
+    .quicknav {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 34px;
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: rgba(255,255,255,.78);
+    }
+    .quicknav a {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 10px;
+      border-radius: 9px;
+      color: #3c526c;
+      font-size: .82rem;
+      font-weight: 700;
+      text-decoration: none;
+      transition: background .18s ease, color .18s ease;
+    }
+    .quicknav a:hover, .quicknav a:focus-visible { background: var(--blue-soft); color: var(--navy); outline: none; }
+    .nav-num {
+      display: grid;
+      place-items: center;
+      width: 23px;
+      height: 23px;
+      border-radius: 7px;
+      background: #edf2f8;
+      color: var(--blue);
+      font-size: .72rem;
+      font-weight: 850;
+    }
+
+    .section-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: end;
+      gap: 20px;
+      margin: 0 0 17px;
+    }
+    .section-top h2 { margin: 0; font-size: 1.42rem; letter-spacing: -.035em; }
+    .section-top p { margin: 5px 0 0; color: var(--muted); font-size: .91rem; }
+    .section-kicker { color: #7890ac; font-size: .76rem; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; white-space: nowrap; }
+
+    .topic-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 15px; }
+    .topic-card {
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+      padding: 21px;
+      border: 1px solid var(--line);
+      border-radius: 15px;
+      background: var(--surface);
+      text-decoration: none;
+      box-shadow: 0 2px 8px rgba(23,54,93,.025);
+      transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+    }
+    .topic-card:hover, .topic-card:focus-visible {
+      transform: translateY(-3px);
+      border-color: #b7cbe1;
+      box-shadow: var(--shadow);
+      outline: none;
+    }
+    .topic-heading { display: flex; align-items: flex-start; gap: 13px; }
+    .topic-icon {
+      display: grid;
+      place-items: center;
+      flex: 0 0 42px;
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      background: var(--blue-soft);
+      color: var(--blue);
+    }
+    .topic-number { display: block; margin-bottom: 3px; color: #7890ac; font-size: .72rem; font-weight: 850; letter-spacing: .12em; text-transform: uppercase; }
+    .topic-card h3 { margin: 0; font-size: 1.06rem; line-height: 1.35; letter-spacing: -.02em; }
+    .topic-card p { margin: 12px 0 0; color: var(--muted); font-size: .89rem; line-height: 1.65; }
+    .topic-note {
+      margin-top: 15px;
+      padding: 11px 12px;
+      border-left: 3px solid #c7d8eb;
+      border-radius: 0 8px 8px 0;
+      background: #f7f9fc;
+      color: #52657d;
+      font-size: .82rem;
+      line-height: 1.55;
+    }
+    .topic-note strong { color: #304760; }
+    .card-action {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-top: auto;
+      padding-top: 18px;
+      color: var(--blue);
+      font-size: .85rem;
+      font-weight: 800;
+    }
+    .card-action span:last-child { font-size: 1.05rem; }
+
+    .exercise-section { margin-top: 36px; }
+    .exercise-groups { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 15px; }
+    .exercise-panel {
+      padding: 20px;
+      border: 1px solid var(--line);
+      border-radius: 15px;
+      background: var(--surface);
+    }
+    .exercise-panel h3 { margin: 0; font-size: 1rem; letter-spacing: -.015em; }
+    .exercise-panel > p { margin: 5px 0 14px; color: var(--muted); font-size: .84rem; }
+    .exercise-list { display: grid; gap: 9px; }
+    .exercise {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 12px;
+      border: 1px solid #e7edf4;
+      border-radius: 10px;
+      background: #fbfcfe;
+      text-decoration: none;
+      transition: background .18s ease, border-color .18s ease;
+    }
+    .exercise:hover, .exercise:focus-visible { background: var(--blue-soft); border-color: #c5d7ea; outline: none; }
+    .exercise strong { display: block; font-size: .86rem; font-weight: 750; }
+    .exercise small { display: block; margin-top: 3px; color: var(--muted); font-size: .78rem; line-height: 1.45; }
+    .exercise-arrow { flex: 0 0 auto; color: var(--blue); font-size: 1rem; }
+
+    .full-list {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      flex-wrap: wrap;
+      margin-top: 30px;
+      padding: 20px;
+      border: 1px solid var(--line);
+      border-radius: 15px;
+      background: #fff;
+    }
+    .pdf-heading { display: flex; align-items: center; gap: 12px; }
+    .pdf-icon {
+      display: grid;
+      place-items: center;
+      flex: 0 0 42px;
+      width: 42px;
+      height: 42px;
+      border-radius: 11px;
+      background: var(--green-soft);
+      color: var(--green);
+    }
+    .full-list h2 { margin: 0 0 3px; font-size: 1rem; }
+    .full-list p { margin: 0; color: var(--muted); font-size: .85rem; }
+    .pdf-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      padding: 10px 14px;
+      border: 1px solid #cbd9e8;
+      border-radius: 10px;
+      background: #f7faff;
+      color: var(--navy);
+      text-decoration: none;
+      font-size: .84rem;
+      font-weight: 800;
+      transition: background .18s ease, border-color .18s ease;
+    }
+    .pdf-link:hover, .pdf-link:focus-visible { background: var(--blue-soft); border-color: #a9c2df; outline: none; }
+
+    footer {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      padding: 18px 0 25px;
+      border-top: 1px solid var(--line);
+      color: var(--muted);
+      font-size: .79rem;
+    }
+    footer strong { color: var(--navy); }
+
+    @media (max-width: 720px) {
+      .topic-grid, .exercise-groups { grid-template-columns: 1fr; }
+      .section-top { align-items: flex-start; flex-direction: column; gap: 5px; }
+      .section-kicker { white-space: normal; }
+    }
+    @media (max-width: 520px) {
+      .hero { padding: 28px 0 34px; }
+      .hero-inner, main, footer { width: min(100% - 28px, 1040px); }
+      .hero-copy { margin-top: 26px; }
+      .course-back { margin-bottom: 12px; }
+      .quicknav { gap: 4px; padding: 8px; }
+      .quicknav a { padding: 7px; font-size: .78rem; }
+      .topic-card, .exercise-panel { padding: 16px; }
+      .full-list { align-items: flex-start; padding: 16px; }
+      .pdf-link { width: 100%; justify-content: center; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; transition: none !important; }
+    }
+  </style>
+</head>
+<body>
+  <header class="hero">
+    <div class="hero-inner">
+      <a class="course-back" href="../index.html" aria-label="Voltar à página de escolha das aulas">← Voltar</a>
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true">
+          <svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M8 3v8.2a4.5 4.5 0 1 0 8 0V3"/>
+            <path d="M8 7h8M8 11h8M12 15v3"/>
+          </svg>
+        </div>
+        <div>
+          <div class="brand-title">Física II</div>
+          <div class="brand-subtitle">Termodinâmica · Material de apoio </div>
+        </div>
+      </div>
+
+      <div class="hero-copy">
+        <div class="eyebrow">Aula 08</div>
+        <h1>Gases ideais</h1>
+        <p>Explore as leis empíricas dos gases, a equação de estado, os calores específicos, os processos adiabáticos e a interpretação microscópica do comportamento dos gases.</p>
+
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <nav class="quicknav" aria-label="Navegação pelos tópicos">
+      <a href="#leis"><span class="nav-num">1</span> Leis dos gases</a>
+      <a href="#gas-ideal"><span class="nav-num">2</span> Gás ideal</a>
+      <a href="#calor-especifico"><span class="nav-num">3</span> Calor específico</a>
+      <a href="#adiabatico"><span class="nav-num">4</span> Adiabáticos</a>
+      <a href="#teoria-cinetica"><span class="nav-num">5</span> Teoria cinética</a>
+      <a href="#exercicios"><span class="nav-num">E</span> Exercícios</a>
+    </nav>
+
+    <section aria-labelledby="topics-title">
+      <div class="section-top">
+        <div>
+          <h2 id="topics-title">Conteúdo da aula</h2>
+          <p>Selecione um tópico para abrir a explicação, as relações matemáticas ou a simulação correspondente.</p>
+        </div>
+        <div class="section-kicker">05 tópicos</div>
+      </div>
+
+      <div class="topic-grid">
+        <a class="topic-card" id="leis" href="01_leis_empiricas.html" aria-label="Abrir tema Leis empíricas dos gases">
+          <div class="topic-heading">
+            <div class="topic-icon" aria-hidden="true">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4 5h16M4 12h16M4 19h16"/><circle cx="8" cy="5" r="2"/><circle cx="15" cy="12" r="2"/><circle cx="10" cy="19" r="2"/>
+              </svg>
+            </div>
+            <div><span class="topic-number">Tópico 01</span><h3>Leis empíricas dos gases</h3></div>
+          </div>
+          <p>Relações entre pressão, volume, temperatura e quantidade de matéria nas transformações gasosas.</p>
+          <div class="topic-note"><strong>Conceito-chave:</strong> identificar qual grandeza permanece constante em cada lei experimental.</div>
+          <div class="card-action"><span>Abrir conteúdo</span><span aria-hidden="true">↗</span></div>
+        </a>
+
+        <a class="topic-card" id="gas-ideal" href="02_gas_ideal.html" aria-label="Abrir tema Lei dos gases ideais e processos">
+          <div class="topic-heading">
+            <div class="topic-icon" aria-hidden="true">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="4" y="4" width="16" height="16" rx="2"/><circle cx="9" cy="9" r="1"/><circle cx="15" cy="11" r="1"/><circle cx="10" cy="16" r="1"/><circle cx="17" cy="16" r="1"/>
+              </svg>
+            </div>
+            <div><span class="topic-number">Tópico 02</span><h3>Lei dos gases ideais e processos</h3></div>
+          </div>
+          <p>Equação de estado, trabalho em uma transformação isotérmica e lei de Dalton das pressões parciais.</p>
+          <div class="topic-note"><strong>Relação central:</strong> \(PV=nRT\), válida para um gás ideal em equilíbrio.</div>
+          <div class="card-action"><span>Abrir conteúdo</span><span aria-hidden="true">↗</span></div>
+        </a>
+
+        <a class="topic-card" id="calor-especifico" href="03_calor_especifico.html" aria-label="Abrir tema Equipartição e calor específico">
+          <div class="topic-heading">
+            <div class="topic-icon" aria-hidden="true">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 3v18M4 7h16M6 17h12"/><circle cx="12" cy="7" r="2"/><circle cx="8" cy="17" r="2"/><circle cx="16" cy="17" r="2"/>
+              </svg>
+            </div>
+            <div><span class="topic-number">Tópico 03</span><h3>Equipartição e calor específico</h3></div>
+          </div>
+          <p>Graus de liberdade, energia interna e calores específicos molares a volume e pressão constantes.</p>
+          <div class="topic-note"><strong>Ideia central:</strong> \(C_P-C_V=R\) para um gás ideal, com calores molares definidos nas mesmas condições.</div>
+          <div class="card-action"><span>Abrir conteúdo</span><span aria-hidden="true">↗</span></div>
+        </a>
+
+        <a class="topic-card" id="adiabatico" href="04_adiabatico.html" aria-label="Abrir tema Processos adiabáticos">
+          <div class="topic-heading">
+            <div class="topic-icon" aria-hidden="true">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4 8h12M12 4l4 4-4 4M20 16H8M12 12l-4 4 4 4"/>
+              </svg>
+            </div>
+            <div><span class="topic-number">Tópico 04</span><h3>Processos adiabáticos</h3></div>
+          </div>
+          <p>Compressão e expansão sem transferência de calor, com análise do trabalho e da variação da energia interna.</p>
+          <div class="topic-note"><strong>Condição adiabática:</strong> \(Q=0\). As relações \(PV^\gamma=\text{constante}\) aplicam-se ao caso reversível com calores específicos constantes.</div>
+          <div class="card-action"><span>Abrir conteúdo</span><span aria-hidden="true">↗</span></div>
+        </a>
+
+        <a class="topic-card" id="teoria-cinetica" href="05_teoria_cinetica.html" aria-label="Abrir tema Teoria cinética dos gases">
+          <div class="topic-heading">
+            <div class="topic-icon" aria-hidden="true">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="8"/><circle cx="8" cy="9" r="1"/><circle cx="15" cy="8" r="1"/><circle cx="14" cy="15" r="1"/><path d="M5 16l3-2M16 11l3 2"/>
+              </svg>
+            </div>
+            <div><span class="topic-number">Tópico 05</span><h3>Teoria cinética dos gases</h3></div>
+          </div>
+          <p>Interpretação microscópica da pressão, distribuição de velocidades de Maxwell e livre caminho médio.</p>
+          <div class="topic-note"><strong>Resultado importante:</strong> a energia cinética translacional média é \(\langle K_{\text{trans}}\rangle=\frac{3}{2}k_BT\).</div>
+          <div class="card-action"><span>Abrir conteúdo</span><span aria-hidden="true">↗</span></div>
+        </a>
+      </div>
+    </section>
+
+    <section class="exercise-section" id="exercicios" aria-labelledby="exercises-title">
+      <div class="section-top">
+        <div>
+          <h2 id="exercises-title">Exercícios interativos</h2>
+          <p>Quatro espaços reservados para os exercícios que serão adicionados à Aula 8.</p>
+        </div>
+        <div class="section-kicker">04 exercícios</div>
+      </div>
+
+      <div class="exercise-groups">
+        <div class="exercise-panel">
+          <h3>Exercícios 1 e 2</h3>
+          <p>Espaços reservados para os primeiros exercícios da aula.</p>
+          <div class="exercise-list">
+            <div class="exercise" aria-label="Espaço reservado para o exercício 1">
+              <span><strong>Exercício 1</strong><small>Enunciado, figura e link serão adicionados.</small></span>
+              <span class="exercise-arrow" aria-hidden="true">＋</span>
+            </div>
+            <div class="exercise" aria-label="Espaço reservado para o exercício 2">
+              <span><strong>Exercício 2</strong><small>Enunciado, figura e link serão adicionados.</small></span>
+              <span class="exercise-arrow" aria-hidden="true">＋</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="exercise-panel">
+          <h3>Exercícios 3 e 4</h3>
+          <p>Espaços reservados para os dois exercícios restantes.</p>
+          <div class="exercise-list">
+            <div class="exercise" aria-label="Espaço reservado para o exercício 3">
+              <span><strong>Exercício 3</strong><small>Enunciado, figura e link serão adicionados.</small></span>
+              <span class="exercise-arrow" aria-hidden="true">＋</span>
+            </div>
+            <div class="exercise" aria-label="Espaço reservado para o exercício 4">
+              <span><strong>Exercício 4</strong><small>Enunciado, figura e link serão adicionados.</small></span>
+              <span class="exercise-arrow" aria-hidden="true">＋</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="full-list" aria-label="Lista completa de exercícios">
+      <div class="pdf-heading">
+        <div class="pdf-icon" aria-hidden="true">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M6 3h8l4 4v14H6z"/><path d="M14 3v5h5M8.5 13h7M8.5 16.5h7"/>
+          </svg>
+        </div>
+        <div>
+          <h2>Lista de exercícios da Aula 8</h2>
+          <p>Espaço reservado para o link do PDF ou da página com a lista completa.</p>
+        </div>
+      </div>
+      <a class="pdf-link" href="#" aria-label="Link da lista de exercícios será adicionado" onclick="return false;">
+        Link da lista será adicionado <span aria-hidden="true">↗</span>
+      </a>
+    </section>
+  </main>
+
+  <footer>
+    <span><strong>Física II</strong> · Aula 8</span>
+    <span>Calor e gases ideais</span>
+  </footer>
+</body>
+</html>

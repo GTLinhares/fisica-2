@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Gás ideal — Equação de estado</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+*{box-sizing:border-box}html,body{margin:0;min-height:100%;font-family:Inter,Arial,sans-serif;background:#f3f6fa;color:#243a52}
+header{background:#172f52;color:white;padding:15px 28px;display:grid;grid-template-columns:1fr auto;align-items:center;gap:12px;border-bottom:3px solid #719ac4}
+header h1{margin:0;font-size:1.7rem;letter-spacing:-.035em}header p{margin:4px 0 0;color:#c6d9ec;font-size:.95rem}
+.index-link{display:inline-flex;padding:7px 11px;border:1px solid #ffffff55;border-radius:7px;color:white;text-decoration:none;font-size:.9rem;font-weight:600}
+.formula-banner{background:white;border:1px solid #d9e3ee;border-left:4px solid #3d76ab;border-radius:10px;margin:10px 12px 0;padding:9px 16px;display:flex;align-items:center;justify-content:center;gap:25px}
+.formula-title{font-size:.75rem;font-weight:700;color:#52708f;text-transform:uppercase;letter-spacing:.08em}.main-equation{font-size:1.85rem;color:#173c65;font-weight:600}
+main{display:grid;grid-template-columns:minmax(280px,.82fr) minmax(0,1.8fr) minmax(245px,.82fr);gap:14px;padding:14px 16px 18px;align-items:stretch}
+.col{display:flex;flex-direction:column;gap:14px;min-width:0}
+.card{background:white;border:1px solid #dce5ee;border-radius:13px;padding:16px 17px;box-shadow:0 2px 10px #142d4b09;min-width:0}
+h2{font-size:1.12rem;margin:0 0 7px;color:#1e426b}.subtitle{font-size:.9rem;color:#70859c;margin:0 0 8px;line-height:1.4}
+.canvas-box{height:clamp(330px,49vh,470px);border:1px solid #e5edf4;border-radius:8px;overflow:hidden;background:#f8fbff;position:relative}
+canvas{display:block;width:100%;height:110%;touch-action:none}
+.surface-canvas{height:clamp(390px,56vh,560px)}
+.caption{font-size:.84rem;color:#617790;line-height:1.45;margin:7px 2px 0}
+.controls{display:grid;gap:12px;margin-top:13px}.control{display:grid;grid-template-columns:92px 1fr 68px;gap:10px;align-items:center;font-size:.9rem;color:#365675}.control input{width:100%;accent-color:#3d76ab}.control strong{text-align:right;color:#173c65;font-size:.9rem}
+.pills{display:flex;gap:8px;flex-wrap:wrap}.pill{border:1px solid #dce5ee;border-radius:8px;background:white;padding:9px 12px;color:#244667;font:600 .86rem Inter;cursor:pointer}.pill.active{background:#eaf2fb;border-color:#3d76ab;box-shadow:inset 3px 0 #3d76ab}
+.info{background:white;border:1px solid #dce5ee;border-radius:11px;padding:15px 16px}.eyebrow{font-size:.76rem;color:#71859c;font-weight:750;text-transform:uppercase;letter-spacing:.07em;margin-bottom:5px}
+.info p,.info li{font-size:.9rem;line-height:1.5;color:#536b82;margin:4px 0}.info strong{font-size:1rem;color:#244667}
+.equation{font-size:1.5rem;color:#173c65;text-align:center;background:#f5f8fc;border:1px solid #e5edf4;border-radius:8px;padding:12px 5px;margin:8px 0}
+.metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:11px}.metric{background:#f7f9fc;border:1px solid #e4ebf2;border-radius:8px;padding:11px 6px;text-align:center}.metric small{display:block;font-size:.72rem;color:#7a8ea4}.metric b{font-size:1rem;color:#25486e}
+.note{background:#f4f8fc;border-left:3px solid #3d76ab;border-radius:7px;padding:12px 13px;font-size:.88rem;color:#4b647f;line-height:1.5}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:.82rem;color:#647b94;margin-top:7px}.legend i{display:inline-block;width:14px;height:4px;border-radius:3px;margin-right:4px;vertical-align:middle}
+ul{padding-left:17px;margin:5px 0}
+@media(max-width:1180px){main{grid-template-columns:minmax(260px,.9fr) minmax(0,1.4fr)}.col:last-child{grid-column:1/-1}}
+@media(max-width:680px){header{grid-template-columns:1fr}.index-link{justify-self:start}main{grid-template-columns:1fr}.col:last-child{grid-column:auto}.formula-banner{flex-direction:column;gap:4px}.canvas-box{height:300px}.control{grid-template-columns:70px 1fr 52px}}
+</style>
+<script>
+window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},options:{skipHtmlTags:['script','noscript','style','textarea','pre','code']}};
+</script><script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+<body>
+<header><div><h1>Gás ideal</h1><p>Equação de estado · Relações entre pressão, volume, temperatura e quantidade de matéria · Física II</p></div><a class="index-link" href="index.html">← Voltar ao índice</a></header>
+
+<main>
+<div class="col">
+<section class="card">
+<h2>Modelo microscópico</h2><p class="subtitle">Um gás ideal é modelado como partículas puntiformes em movimento aleatório, com colisões elásticas.</p>
+<div class="canvas-box"><canvas id="particles" aria-label="Representação de partículas de um gás ideal"></canvas></div>
+<div class="controls">
+<div class="control"><label for="temp">Temperatura</label><input id="temp" type="range" min="150" max="600" value="300" step="10"><strong id="tempVal">300 K</strong></div>
+<div class="control"><label for="vol">Volume</label><input id="vol" type="range" min="2" max="10" value="6" step=".2"><strong id="volVal">6,0 L</strong></div>
+<div class="control"><label for="moles">Quantidade</label><input id="moles" type="range" min=".2" max="3" value="1" step=".1"><strong id="molesVal">2,0 mol</strong></div>
+</div>
+<div class="metrics">
+<div class="metric"><small>PRESSÃO</small><b id="pressure">0,42 atm</b></div>
+<div class="metric"><small>TEMPERATURA</small><b id="tempMetric">300 K</b></div>
+<div class="metric"><small>VOLUME</small><b id="volMetric">6,0 L</b></div>
+</div>
+<p class="caption">Ajuste as variáveis para observar como a pressão responde à equação de estado. O modelo considera \(n\) fixo durante cada transformação, exceto quando a quantidade de matéria é alterada.</p>
+</section>
+</div>
+<div class="col">
+<section class="card">
+<h2>Superfície de estado \(P(V,T)\)</h2>
+<p class="subtitle">Para uma quantidade fixa de gás, a equação \(P=nRT/V\) define uma superfície no espaço pressão–volume–temperatura.</p>
+<div class="canvas-box surface-canvas"><canvas id="surface" aria-label="Superfície tridimensional da equação de estado do gás ideal; arraste para girar"></canvas></div>
+<div class="legend"><span><i style="background:#3d76ab"></i>Superfície \(P=nRT/V\)</span><span><i id="sectionLegendColor" style="background:#e27a35"></i>Seção selecionada</span></div>
+
+<div class="note" id="sliceText" style="margin-top:8px" hidden></div>
+</section>
+<section class="info" id="surfaceReadCard" hidden><div class="eyebrow">Como ler a superfície</div><p id="surfaceRead"></p></section>
+</div>
+<div class="col">
+<section class="info" id="lawPanel">
+ <div class="eyebrow">Equação dos gases ideais</div>
+ <div class="equation" style="margin:8px 0 8px">\[PV=nRT\]</div>
+ <p style="margin:0 0 16px">A constante universal dos gases ideais, no SI, é \(R=8{,}314\;\mathrm{J\,mol^{-1}\,K^{-1}}\).</p>
+ <div class="eyebrow">Leis empíricas</div>
+<div class="pills" id="slices" style="margin:9px 0 18px">
+<button class="pill" data-slice="boyle">Boyle</button>
+<button class="pill" data-slice="charles">Charles</button>
+<button class="pill" data-slice="gay">Gay-Lussac</button>
+</div>
+<div id="selectedLawDetails" hidden>
+ <div class="eyebrow" id="lawEyebrow">Seção selecionada · Lei de Boyle</div>
+ <strong id="lawTitle">Transformação isotérmica</strong>
+ <div class="equation" id="lawEquation">\[P_1V_1=P_2V_2\]</div>
+ <p id="lawCondition">Temperatura e quantidade de matéria constantes.</p>
+ <p id="lawDescription">Quando o volume aumenta, a pressão diminui na mesma proporção inversa. Quando o volume diminui, a pressão aumenta.</p>
+ <p class="note" id="lawInterpretation">No gráfico, a seção é uma hipérbole no plano pressão–volume.</p>
+ </div>
+</section>
+</div>
+</main>
+<script>
+const $=id=>document.getElementById(id), R=.082057;
+const temp=$('temp'),vol=$('vol'),moles=$('moles');
+const fmt=(x,d=2)=>x.toLocaleString('pt-BR',{minimumFractionDigits:d,maximumFractionDigits:d});
+function update(){
+ const T=+temp.value,V=+vol.value,n=+moles.value,P=n*R*T/V;
+ $('tempVal').textContent=T+' K';$('volVal').textContent=fmt(V,1)+' L';$('molesVal').textContent=fmt(n,1)+' mol';
+ $('pressure').textContent=fmt(P,2)+' atm';$('tempMetric').textContent=T+' K';$('volMetric').textContent=fmt(V,1)+' L';
+ drawParticles();drawSurface();
+}
+[temp,vol,moles].forEach(e=>e.addEventListener('input',update));
+let particlePositions=Array.from({length:120},()=>({
+ x:.06+Math.random()*.88,y:.08+Math.random()*.84,
+ vx:(Math.random()-.5)*2,vy:(Math.random()-.5)*2
+}));
+let lastParticleFrame=0;
+function drawParticles(){
+ const c=$('particles'),ctx=c.getContext('2d'),r=c.getBoundingClientRect(),d=window.devicePixelRatio||1;
+ c.width=Math.max(1,Math.round(r.width*d));c.height=Math.max(1,Math.round(r.height*d));
+ ctx.setTransform(d,0,0,d,0,0);
+ const w=r.width,h=r.height;ctx.clearRect(0,0,w,h);
+ const V=+vol.value;
+ // Recipiente de dimensões fixas; o volume é representado pela posição do pistão.
+ const chamberW=w*.62,chamberH=h*.72,left=(w-chamberW)/2,top=h*.10;
+ const bottom=top+chamberH;
+ const pistonFraction=(V-(+vol.min))/(+vol.max-(+vol.min));
+ const pistonY=bottom- chamberH*(.16+.76*pistonFraction);
+ const innerPad=9,gasLeft=left+innerPad,gasRight=left+chamberW-innerPad;
+ const gasTop=pistonY+7,gasBottom=bottom-innerPad;
+
+ // Corpo do cilindro e gás abaixo do pistão.
+ ctx.fillStyle='#fff';ctx.fillRect(left,top,chamberW,chamberH);
+ ctx.fillStyle='#eaf2fb';ctx.fillRect(gasLeft,gasTop,gasRight-gasLeft,gasBottom-gasTop);
+ ctx.strokeStyle='#8098b3';ctx.lineWidth=4;
+ ctx.beginPath();ctx.moveTo(left,top);ctx.lineTo(left,bottom);ctx.lineTo(left+chamberW,bottom);ctx.lineTo(left+chamberW,top);ctx.stroke();
+
+ // Pistão móvel e haste.
+ ctx.fillStyle='#9aafc5';ctx.strokeStyle='#526f8d';ctx.lineWidth=1.5;
+ ctx.fillRect(left+2,pistonY-7,chamberW-4,14);ctx.strokeRect(left+2,pistonY-7,chamberW-4,14);
+ ctx.fillStyle='#8098b3';ctx.fillRect(w/2-5,top-18,10,pistonY-top+11);
+ ctx.fillStyle='#526f82';ctx.font='12px Inter';ctx.textAlign='center';
+ //ctx.fillText('Pistão móvel',w/2,top-23);
+
+ // As coordenadas normalizadas das partículas permanecem dentro do gás;
+ // quando o pistão se move, o espaço disponível para elas acompanha o volume.
+ const n=+moles.value,count=Math.max(28,Math.min(120,Math.round(48*n)));
+ for(let i=0;i<count;i++){
+  const p=particlePositions[i];
+  const x=gasLeft+(.035+p.x*.93)*(gasRight-gasLeft);
+  const y=gasTop+(.04+p.y*.90)*(gasBottom-gasTop);
+  ctx.beginPath();ctx.arc(x,y,3.1,0,Math.PI*2);
+  ctx.fillStyle='#3d76ab';ctx.fill();
+ }
+ ctx.fillStyle='#526b82';ctx.font='12px Inter';ctx.textAlign='center';
+ //ctx.fillText('Gás',w/2,bottom+22);
+}function animateParticles(timestamp){
+ if(!lastParticleFrame)lastParticleFrame=timestamp;
+ const dt=Math.min((timestamp-lastParticleFrame)/1000,.04);
+ lastParticleFrame=timestamp;
+ // A rapidez média cresce como sqrt(T), de acordo com a energia cinética média.
+ const speed=.34*Math.sqrt((+temp.value)/300);
+ for(const p of particlePositions){
+  p.x+=p.vx*speed*dt;
+  p.y+=p.vy*speed*dt;
+  if(p.x<.035){p.x=.035;p.vx=Math.abs(p.vx);}
+  if(p.x>.965){p.x=.965;p.vx=-Math.abs(p.vx);}
+  if(p.y<.055){p.y=.055;p.vy=Math.abs(p.vy);}
+  if(p.y>.945){p.y=.945;p.vy=-Math.abs(p.vy);}
+ } 
+ drawParticles();
+ requestAnimationFrame(animateParticles);
+}
+let yaw=-2.30,pitch=.30,drag=null,selected=null;
+const surf=$('surface');
+function rawProject(x,y,z){
+ const cy=Math.cos(yaw),sy=Math.sin(yaw),cp=Math.cos(pitch),sp=Math.sin(pitch);
+ const X=x*cy-y*sy;
+ const Y=x*sy+y*cy;
+ // A coordenada vertical positiva é a pressão: valores maiores sobem na tela.
+ const pz=z*0.6; // escala vertical equilibrada: evidencia a curvatura sem distorcer excessivamente P
+ const vertical=Y*sp+pz*cp;
+ const depth=Y*cp-pz*sp;
+ return [X,vertical,depth];
+}
+function makeProjector(w,h){
+ // Enquadramento fixo: variar n altera a altura da superfície, não a escala do gráfico.
+ // Os três eixos têm comprimentos comparáveis; P é apenas um pouco maior.
+ const zAxis=2.25;
+ const bounds=[];
+ for(const x of [-1,1]){
+  for(const y of [-1,1]){
+   for(const z of [0,zAxis]){
+    bounds.push(rawProject(x,y,z));
+   }
+  }
+ }
+ const xs=bounds.map(p=>p[0]),ys=bounds.map(p=>p[1]);
+ const minX=Math.min(...xs),maxX=Math.max(...xs),minY=Math.min(...ys),maxY=Math.max(...ys);
+ const padX=Math.min(42,w*.065),padY=Math.min(34,h*.075);
+ const scale=Math.min((w-2*padX)/(maxX-minX),(h-2*padY)/(maxY-minY));
+ const cx=(minX+maxX)/2,cy=(minY+maxY)/2;
+ return (x,y,z)=>{
+  const q=rawProject(x,y,z);
+  return [w/2+(q[0]-cx)*scale,h/2-(q[1]-cy)*scale];
+ };
+}
+function drawSurface(){
+ const ctx=surf.getContext('2d'),r=surf.getBoundingClientRect(),d=devicePixelRatio||1,w=r.width,h=r.height;
+ surf.width=Math.max(1,Math.round(w*d));surf.height=Math.max(1,Math.round(h*d));ctx.setTransform(d,0,0,d,0,0);ctx.clearRect(0,0,w,h);
+ ctx.fillStyle='#f8fbff';ctx.fillRect(0,0,w,h);
+ const project=makeProjector(w,h);
+ const zf=(T,V)=>.25*(+moles.value)*(T/300)/(V/6);
+ // Eixo horizontal x = temperatura T; eixo horizontal y = volume V.
+ const Vmin=2,Vmax=10,Tmin=150,Tmax=600,nx=30,ny=26;
+ for(let j=ny-2;j>=0;j--){
+  for(let i=0;i<nx-1;i++){
+   const x0=-1+2*i/(nx-1),x1=-1+2*(i+1)/(nx-1);
+   const y0=-1+2*j/(ny-1),y1=-1+2*(j+1)/(ny-1);
+   const pts=[[x0,y0],[x1,y0],[x1,y1],[x0,y1]].map(([x,y])=>{
+    const T=Tmin+(x+1)*.5*(Tmax-Tmin),V=Vmin+(y+1)*.5*(Vmax-Vmin);
+    return project(x,y,zf(T,V));
+   });
+   ctx.beginPath();ctx.moveTo(...pts[0]);pts.slice(1).forEach(q=>ctx.lineTo(...q));ctx.closePath();
+   ctx.fillStyle='rgba(61,118,171,.76)';ctx.fill();
+   ctx.strokeStyle='rgba(255,255,255,.46)';ctx.lineWidth=.65;ctx.stroke();
+  }
+ }
+ // Eixos identificados apenas pelas grandezas: T, V e P.
+ const O=project(-1,-1,0),Taxis=project(1,-1,0),Vaxis=project(-1,1,0),Paxis=project(-1,-1,2.25);
+ ctx.strokeStyle='#536f8e';ctx.lineWidth=2;
+ [[O,Taxis],[O,Vaxis],[O,Paxis]].forEach(([a,b])=>{ctx.beginPath();ctx.moveTo(...a);ctx.lineTo(...b);ctx.stroke()});
+ ctx.fillStyle='#365675';ctx.font='12px Inter';ctx.textAlign='center';
+ ctx.fillText('T',Taxis[0]+12,Taxis[1]+19);
+ ctx.fillText('V',Vaxis[0]-9,Vaxis[1]+19);
+ ctx.textAlign='left';ctx.fillText('P',Paxis[0]+8,Paxis[1]-5);
+ // A curva só é desenhada depois que o usuário seleciona uma seção.
+ if(selected){
+ const Tnow=+temp.value, Vnow=+vol.value, nnow=+moles.value;
+ const Pnow=nnow*R*Tnow/Vnow;
+ ctx.strokeStyle='#e27a35';
+ ctx.lineWidth=3.5;ctx.lineJoin='round';
+ ctx.setLineDash([7,5]);ctx.beginPath();
+ if(selected==='boyle'){
+  // Temperatura fixa no valor atual do controle.
+  const T=Tnow, x=(T-Tmin)/((Tmax-Tmin)/2)-1;
+  for(let i=0;i<=120;i++){
+   const y=-1+2*i/120, V=Vmin+(y+1)*.5*(Vmax-Vmin);
+   const q=project(x,y,zf(T,V));i?ctx.lineTo(...q):ctx.moveTo(...q);
+  }
+ }else if(selected==='charles'){
+  // Pressão fixa no valor atual; a isóbara passa por (Tnow,Vnow).
+  const Vlo=Math.max(Vmin,Vnow*Tmin/Tnow), Vhi=Math.min(Vmax,Vnow*Tmax/Tnow);
+  for(let i=0;i<=120;i++){
+   const V=Vlo+(Vhi-Vlo)*i/120, T=Tnow*V/Vnow;
+   const x=(T-Tmin)/((Tmax-Tmin)/2)-1, y=(V-Vmin)/((Vmax-Vmin)/2)-1;
+   const q=project(x,y,zf(T,V));i?ctx.lineTo(...q):ctx.moveTo(...q);
+  }
+ }else{
+  // Volume fixo no valor atual do controle.
+  const V=Vnow, y=(V-Vmin)/((Vmax-Vmin)/2)-1;
+  for(let i=0;i<=120;i++){
+   const x=-1+2*i/120, T=Tmin+(x+1)*.5*(Tmax-Tmin);
+   const q=project(x,y,zf(T,V));i?ctx.lineTo(...q):ctx.moveTo(...q);
+  }
+ }
+ ctx.stroke();
+ ctx.setLineDash([]);
+ }
+ ctx.fillStyle='#536b82';ctx.font='11px Inter';ctx.textAlign='left';ctx.fillText('Arraste para girar a superfície',12,h-12);
+}
+surf.addEventListener('pointerdown',e=>{drag={x:e.clientX,y:e.clientY};surf.setPointerCapture(e.pointerId)});
+surf.addEventListener('pointermove',e=>{if(!drag)return;yaw+=(e.clientX-drag.x)*.007;pitch=Math.max(.18,Math.min(1.12,pitch+(e.clientY-drag.y)*.006));drag={x:e.clientX,y:e.clientY};drawSurface()});
+surf.addEventListener('pointerup',()=>drag=null);surf.addEventListener('pointercancel',()=>drag=null);
+const sliceCopy={
+boyle:['Corte em temperatura constante: \\(P=nRT_0/V\\). No plano \\(P\\)-\\(V\\), obtemos uma hipérbole (Lei de Boyle).','A curva tracejada representa uma seção com temperatura fixa. Ao variar o volume, a pressão muda inversamente, mantendo \\(n\\) e \\(T\\) constantes.'],
+charles:['Corte em pressão constante: \\(V=nRT/P_0\\). No plano \\(V\\)-\\(T\\), obtemos uma reta (Lei de Charles).','A curva tracejada representa pressão fixa. O volume aumenta linearmente com a temperatura absoluta, mantendo \\(n\\) e \\(P\\) constantes.'],
+gay:['Corte em volume constante: \\(P=nRT/V_0\\). No plano \\(P\\)-\\(T\\), obtemos uma reta (Lei de Gay-Lussac).','A curva tracejada representa volume fixo. A pressão cresce linearmente com a temperatura absoluta, mantendo \\(n\\) e \\(V\\) constantes.']
+};
+const lawPanelCopy={
+ boyle:{
+  eyebrow:'Lei de Boyle',
+  title:'Transformação isotérmica',
+  equation:'\\[P_1V_1=P_2V_2\\]',
+  condition:'Temperatura e quantidade de matéria constantes.',
+  description:'A pressão é inversamente proporcional ao volume. Se o gás ocupa um volume maior, sua pressão diminui; se é comprimido, sua pressão aumenta.',
+  interpretation:'A curva é uma hipérbole no plano P–V. A temperatura permanece fixa durante a transformação.'
+ },
+ charles:{
+  eyebrow:'Lei de Charles',
+  title:'Transformação isobárica',
+  equation:'\\[\\frac{V_1}{T_1}=\\frac{V_2}{T_2}\\]',
+  condition:'Pressão e quantidade de matéria constantes.',
+  description:'O volume é diretamente proporcional à temperatura absoluta. Ao aquecer o gás, o pistão se desloca para aumentar o volume; ao resfriar, o volume diminui.',
+  interpretation:'A seção é uma reta no plano V–T. A temperatura deve ser expressa em kelvin.'
+ },
+ gay:{
+  eyebrow:'Lei de Gay-Lussac',
+  title:'Transformação isovolumétrica',
+  equation:'\\[\\frac{P_1}{T_1}=\\frac{P_2}{T_2}\\]',
+  condition:'Volume e quantidade de matéria constantes.',
+  description:'A pressão é diretamente proporcional à temperatura absoluta. Ao aquecer o gás em um recipiente rígido, a pressão aumenta; ao resfriar, ela diminui.',
+  interpretation:'A seção é uma reta no plano P–T. O volume permanece fixo durante a transformação.'
+ }
+};
+function updateLawPanel(){
+ if(!selected) return;
+ $('selectedLawDetails').hidden=false;
+ const info=lawPanelCopy[selected];
+ $('lawEyebrow').textContent=info.eyebrow;
+ $('lawTitle').textContent=info.title;
+ $('lawEquation').innerHTML=info.equation;
+ $('lawCondition').textContent=info.condition;
+ $('lawDescription').textContent=info.description;
+ $('lawInterpretation').textContent=info.interpretation;
+ if(window.MathJax?.typesetPromise) MathJax.typesetPromise([$ ('lawEquation')]);
+}
+document.querySelectorAll('.pill').forEach(b=>b.addEventListener('click',()=>{
+ selected=b.dataset.slice;document.querySelectorAll('.pill').forEach(x=>x.classList.toggle('active',x===b));updateLawPanel();
+ $('sliceText').hidden=false;$('surfaceReadCard').hidden=false;
+ $('sliceText').innerHTML=sliceCopy[selected][0];$('surfaceRead').innerHTML=sliceCopy[selected][1];
+  $('sectionLegendColor').style.background='#e27a35';
+ if(window.MathJax?.typesetPromise) MathJax.typesetPromise([$('sliceText'),$('surfaceRead')]);drawSurface();
+}));
+window.addEventListener('resize',()=>{drawParticles();drawSurface()});
+update();drawSurface();requestAnimationFrame(animateParticles);
+</script>
+</body></html>
