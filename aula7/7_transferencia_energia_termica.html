@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Transferência de energia térmica — Física II</title>
+<style>
+:root{
+  --navy:#172f52;--blue:#3d76ab;--ink:#243a52;--muted:#70859c;
+  --line:#dce5ee;--bg:#f3f6fa;--orange:#d97736;--red:#c95b4b;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);font-family:Inter,Segoe UI,Arial,sans-serif;color:var(--ink)}
+header{min-height:65px;background:var(--navy);color:#fff;padding:11px 23px;display:flex;align-items:center;justify-content:space-between;gap:14px;border-bottom:3px solid #719ac4}
+header h1{font-size:1.35rem;margin:0 0 3px;font-weight:700;letter-spacing:-.035em}
+header p{margin:0;font-size:.8rem;color:#c6d9ec}
+.index-link{display:inline-flex;align-items:center;justify-content:center;padding:7px 11px;border:1px solid rgba(255,255,255,.35);border-radius:7px;color:#fff;text-decoration:none;font-size:.78rem;font-weight:600;white-space:nowrap}
+.index-link:hover{background:rgba(255,255,255,.12)}
+main{max-width:1320px;margin:auto;padding:13px 16px 22px;display:grid;gap:11px}
+.tabs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.tab{border:1px solid var(--line);border-radius:8px;background:#fff;color:var(--ink);padding:11px 8px;font-size:.82rem;font-weight:700;cursor:pointer;transition:background .15s,border-color .15s}
+.tab:hover{background:#f7fafd}
+.tab.active{background:#eaf2fb;border:1px solid var(--blue);color:#234f7a;box-shadow:inset 3px 0 var(--blue)}
+.layout{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:11px;align-items:stretch}
+.card{background:#fff;border:1px solid var(--line);border-radius:10px;padding:14px;box-shadow:0 2px 10px rgba(20,45,75,.035);min-width:0}
+.card h2{font-size:1rem;margin:0 0 5px;color:#1e426b}
+.sub{font-size:.78rem;color:var(--muted);margin:0 0 11px;line-height:1.5}
+.modelbox{background:#f8fbff;border:1px solid #e5edf4;border-radius:8px;padding:9px 10px}
+.modelhead{display:flex;justify-content:space-between;gap:8px;align-items:center;font-size:.68rem;color:var(--muted);font-weight:750;margin-bottom:5px;letter-spacing:.035em}
+.model-svg{width:100%;height:275px;display:block}
+.model-note{font-size:.77rem;color:#526b85;margin:9px 2px 0;line-height:1.55}
+.concept{margin-top:10px;background:#f5f8fc;border-left:3px solid var(--blue);border-radius:0 7px 7px 0;padding:9px 11px;font-size:.78rem;line-height:1.5;color:#405b78}
+.concept strong{color:#24496f}
+.side{display:flex;flex-direction:column;gap:10px}
+.info{border:1px solid var(--line);border-radius:9px;padding:13px;background:#fff}
+.eyebrow{font-size:.66rem;color:#71859c;font-weight:750;text-transform:uppercase;letter-spacing:.07em}
+.formula{font-size:1.22rem;font-weight:700;color:#173c65;margin:8px 0}
+.info p{font-size:.77rem;line-height:1.5;color:#536985;margin:5px 0 0}
+.bullets{margin:7px 0 0;padding-left:18px;color:#536985;font-size:.77rem;line-height:1.55}
+.bottom{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+button.action{border:0;border-radius:7px;background:#285e92;color:#fff;padding:9px 12px;font-size:.76rem;font-weight:650;cursor:pointer}
+button.action:hover{background:#214f7d}
+button.secondary{background:#e9f0f7;color:#2b5279}
+button.secondary:hover{background:#dfe9f3}
+.controls{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}
+.legend{display:flex;gap:12px;flex-wrap:wrap;color:var(--muted);font-size:.69rem;margin-top:5px}
+.legend i{display:inline-block;width:13px;height:4px;margin-right:5px;vertical-align:middle;border-radius:2px}
+@keyframes flowRight{to{stroke-dashoffset:-34}}
+@keyframes rise{0%{transform:translateY(8px);opacity:.25}50%{opacity:1}100%{transform:translateY(-10px);opacity:.25}}
+@keyframes pulse{0%,100%{opacity:.35}50%{opacity:1}}
+@keyframes wave{0%{stroke-dashoffset:30;opacity:.35}50%{opacity:1}100%{stroke-dashoffset:0;opacity:.35}}
+.flowline{stroke-dasharray:8 8;animation:flowRight 1.2s linear infinite}
+.rising{animation:rise 1.8s ease-in-out infinite;transform-box:fill-box;transform-origin:center}
+.rising.delay1{animation-delay:.35s}.rising.delay2{animation-delay:.7s}
+@keyframes descend{0%{transform:translateY(-8px);opacity:.25}50%{opacity:1}100%{transform:translateY(10px);opacity:.25}}
+.descending{animation:descend 1.8s ease-in-out infinite;transform-box:fill-box;transform-origin:center}
+.descending.delay1{animation-delay:.35s}.descending.delay2{animation-delay:.7s}
+
+.radiant{stroke-dasharray:5 7;animation:wave 1.5s ease-in-out infinite}
+.pulse{animation:pulse 1.4s ease-in-out infinite}
+@media(max-width:850px){.layout{grid-template-columns:1fr}.bottom{grid-template-columns:1fr}}
+@media(max-width:520px){header{padding:10px 12px}header h1{font-size:1.08rem}header p{font-size:.7rem}.index-link{font-size:.7rem;padding:7px 9px}.tabs{gap:5px}.tab{font-size:.72rem;padding:10px 5px}main{padding:8px}.card{padding:11px}.model-svg{height:230px}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;scroll-behavior:auto!important;transition:none!important}}
+</style>
+<script>
+window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},options:{skipHtmlTags:['script','noscript','style','textarea','pre','code']}};
+</script>
+<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+<body>
+<header>
+  <div><h1>Transferência de energia térmica</h1><p>Condução, convecção e radiação · Física II</p></div>
+  <a class="index-link" href="index.html">← Voltar ao índice</a>
+</header>
+<main>
+  <nav class="tabs" aria-label="Selecionar modo de transferência">
+    <button class="tab active" data-mode="conduction" aria-pressed="true">1. Condução</button>
+    <button class="tab" data-mode="convection" aria-pressed="false">2. Convecção</button>
+    <button class="tab" data-mode="radiation" aria-pressed="false">3. Radiação</button>
+  </nav>
+  <section class="layout">
+    <article class="card">
+      <h2 id="modeTitle">Condução térmica</h2>
+      <p class="sub" id="modeSubtitle">Transferência de energia através de um material, sem transporte macroscópico de matéria.</p>
+      <div class="modelbox">
+        <div class="modelhead"><span id="modelLabel">MODELO FÍSICO · BARRA SÓLIDA</span><span id="modelState">EXTREMIDADE QUENTE → FRIA</span></div>
+        <svg id="modelSvg" class="model-svg" viewBox="0 0 560 275" role="img" aria-label="Ilustração animada do mecanismo de condução térmica">
+          <defs>
+            <linearGradient id="barGrad" x1="0" x2="1"><stop offset="0" stop-color="#e78a65"/><stop offset=".48" stop-color="#e9c18c"/><stop offset="1" stop-color="#9fc4df"/></linearGradient>
+            <marker id="arr" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0 0 L6 3 L0 6" fill="none" stroke="#d97736" stroke-width="1.2"/></marker>
+          </defs>
+          <g id="conductionScene">
+            <rect x="52" y="94" width="456" height="74" rx="9" fill="url(#barGrad)" stroke="#8da2b8" stroke-width="1.5"/>
+            <g fill="#fff" stroke="#9b6b58" stroke-width="1.2">
+              <circle cx="78" cy="112" r="7"/><circle cx="112" cy="112" r="7"/><circle cx="146" cy="112" r="7"/><circle cx="180" cy="112" r="7"/><circle cx="214" cy="112" r="7"/><circle cx="248" cy="112" r="7"/><circle cx="282" cy="112" r="7"/><circle cx="316" cy="112" r="7"/><circle cx="350" cy="112" r="7"/><circle cx="384" cy="112" r="7"/><circle cx="418" cy="112" r="7"/><circle cx="452" cy="112" r="7"/><circle cx="486" cy="112" r="7"/>
+              <circle cx="78" cy="150" r="7"/><circle cx="112" cy="150" r="7"/><circle cx="146" cy="150" r="7"/><circle cx="180" cy="150" r="7"/><circle cx="214" cy="150" r="7"/><circle cx="248" cy="150" r="7"/><circle cx="282" cy="150" r="7"/><circle cx="316" cy="150" r="7"/><circle cx="350" cy="150" r="7"/><circle cx="384" cy="150" r="7"/><circle cx="418" cy="150" r="7"/><circle cx="452" cy="150" r="7"/><circle cx="486" cy="150" r="7"/>
+            </g>
+            <path d="M70 70 H480" stroke="#d97736" stroke-width="3" fill="none" marker-end="url(#arr)" class="flowline"/>
+            <text x="72" y="48" fill="#b65f32" font-size="13" font-weight="700">REGIÃO QUENTE</text>
+            <text x="488" y="48" text-anchor="end" fill="#47799d" font-size="13" font-weight="700">REGIÃO FRIA</text>
+            <g fill="#d97736" class="pulse"><path d="M68 184 q-12 10 0 20 q12-10 0-20"/><path d="M92 184 q-12 10 0 20 q12-10 0-20"/></g>
+            <text x="280" y="235" text-anchor="middle" fill="#536985" font-size="13">Energia transferida por interações microscópicas</text>
+          </g>
+          <g id="convectionScene" style="display:none">
+            <rect x="145" y="45" width="270" height="184" rx="8" fill="#f7fbff" stroke="#8098b3" stroke-width="3"/>
+            <rect x="150" y="50" width="260" height="174" rx="4" fill="#dcecf5"/>
+            <rect x="150" y="184" width="260" height="40" fill="#e8a06f" opacity=".85"/>
+            <path d="M190 194 C145 142 190 86 260 82 C330 78 368 128 330 177" fill="none" stroke="#d97736" stroke-width="4" stroke-linecap="round" class="flowline"/>
+            <path d="M330 177 l-13 -4 8 13" fill="none" stroke="#d97736" stroke-width="3"/>
+            <path d="M365 190 C400 140 365 91 300 82 C240 73 205 119 230 167" fill="none" stroke="#3d86b7" stroke-width="4" stroke-linecap="round" stroke-dasharray="7 7" class="flowline"/>
+            <path d="M365 145 l-8 12 14 1" fill="none" stroke="#3d86b7" stroke-width="3"/>
+            <g fill="#d97736"><circle class="rising" cx="210" cy="177" r="5"/><circle class="rising delay1" cx="255" cy="194" r="5"/><circle class="rising delay2" cx="300" cy="185" r="5"/></g>
+            <g fill="#3d86b7"><circle class="descending delay1" cx="350" cy="90" r="5"/><circle class="descending delay2" cx="310" cy="70" r="5"/></g>
+            <text x="280" y="25" text-anchor="middle" fill="#536985" font-size="13" font-weight="700">CIRCULAÇÃO DO FLUIDO</text>
+            <text x="280" y="258" text-anchor="middle" fill="#536985" font-size="12">Fluido aquecido sobe; fluido mais frio desce</text>
+          </g>
+          <g id="radiationScene" style="display:none">
+            <circle cx="115" cy="132" r="43" fill="#f4a261" stroke="#d97736" stroke-width="2"/>
+            <g stroke="#e58a3c" stroke-width="3" stroke-linecap="round">
+              <path d="M115 72 V55 M115 209 V192 M55 132 H38 M192 132 H175 M72 89 L59 76 M171 188 L158 175 M72 175 L59 188 M171 76 L158 89"/>
+            </g>
+            <g fill="none" stroke="#d97736" stroke-width="3" stroke-linecap="round">
+              <path class="radiant" d="M178 90 Q230 50 280 90 T382 90"/>
+              <path class="radiant" d="M178 132 Q230 92 280 132 T382 132"/>
+              <path class="radiant" d="M178 174 Q230 134 280 174 T382 174"/>
+            </g>
+            <rect x="405" y="69" width="65" height="126" rx="7" fill="#d9e6f1" stroke="#7892ad" stroke-width="2"/>
+            <path d="M418 86 H457 M418 178 H457" stroke="#7892ad" stroke-width="2"/>
+            <text x="115" y="202" text-anchor="middle" fill="#a65b32" font-size="12" font-weight="700">FONTE QUENTE</text>
+            <text x="438" y="216" text-anchor="middle" fill="#536985" font-size="12">CORPO</text>
+            <text x="280" y="247" text-anchor="middle" fill="#536985" font-size="13">Ondas eletromagnéticas atravessam o espaço</text>
+          </g>
+        </svg>
+        <div class="legend" id="legend"><span><i style="background:#d97736"></i>Fluxo de energia térmica</span><span><i style="background:#9fc4df"></i>Região mais fria</span></div>
+      </div>
+      <p class="model-note" id="modelNote">A energia é transferida da extremidade de maior temperatura para a de menor temperatura. As partículas vibram e interagem com as vizinhas, transmitindo energia ao longo do material.</p>
+      <div class="concept" id="concept"><strong>Ideia central:</strong> há transferência de energia sem deslocamento macroscópico de matéria. É especialmente importante em sólidos.</div>
+    </article>
+    <div class="side">
+      <article class="info">
+        <div class="eyebrow" id="lawEyebrow">Lei de Fourier · forma unidimensional</div>
+        <div class="formula" id="formula">\(\frac{Q}{\Delta t}=kA\frac{T_q-T_f}{L}\)</div>
+        <p id="formulaText">A taxa de transferência depende da condutividade térmica \(k\), da área \(A\), da diferença de temperatura e do comprimento \(L\) atravessado pelo fluxo.</p>
+      </article>
+      <article class="info">
+        <div class="eyebrow">Características principais</div>
+        <ul class="bullets" id="features">
+          <li>Ocorre sem transporte macroscópico de matéria.</li>
+          <li>É muito relevante em materiais sólidos.</li>
+          <li>Metais geralmente são bons condutores térmicos.</li>
+        </ul>
+      </article>
+      <article class="info">
+        <div class="eyebrow">Exemplo cotidiano</div>
+        <strong id="exampleTitle">Colher metálica na bebida quente</strong>
+        <p id="exampleText">A extremidade mergulhada aquece primeiro; depois, energia é conduzida ao longo da colher até o cabo.</p>
+      </article>
+    </div>
+  </section>
+  <section class="bottom">
+    <article class="info">
+      <div class="eyebrow">Direção espontânea</div>
+      <div class="formula">\(T_{\text{quente}}>T_{\text{frio}}\)</div>
+      <p>Na ausência de outras influências, a energia térmica é transferida espontaneamente do corpo de maior temperatura para o de menor temperatura.</p>
+    </article>
+    <article class="info">
+      <div class="eyebrow">Atenção</div>
+      <strong id="attentionTitle">Condução não é convecção</strong>
+      <p id="attentionText">Na condução, a energia passa de partícula para partícula; na convecção, o movimento do próprio fluido transporta energia.</p>
+    </article>
+    <article class="info">
+      <div class="eyebrow">Para lembrar</div>
+      <strong>Os mecanismos podem coexistir</strong>
+      <p>Em situações reais, condução, convecção e radiação frequentemente ocorrem simultaneamente, embora um mecanismo possa predominar.</p>
+    </article>
+  </section>
+</main>
+<script>
+const modes={
+ conduction:{
+  title:'Condução térmica',
+  subtitle:'Transferência de energia através de um material, sem transporte macroscópico de matéria.',
+  label:'MODELO FÍSICO · BARRA SÓLIDA',state:'EXTREMIDADE QUENTE → FRIA',
+  note:'A energia é transferida da extremidade de maior temperatura para a de menor temperatura. As partículas vibram e interagem com as vizinhas, transmitindo energia ao longo do material.',
+  concept:'<strong>Ideia central:</strong> há transferência de energia sem deslocamento macroscópico de matéria. É especialmente importante em sólidos.',
+  eyebrow:'Lei de Fourier · forma unidimensional',
+  formula:'\\(\\frac{Q}{\\Delta t}=kA\\frac{T_q-T_f}{L}\\)',
+  formulaText:'A taxa de transferência depende da condutividade térmica \\(k\\), da área \\(A\\), da diferença de temperatura e do comprimento \\(L\\) atravessado pelo fluxo.',
+  features:['Ocorre sem transporte macroscópico de matéria.','É muito relevante em materiais sólidos.','Metais geralmente são bons condutores térmicos.'],
+  exampleTitle:'Colher metálica na bebida quente',
+  exampleText:'A extremidade mergulhada aquece primeiro; depois, energia é conduzida ao longo da colher até o cabo.',
+  attentionTitle:'Condução não é convecção',
+  attentionText:'Na condução, a energia passa de partícula para partícula; na convecção, o movimento do próprio fluido transporta energia.',
+  scene:'conductionScene',legend:'<span><i style="background:#d97736"></i>Fluxo de energia térmica</span><span><i style="background:#9fc4df"></i>Região mais fria</span>'
+ },
+ convection:{
+  title:'Convecção térmica',
+  subtitle:'Transferência de energia associada ao movimento coletivo de um fluido, como um líquido ou gás.',
+  label:'MODELO FÍSICO · FLUIDO EM CIRCULAÇÃO',state:'MOVIMENTO DO FLUIDO',
+  note:'Ao ser aquecido, o fluido pode se expandir e ter sua densidade reduzida. Em um campo gravitacional, regiões menos densas tendem a subir, enquanto regiões mais densas descem, formando correntes de convecção.',
+  concept:'<strong>Ideia central:</strong> a energia é transportada pelo movimento do fluido. A convecção pode ser natural, quando o movimento surge de diferenças de densidade, ou forçada, quando há ventilador ou bomba.',
+  eyebrow:'Lei do resfriamento de Newton · modelo convectivo',
+  formula:'\\(\\frac{Q}{\\Delta t}=hA(T_s-T_f)\\)',
+  formulaText:'O coeficiente convectivo \\(h\\) depende das condições do escoamento e das propriedades do fluido. \\(T_s\\) é a temperatura da superfície e \\(T_f\\), a do fluido distante da superfície.',
+  features:['Ocorre em líquidos e gases.','Envolve movimento macroscópico do fluido.','Pode ser natural ou forçada.'],
+  exampleTitle:'Água aquecida em uma panela',
+  exampleText:'A água próxima ao fundo aquece, fica menos densa e sobe; a água mais fria desce, estabelecendo circulação.',
+  attentionTitle:'O fluido se movimenta',
+  attentionText:'Diferentemente da condução em um sólido, na convecção há transporte de energia associado ao deslocamento de porções do líquido ou do gás.',
+  scene:'convectionScene',legend:'<span><i style="background:#d97736"></i>Fluido aquecido sobe</span><span><i style="background:#3d86b7"></i>Fluido mais frio desce</span>'
+ },
+ radiation:{
+  title:'Radiação térmica',
+  subtitle:'Transferência de energia por ondas eletromagnéticas, sem necessidade de um meio material.',
+  label:'MODELO FÍSICO · EMISSÃO E ABSORÇÃO',state:'ONDAS ELETROMAGNÉTICAS',
+  note:'Todo corpo com temperatura acima do zero absoluto emite radiação térmica. A energia pode se propagar mesmo no vácuo; ao ser absorvida por outro corpo, pode aumentar sua energia interna.',
+  concept:'<strong>Ideia central:</strong> a transferência ocorre por ondas eletromagnéticas. Não é necessário contato entre os corpos nem a presença de ar ou outro meio material.',
+  eyebrow:'Lei de Stefan–Boltzmann · superfície idealizada',
+  formula:'\\(P=\\varepsilon\\sigma A(T^4-T_{amb}^4)\\)',
+  formulaText:'A potência líquida radiada depende da emissividade \\(\\varepsilon\\), da área \\(A\\), da constante de Stefan–Boltzmann \\(\\sigma\\) e das temperaturas absolutas em kelvin.',
+  features:['Não necessita de meio material.','Pode ocorrer no vácuo.','A emissão térmica aumenta fortemente com a temperatura.'],
+  exampleTitle:'Energia recebida do Sol',
+  exampleText:'A energia emitida pelo Sol atravessa o espaço e é absorvida pela atmosfera e pela superfície terrestre.',
+  attentionTitle:'Temperatura em kelvin',
+  attentionText:'Na expressão de Stefan–Boltzmann, as temperaturas devem ser usadas na escala absoluta (kelvin), e não em graus Celsius.',
+  scene:'radiationScene',legend:'<span><i style="background:#d97736"></i>Radiação emitida</span><span><i style="background:#d9e6f1"></i>Corpo que absorve</span>'
+ }
+};
+const $=id=>document.getElementById(id);
+function updateMath(){
+ if(window.MathJax&&window.MathJax.typesetPromise){
+  const nodes=[$('formula'),$('formulaText')];
+  if(window.MathJax.typesetClear)window.MathJax.typesetClear(nodes);
+  window.MathJax.typesetPromise(nodes).catch(e=>console.warn('MathJax:',e));
+ }
+}
+function selectMode(key){
+ const m=modes[key];
+ document.querySelectorAll('.tab').forEach(b=>{
+  const active=b.dataset.mode===key;
+  b.classList.toggle('active',active);
+  b.setAttribute('aria-pressed',String(active));
+ });
+ $('modeTitle').textContent=m.title;
+ $('modeSubtitle').textContent=m.subtitle;
+ $('modelLabel').textContent=m.label;
+ $('modelState').textContent=m.state;
+ $('modelNote').textContent=m.note;
+ $('concept').innerHTML=m.concept;
+ $('lawEyebrow').textContent=m.eyebrow;
+ $('formula').innerHTML=m.formula;
+ $('formulaText').innerHTML=m.formulaText;
+ $('features').innerHTML=m.features.map(x=>`<li>${x}</li>`).join('');
+ $('exampleTitle').textContent=m.exampleTitle;
+ $('exampleText').textContent=m.exampleText;
+ $('attentionTitle').textContent=m.attentionTitle;
+ $('attentionText').textContent=m.attentionText;
+ $('legend').innerHTML=m.legend;
+ ['conductionScene','convectionScene','radiationScene'].forEach(id=>$(id).style.display=id===m.scene?'':'none');
+ $('modelSvg').setAttribute('aria-label','Ilustração animada de '+m.title.toLowerCase());
+ updateMath();
+}
+document.querySelectorAll('.tab').forEach(b=>b.addEventListener('click',()=>selectMode(b.dataset.mode)));
+window.addEventListener('load',()=>{if(window.MathJax&&window.MathJax.startup&&window.MathJax.startup.promise)window.MathJax.startup.promise.then(updateMath);});
+</script>
+</body>
+</html>
