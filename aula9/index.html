@@ -1,1 +1,441 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Índice da Aula 9 de Física II: Segunda Lei da Termodinâmica, máquinas térmicas e entropia.">
+  <meta name="theme-color" content="#17365d">
+  <title>Aula 9 — Segunda Lei da Termodinâmica</title>
 
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['\\(', '\\)']],
+        displayMath: [['\\[', '\\]']],
+        processEscapes: true
+      },
+      options: {
+        skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    };
+  </script>
+  <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+  <style>
+    :root {
+      color-scheme: light;
+      --page: #f5f7fb;
+      --surface: #ffffff;
+      --ink: #17283f;
+      --muted: #64748b;
+      --line: #e1e7ef;
+      --navy: #17365d;
+      --blue: #2e649f;
+      --blue-soft: #eaf2fb;
+      --green: #28664b;
+      --green-soft: #e9f5ee;
+      --shadow: 0 12px 30px rgba(23, 54, 93, .08);
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; scroll-padding-top: 20px; }
+    body {
+      margin: 0;
+      background: var(--page);
+      color: var(--ink);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+    a { color: inherit; }
+    .hero {
+      position: relative;
+      isolation: isolate;
+      overflow: hidden;
+      color: #fff;
+      background: linear-gradient(120deg, #122a49 0%, #17365d 62%, #214c78 100%);
+      padding: 38px 24px 43px;
+    }
+    .hero::before {
+      content: "";
+      position: absolute;
+      z-index: -1;
+      width: 410px;
+      height: 410px;
+      right: -95px;
+      top: -230px;
+      border: 1px solid rgba(222, 237, 255, .16);
+      border-radius: 50%;
+      box-shadow: 0 0 0 42px rgba(222,237,255,.035), 0 0 0 86px rgba(222,237,255,.025);
+    }
+    .hero-inner, main, footer {
+      width: min(1040px, calc(100% - 40px));
+      margin-inline: auto;
+    }
+    .course-back {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      width: fit-content;
+      margin-bottom: 15px;
+      padding: 7px 11px;
+      border: 1px solid rgba(255,255,255,.3);
+      border-radius: 9px;
+      background: rgba(255,255,255,.08);
+      color: #f4f8fd;
+      font-size: .8rem;
+      font-weight: 700;
+      text-decoration: none;
+      transition: background .18s ease, border-color .18s ease;
+    }
+    .course-back:hover, .course-back:focus-visible {
+      background: rgba(255,255,255,.16);
+      border-color: rgba(255,255,255,.55);
+      outline: none;
+    }
+    .course-back:focus-visible { box-shadow: 0 0 0 3px rgba(191,214,241,.25); }
+    .brand { display: flex; align-items: center; gap: 11px; }
+    .brand-mark {
+      display: grid;
+      place-items: center;
+      width: 42px;
+      height: 42px;
+      border: 1px solid rgba(255,255,255,.22);
+      border-radius: 12px;
+      background: rgba(255,255,255,.08);
+      color: #eaf2fb;
+    }
+    .brand-title { font-size: .84rem; font-weight: 800; letter-spacing: .13em; text-transform: uppercase; }
+    .brand-subtitle { color: #c7d8eb; font-size: .76rem; }
+    .hero-copy { max-width: 760px; margin-top: 31px; }
+    .eyebrow {
+      color: #bfd6f1;
+      font-size: .74rem;
+      font-weight: 800;
+      letter-spacing: .15em;
+      text-transform: uppercase;
+    }
+    h1 {
+      margin: 10px 0 12px;
+      font-size: clamp(2rem, 5vw, 3.35rem);
+      letter-spacing: -.05em;
+      line-height: 1.09;
+      font-weight: 760;
+    }
+    .hero-copy p { max-width: 650px; margin: 0; color: #d9e5f3; font-size: 1rem; }
+    .equation-strip { display: flex; flex-wrap: wrap; gap: 9px; margin-top: 23px; }
+    .equation {
+      padding: 6px 11px;
+      border: 1px solid rgba(255,255,255,.17);
+      border-radius: 9px;
+      background: rgba(255,255,255,.055);
+      color: #f1f6fc;
+      font-size: .91rem;
+    }
+
+    main { padding-top: 30px; padding-bottom: 42px; }
+    .quicknav {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 34px;
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: rgba(255,255,255,.78);
+    }
+    .quicknav a {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 10px;
+      border-radius: 9px;
+      color: #3c526c;
+      font-size: .82rem;
+      font-weight: 700;
+      text-decoration: none;
+      transition: background .18s ease, color .18s ease;
+    }
+    .quicknav a:hover, .quicknav a:focus-visible { background: var(--blue-soft); color: var(--navy); outline: none; }
+    .nav-num {
+      display: grid;
+      place-items: center;
+      width: 23px;
+      height: 23px;
+      border-radius: 7px;
+      background: #edf2f8;
+      color: var(--blue);
+      font-size: .72rem;
+      font-weight: 850;
+    }
+
+    .section-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: end;
+      gap: 20px;
+      margin: 0 0 17px;
+    }
+    .section-top h2 { margin: 0; font-size: 1.42rem; letter-spacing: -.035em; }
+    .section-top p { margin: 5px 0 0; color: var(--muted); font-size: .91rem; }
+    .section-kicker { color: #7890ac; font-size: .76rem; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; white-space: nowrap; }
+
+    .topic-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 15px; }
+    .topic-card {
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+      padding: 21px;
+      border: 1px solid var(--line);
+      border-radius: 15px;
+      background: var(--surface);
+      text-decoration: none;
+      box-shadow: 0 2px 8px rgba(23,54,93,.025);
+      transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+    }
+    .topic-card:hover, .topic-card:focus-visible {
+      transform: translateY(-3px);
+      border-color: #b7cbe1;
+      box-shadow: var(--shadow);
+      outline: none;
+    }
+    .topic-heading { display: flex; align-items: flex-start; gap: 13px; }
+    .topic-icon {
+      display: grid;
+      place-items: center;
+      flex: 0 0 42px;
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      background: var(--blue-soft);
+      color: var(--blue);
+    }
+    .topic-number { display: block; margin-bottom: 3px; color: #7890ac; font-size: .72rem; font-weight: 850; letter-spacing: .12em; text-transform: uppercase; }
+    .topic-card h3 { margin: 0; font-size: 1.06rem; line-height: 1.35; letter-spacing: -.02em; }
+    .topic-card p { margin: 12px 0 0; color: var(--muted); font-size: .89rem; line-height: 1.65; }
+    .topic-note {
+      margin-top: 15px;
+      padding: 11px 12px;
+      border-left: 3px solid #c7d8eb;
+      border-radius: 0 8px 8px 0;
+      background: #f7f9fc;
+      color: #52657d;
+      font-size: .82rem;
+      line-height: 1.55;
+    }
+    .topic-note strong { color: #304760; }
+    .card-action {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-top: auto;
+      padding-top: 18px;
+      color: var(--blue);
+      font-size: .85rem;
+      font-weight: 800;
+    }
+    .card-action span:last-child { font-size: 1.05rem; }
+
+    .exercise-section { margin-top: 36px; }
+    .exercise-groups { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 15px; }
+    .exercise-panel {
+      padding: 20px;
+      border: 1px solid var(--line);
+      border-radius: 15px;
+      background: var(--surface);
+    }
+    .exercise-panel h3 { margin: 0; font-size: 1rem; letter-spacing: -.015em; }
+    .exercise-panel > p { margin: 5px 0 14px; color: var(--muted); font-size: .84rem; }
+    .exercise-list { display: grid; gap: 9px; }
+    .exercise {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 12px;
+      border: 1px solid #e7edf4;
+      border-radius: 10px;
+      background: #fbfcfe;
+      text-decoration: none;
+      transition: background .18s ease, border-color .18s ease;
+    }
+    .exercise:hover, .exercise:focus-visible { background: var(--blue-soft); border-color: #c5d7ea; outline: none; }
+    .exercise strong { display: block; font-size: .86rem; font-weight: 750; }
+    .exercise small { display: block; margin-top: 3px; color: var(--muted); font-size: .78rem; line-height: 1.45; }
+    .exercise-arrow { flex: 0 0 auto; color: var(--blue); font-size: 1rem; }
+
+    .full-list {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      flex-wrap: wrap;
+      margin-top: 30px;
+      padding: 20px;
+      border: 1px solid var(--line);
+      border-radius: 15px;
+      background: #fff;
+    }
+    .pdf-heading { display: flex; align-items: center; gap: 12px; }
+    .pdf-icon {
+      display: grid;
+      place-items: center;
+      flex: 0 0 42px;
+      width: 42px;
+      height: 42px;
+      border-radius: 11px;
+      background: var(--green-soft);
+      color: var(--green);
+    }
+    .full-list h2 { margin: 0 0 3px; font-size: 1rem; }
+    .full-list p { margin: 0; color: var(--muted); font-size: .85rem; }
+    .pdf-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      padding: 10px 14px;
+      border: 1px solid #cbd9e8;
+      border-radius: 10px;
+      background: #f7faff;
+      color: var(--navy);
+      text-decoration: none;
+      font-size: .84rem;
+      font-weight: 800;
+      transition: background .18s ease, border-color .18s ease;
+    }
+    .pdf-link:hover, .pdf-link:focus-visible { background: var(--blue-soft); border-color: #a9c2df; outline: none; }
+
+    footer {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      padding: 18px 0 25px;
+      border-top: 1px solid var(--line);
+      color: var(--muted);
+      font-size: .79rem;
+    }
+    footer strong { color: var(--navy); }
+
+    @media (max-width: 720px) {
+      .topic-grid, .exercise-groups { grid-template-columns: 1fr; }
+      .section-top { align-items: flex-start; flex-direction: column; gap: 5px; }
+      .section-kicker { white-space: normal; }
+    }
+    @media (max-width: 520px) {
+      .hero { padding: 28px 0 34px; }
+      .hero-inner, main, footer { width: min(100% - 28px, 1040px); }
+      .hero-copy { margin-top: 26px; }
+      .course-back { margin-bottom: 12px; }
+      .quicknav { gap: 4px; padding: 8px; }
+      .quicknav a { padding: 7px; font-size: .78rem; }
+      .topic-card, .exercise-panel { padding: 16px; }
+      .full-list { align-items: flex-start; padding: 16px; }
+      .pdf-link { width: 100%; justify-content: center; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; transition: none !important; }
+    }
+  </style>
+</head>
+<body>
+  <header class="hero">
+    <div class="hero-inner">
+      <a class="course-back" href="../index.html" aria-label="Voltar à página de escolha das aulas">← Voltar</a>
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true">
+          <svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M8 3v8.2a4.5 4.5 0 1 0 8 0V3"/><path d="M8 7h8M8 11h8M12 15v3"/>
+          </svg>
+        </div>
+        <div><div class="brand-title">Física II</div><div class="brand-subtitle">Termodinâmica · Material de apoio</div></div>
+      </div>
+      <div class="hero-copy">
+        <div class="eyebrow">Aula 09</div>
+        <h1>Segunda Lei da Termodinâmica</h1>
+        <p>Explore a diferença entre processos reversíveis e irreversíveis, o funcionamento de máquinas térmicas e refrigeradores, e o papel da entropia na descrição dos processos naturais.</p>
+        <div class="equation-strip">
+          <span class="equation">\(\Delta S_{\text{universo}}\geq 0\)</span>
+          <span class="equation">\(\eta=\frac{W}{Q_h}\)</span>
+          <span class="equation">\(\eta_C=1-\frac{T_c}{T_h}\)</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <nav class="quicknav" aria-label="Navegação pelos tópicos">
+      <a href="#reversiveis"><span class="nav-num">1</span> Processos</a>
+      <a href="#maquinas"><span class="nav-num">2</span> Máquinas e refrigeradores</a>
+      <a href="#ideais"><span class="nav-num">3</span> Máquinas ideais</a>
+      <a href="#reais"><span class="nav-num">4</span> Eficiência real</a>
+      <a href="#segunda-lei"><span class="nav-num">5</span> Segunda Lei</a>
+      <a href="#entropia"><span class="nav-num">6</span> Entropia</a>
+      <a href="#exercicios"><span class="nav-num">E</span> Exercícios</a>
+    </nav>
+
+    <section aria-labelledby="topics-title">
+      <div class="section-top"><div><h2 id="topics-title">Conteúdo da aula</h2><p>Selecione um tópico para abrir a explicação, demonstração ou simulação correspondente.</p></div><div class="section-kicker">06 tópicos</div></div>
+      <div class="topic-grid">
+        <a class="topic-card" id="reversiveis" href="01_processos_reversiveis.html" aria-label="Abrir tema Processos reversíveis e irreversíveis">
+          <div class="topic-heading"><div class="topic-icon" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h12l-3-3M20 16H8l3 3"/><path d="M16 5l3 3-3 3M8 13l-3 3 3 3"/></svg></div><div><span class="topic-number">Tópico 01</span><h3>Processos reversíveis e irreversíveis</h3></div></div>
+          <p>Como distinguir processos ideais, que podem ser invertidos sem efeitos líquidos, dos processos espontâneos que encontramos na natureza.</p>
+          <div class="topic-note"><strong>Ideia central:</strong> processos reais apresentam irreversibilidades, como atrito e transferência de calor com diferença finita de temperatura.</div><div class="card-action"><span>Abrir conteúdo</span><span aria-hidden="true">↗</span></div>
+        </a>
+        <a class="topic-card" id="maquinas" href="02_maquinas_refrigeradores.html" aria-label="Abrir tema Máquinas térmicas e refrigeradores">
+          <div class="topic-heading"><div class="topic-icon" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3v4M17 3v4M5 7h14v14H5z"/><path d="M8 12h8M12 9v6"/></svg></div><div><span class="topic-number">Tópico 02</span><h3>Máquinas térmicas e refrigeradores</h3></div></div>
+          <p>Dispositivos que operam em ciclos, convertendo parte do calor em trabalho ou usando trabalho para transferir calor de uma região fria para uma quente.</p>
+          <div class="topic-note"><strong>Para comparar:</strong> máquinas térmicas produzem trabalho; refrigeradores consomem trabalho para retirar calor de uma região fria.</div><div class="card-action"><span>Abrir conteúdo</span><span aria-hidden="true">↗</span></div>
+        </a>
+        <a class="topic-card" id="ideais" href="03_maquinas_ideais.html" aria-label="Abrir tema Máquinas ideais">
+          <div class="topic-heading"><div class="topic-icon" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 3.5v4M20.5 12h-4M12 20.5v-4M3.5 12h4"/><circle cx="12" cy="12" r="3"/></svg></div><div><span class="topic-number">Tópico 03</span><h3>Máquinas ideais</h3></div></div>
+          <p>O ciclo de Carnot como referência para compreender o limite máximo de eficiência de uma máquina operando entre duas temperaturas.</p>
+          <div class="topic-note"><strong>Resultado importante:</strong> \(\eta_C=1-T_c/T_h\), com temperaturas absolutas em kelvin.</div><div class="card-action"><span>Abrir conteúdo</span><span aria-hidden="true">↗</span></div>
+        </a>
+        <a class="topic-card" id="reais" href="04_maquinas_reais_eficiencia.html" aria-label="Abrir tema Máquinas reais e eficiência">
+          <div class="topic-heading"><div class="topic-icon" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19V5M4 19h16"/><path d="m7 15 4-4 3 2 5-7"/><path d="M15 6h4v4"/></svg></div><div><span class="topic-number">Tópico 04</span><h3>Máquinas reais e eficiência</h3></div></div>
+          <p>Como avaliar o desempenho de máquinas reais e entender por que perdas e irreversibilidades reduzem sua eficiência.</p>
+          <div class="topic-note"><strong>Definição:</strong> eficiência térmica é a razão entre o trabalho útil produzido e o calor recebido da fonte quente.</div><div class="card-action"><span>Abrir conteúdo</span><span aria-hidden="true">↗</span></div>
+        </a>
+        <a class="topic-card" id="segunda-lei" href="05_segunda_lei.html" aria-label="Abrir tema A Segunda Lei da Termodinâmica">
+          <div class="topic-heading"><div class="topic-icon" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18M3 12h18"/><circle cx="12" cy="12" r="8.5"/><path d="m8 9 4 3-4 3"/></svg></div><div><span class="topic-number">Tópico 05</span><h3>A Segunda Lei da Termodinâmica</h3></div></div>
+          <p>Princípios que estabelecem o sentido dos processos naturais e limitam a conversão de calor em trabalho.</p>
+          <div class="topic-note"><strong>Mensagem central:</strong> nem todo processo compatível com a conservação de energia pode ocorrer espontaneamente.</div><div class="card-action"><span>Abrir conteúdo</span><span aria-hidden="true">↗</span></div>
+        </a>
+        <a class="topic-card" id="entropia" href="06_entropia.html" aria-label="Abrir tema Entropia">
+          <div class="topic-heading"><div class="topic-icon" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="5" cy="6" r="1.3"/><circle cx="12" cy="4" r="1.3"/><circle cx="19" cy="7" r="1.3"/><circle cx="7" cy="14" r="1.3"/><circle cx="15" cy="12" r="1.3"/><circle cx="19" cy="19" r="1.3"/><circle cx="5" cy="20" r="1.3"/><path d="m6 7 1 5m6-7 2 5m3-2-2 3m-8 4-2 4m5-5 6 4"/></svg></div><div><span class="topic-number">Tópico 06</span><h3>Entropia</h3></div></div>
+          <p>Uma grandeza que ajuda a descrever a direção dos processos e a distinguir transformações reversíveis e irreversíveis.</p>
+          <div class="topic-note"><strong>Para lembrar:</strong> a entropia total de um sistema isolado não diminui.</div><div class="card-action"><span>Abrir conteúdo</span><span aria-hidden="true">↗</span></div>
+        </a>
+      </div>
+    </section>
+
+    <section class="exercise-section" id="exercicios" aria-labelledby="exercises-title">
+      <div class="section-top"><div><h2 id="exercises-title">Exercícios de sala de aula</h2><p>Oito espaços reservados para problemas de aplicação dos conceitos estudados.</p></div></div>
+      <div class="exercise-groups">
+        <div class="exercise-panel"><h3>Processos e máquinas térmicas</h3><p>Exercícios 1 a 4 · aplicações e interpretação física.</p><div class="exercise-list">
+          <div class="exercise"><span><strong>Exercício 1</strong><small>Processos reversíveis e irreversíveis.</small></span><span class="exercise-arrow" aria-hidden="true">＋</span></div>
+          <div class="exercise"><span><strong>Exercício 2</strong><small>Identificação de processos espontâneos.</small></span><span class="exercise-arrow" aria-hidden="true">＋</span></div>
+          <div class="exercise"><span><strong>Exercício 3</strong><small>Balanço de energia em uma máquina térmica.</small></span><span class="exercise-arrow" aria-hidden="true">＋</span></div>
+          <div class="exercise"><span><strong>Exercício 4</strong><small>Funcionamento de um refrigerador.</small></span><span class="exercise-arrow" aria-hidden="true">＋</span></div>
+        </div></div>
+        <div class="exercise-panel"><h3>Eficiência e entropia</h3><p>Exercícios 5 a 8 · cálculos e conceitos fundamentais.</p><div class="exercise-list">
+          <div class="exercise"><span><strong>Exercício 5</strong><small>Eficiência de uma máquina térmica.</small></span><span class="exercise-arrow" aria-hidden="true">＋</span></div>
+          <div class="exercise"><span><strong>Exercício 6</strong><small>Limite de eficiência de Carnot.</small></span><span class="exercise-arrow" aria-hidden="true">＋</span></div>
+          <div class="exercise"><span><strong>Exercício 7</strong><small>Aplicação da Segunda Lei da Termodinâmica.</small></span><span class="exercise-arrow" aria-hidden="true">＋</span></div>
+          <div class="exercise"><span><strong>Exercício 8</strong><small>Variação de entropia em uma transformação.</small></span><span class="exercise-arrow" aria-hidden="true">＋</span></div>
+        </div></div>
+      </div>
+    </section>
+
+    <section class="full-list" aria-label="Lista completa de exercícios em PDF">
+      <div class="pdf-heading"><div class="pdf-icon" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h8l4 4v14H6z"/><path d="M14 3v5h5M8.5 13h7M8.5 16.5h7"/></svg></div><div><h2>Lista completa de exercícios</h2><p>Consulte a lista integral da Aula 9 em PDF.</p></div></div>
+      <a class="pdf-link" href="lista_exercicios_aula9.pdf" target="_blank" rel="noopener">Abrir lista em PDF <span aria-hidden="true">↗</span></a>
+    </section>
+  </main>
+  <footer><span><strong>Física II</strong> · Aula 9</span><span>Segunda Lei da Termodinâmica</span></footer>
+</body>
+</html>
