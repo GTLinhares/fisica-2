@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Exercício 6.41 — Equilíbrio térmico e solidificação do alumínio</title>
+<script>
+window.MathJax={tex:{inlineMath:[['\\(','\\)'],['$','$']],displayMath:[['\\[','\\]'],['$$','$$']]},options:{skipHtmlTags:['script','noscript','style','textarea','pre','code']}};
+</script>
+<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+<style>
+:root{--navy:#173c65;--blue:#2563a6;--blue-soft:#eaf2fb;--ink:#1e293b;--muted:#64748b;--line:#dbe3ec;--bg:#f1f5f9;--orange:#ea580c;--red:#c94f42;--green:#15803d}
+*{box-sizing:border-box}
+body{margin:0;height:100vh;overflow:hidden;background:var(--bg);color:var(--ink);font-family:Inter,Arial,sans-serif}
+header{height:62px;background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:space-between;padding:8px 20px;gap:14px;box-shadow:0 2px 8px #0f172a22}
+header h1{font-size:18px;margin:0;font-weight:800;letter-spacing:-.2px}
+header p{margin:3px 0 0;color:#c9ddf2;font-size:11px}
+.index-return{color:#fff;text-decoration:none;border:1px solid #ffffff55;background:#ffffff14;border-radius:8px;padding:8px 12px;font-size:12px;font-weight:700;white-space:nowrap}
+main{height:calc(100vh - 62px);padding:10px;display:grid;grid-template-columns:minmax(320px,.92fr) minmax(380px,1.18fr) minmax(280px,.88fr);gap:10px;max-width:1700px;margin:auto}
+.panel{background:#fff;border:1px solid var(--line);border-radius:12px;box-shadow:0 1px 3px #0f172a0a;min-width:0;min-height:0;padding:11px;display:flex;flex-direction:column;gap:8px;overflow:hidden}
+.panel h2{font-size:13px;margin:0;font-weight:800;color:#334155}
+.eyebrow{font-size:9px;text-transform:uppercase;letter-spacing:1px;font-weight:800;color:#94a3b8}
+.sub{font-size:10px;color:var(--muted);line-height:1.4;margin:2px 0 0}
+.scene-wrap{flex:1;min-height:190px;border:1px solid #dbe5ef;border-radius:9px;background:linear-gradient(180deg,#f8fbff,#eef5fb);overflow:hidden}
+#scene{width:100%;height:100%;display:block}
+.stage-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:5px}
+.stage{border:1px solid var(--line);border-radius:7px;padding:6px 7px;background:#f8fafc;min-width:0}
+.stage.active{border-color:#e5a04b;background:#fff7ed}
+.stage b{display:block;font-size:10px;color:#475569}
+.stage span{font-size:9px;color:#64748b;line-height:1.25;display:block;margin-top:2px}
+.playrow{display:flex;gap:6px;align-items:center}
+button{border:0;border-radius:8px;padding:8px 10px;font-weight:800;font-size:11px;cursor:pointer}
+.primary{background:#2563a6;color:#fff;flex:1}
+.secondary{background:#eaf2fb;color:#1e4e7b}
+.timeline{width:100%;accent-color:#2563a6}
+.graph-card{border:1px solid var(--line);border-radius:9px;padding:8px;background:#fff;min-height:0}
+.graph-card.cooling{flex:1;display:flex;flex-direction:column}
+
+.graph-title{display:flex;align-items:center;justify-content:space-between;gap:6px;margin-bottom:2px}
+.graph-title b{font-size:11px}
+.graph-title span{font-size:9px;color:#64748b}
+svg.graph{width:100%;height:100%;min-height:105px;display:block}
+.legend{font-size:9px;color:#64748b;display:flex;gap:10px;flex-wrap:wrap}
+.dot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:4px}
+.controls{background:#f8fafc;border:1px solid var(--line);border-radius:9px;padding:9px}
+.control{margin-bottom:10px}
+.control:last-child{margin-bottom:0}
+.control-head{display:flex;justify-content:space-between;gap:8px;font-size:10px;font-weight:700;color:#475569}
+.control-head output{color:#173c65;font-weight:800}
+input[type=range]{width:100%;margin:6px 0 1px;accent-color:#2563a6}
+.range-limits{display:flex;justify-content:space-between;font-size:9px;color:#94a3b8}
+.metric-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.metric{border:1px solid var(--line);border-radius:8px;padding:8px;background:#fff;min-width:0}
+.metric .label{font-size:9px;text-transform:uppercase;letter-spacing:.5px;font-weight:800;color:#94a3b8}
+.metric .value{font-size:clamp(16px,1.5vw,22px);font-weight:900;line-height:1.2;margin-top:3px;color:#173c65;white-space:nowrap}
+.metric .unit{font-size:9px;color:#64748b}
+.metric.blue{background:#eff6ff;border-color:#bfdbfe}.metric.orange{background:#fff7ed;border-color:#fed7aa}.metric.green{background:#f0fdf4;border-color:#bbf7d0}
+.answer{border-radius:9px;padding:9px;background:#173c65;color:white}
+.answer .eyebrow{color:#bfdbfe}
+.answer strong{font-size:21px;display:block;margin-top:3px}
+.answer p{font-size:9px;line-height:1.4;color:#dbeafe;margin:4px 0 0}
+.energy{font-size:10px;line-height:1.45;color:#475569;background:#f8fafc;border:1px solid var(--line);padding:8px;border-radius:8px}
+.energy b{color:#173c65}.equation{font-size:11px;line-height:1.55;overflow-x:auto;padding:2px 0}.equation mjx-container[display="true"]{margin:.25em 0!important}.note-math{font-size:9px;color:#64748b;line-height:1.35}
+.note{font-size:9px;color:#64748b;line-height:1.4}
+@media(max-width:1050px){body{height:auto;overflow:auto}main{height:auto;grid-template-columns:1fr;max-width:760px}.panel{overflow:visible}.scene-wrap{height:330px;flex:none}.graph-card{min-height:230px}}
+@media(max-height:760px) and (min-width:1051px){header{height:54px}main{height:calc(100vh - 54px);padding:7px;gap:7px}.panel{padding:8px;gap:6px}.scene-wrap{min-height:155px}.stage{padding:4px}.controls{padding:7px}.control{margin-bottom:7px}.metric{padding:6px}.graph-card{padding:6px}}
+
+/* Leitura ampliada na coluna de parâmetros e resultados */
+.panel:last-child .sub{font-size:12px;line-height:1.5}
+.panel:last-child .control-head{font-size:12px}
+.panel:last-child .range-limits{font-size:10px}
+.panel:last-child .metric .label{font-size:10px}
+.panel:last-child .metric .value{font-size:clamp(18px,1.7vw,24px)}
+.panel:last-child .metric .unit{font-size:10px}
+.panel:last-child .answer .eyebrow{font-size:10px}
+.panel:last-child .answer strong{font-size:23px}
+.panel:last-child .answer p{font-size:11px;line-height:1.5}
+.panel:last-child .energy{font-size:12px;line-height:1.55}
+.panel:last-child .equation{font-size:13px;line-height:1.6}
+.panel:last-child .note,
+.panel:last-child .note-math{font-size:11px;line-height:1.5}
+
+/* Propriedades físicas em formato de tabela, separadas por material */
+.data-table{
+  margin-top:8px;
+  padding:12px;
+  border:1px solid #d8e2ef;
+  border-radius:9px;
+  background:#f8fafc;
+  color:#26384c;
+}
+.data-title{
+  margin-bottom:9px;
+  color:#173b61;
+  font-size:13px;
+  font-weight:800;
+}
+.data-columns{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+}
+.data-column{
+  min-width:0;
+  padding:9px 8px 7px;
+  border:1px solid #dce5ef;
+  border-radius:7px;
+  background:#fff;
+}
+.data-column h4{
+  margin:0 0 8px;
+  padding-bottom:5px;
+  border-bottom:1px solid #e5edf5;
+  color:#245f9e;
+  font-size:13px;
+  font-weight:800;
+}
+.data-equation{
+  min-width:0;
+  margin:5px 0;
+  text-align:center;
+  font-size:14px;
+  line-height:1.5;
+}
+.data-equation mjx-container{
+  margin:3px 0!important;
+  max-width:100%;
+}
+@media(max-width:700px){
+  .data-columns{grid-template-columns:1fr;}
+}
+
+
+/* Layout responsivo: adapta a distribuição e a legibilidade ao espaço disponível */
+@media (min-width: 1051px) and (max-width: 1450px) {
+  main {
+    grid-template-columns: minmax(0, .95fr) minmax(0, 1.12fr) minmax(0, .93fr);
+    gap: 8px;
+    padding: 8px;
+  }
+  .panel { padding: 9px; gap: 7px; }
+  .panel h2 { font-size: 14px; }
+  .sub { font-size: 11px; }
+  .eyebrow { font-size: 9px; }
+  .stage b { font-size: 10px; }
+  .stage span { font-size: 9px; }
+  .graph-title b { font-size: 11px; }
+  .panel:last-child .sub { font-size: 11px; }
+  .panel:last-child .control-head { font-size: 11px; }
+  .panel:last-child .energy { font-size: 11px; }
+  .panel:last-child .equation { font-size: 12px; }
+  .data-table { padding: 9px; margin-top: 5px; }
+  .data-column { padding: 7px 6px 5px; }
+  .data-equation { font-size: 12px; }
+}
+@media (min-width: 1051px) and (max-height: 850px) {
+  header { height: 56px; }
+  main {
+    height: calc(100vh - 56px);
+    padding: 7px;
+    gap: 7px;
+  }
+  .panel { padding: 8px; gap: 6px; }
+  .scene-wrap { min-height: 125px; }
+  .stage { padding: 4px 5px; }
+  .controls { padding: 7px; }
+  .control { margin-bottom: 6px; }
+  .metric { padding: 6px; }
+  .answer { padding: 7px; }
+  .energy { padding: 6px; }
+  .data-table { padding: 7px; margin-top: 3px; }
+  .data-title { margin-bottom: 5px; }
+  .data-column h4 { margin-bottom: 5px; padding-bottom: 3px; }
+  .data-equation { margin: 3px 0; line-height: 1.3; }
+}
+@media (max-width: 1050px) {
+  body { height: auto; min-height: 100vh; overflow: auto; }
+  header { min-height: 58px; height: auto; padding: 10px 14px; }
+  header h1 { font-size: clamp(15px, 2vw, 18px); }
+  main {
+    height: auto;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    max-width: 1100px;
+    padding: 10px;
+  }
+  main > aside { grid-column: 1 / -1; }
+  .panel { overflow: visible; }
+  .scene-wrap { height: clamp(260px, 38vw, 390px); min-height: 0; flex: none; }
+  .graph-card { min-height: 240px; }
+  .graph-card.cooling { flex: initial; }
+}
+@media (max-width: 680px) {
+  header { align-items: flex-start; }
+  header p { font-size: 10px; }
+  .index-return { padding: 7px 9px; }
+  main { grid-template-columns: minmax(0, 1fr); padding: 8px; gap: 8px; }
+  main > aside { grid-column: auto; }
+  .panel { padding: 10px; }
+  .scene-wrap { height: 300px; }
+  .graph-card { min-height: 220px; }
+  .data-columns { grid-template-columns: 1fr; }
+  .metric .value { font-size: clamp(17px, 5vw, 22px); }
+}
+@media (max-width: 380px) {
+  .stage-strip { grid-template-columns: 1fr; }
+  .stage span { font-size: 10px; }
+  .scene-wrap { height: 250px; }
+  .metric-grid { gap: 5px; }
+}
+
+
+/* Aumento geral de legibilidade, preservando o layout responsivo */
+.panel h2 { font-size: 15px; }
+.eyebrow { font-size: 10px; }
+.sub { font-size: 12px; line-height: 1.5; }
+.stage b { font-size: 11px; }
+.stage span { font-size: 10px; line-height: 1.35; }
+button { font-size: 12px; }
+.graph-title b { font-size: 12px; }
+.graph-title span { font-size: 10px; }
+.legend { font-size: 10px; }
+.control-head { font-size: 12px; }
+.range-limits { font-size: 10px; }
+.metric .label { font-size: 10px; }
+.metric .unit { font-size: 10px; }
+.answer .eyebrow { font-size: 10px; }
+.answer p { font-size: 12px; line-height: 1.5; }
+.energy { font-size: 12px; line-height: 1.55; }
+.equation { font-size: 13px; line-height: 1.6; }
+.note, .note-math { font-size: 11px; line-height: 1.5; }
+.data-title { font-size: 14px; }
+.data-column h4 { font-size: 14px; }
+.data-equation { font-size: 15px; }
+
+@media (max-width: 1450px) and (min-width: 1051px) {
+  .sub { font-size: 12px; }
+  .panel:last-child .sub,
+  .panel:last-child .control-head,
+  .panel:last-child .energy { font-size: 12px; }
+  .panel:last-child .equation { font-size: 13px; }
+  .data-equation { font-size: 14px; }
+}
+@media (max-width: 680px) {
+  .sub { font-size: 13px; }
+  .panel h2 { font-size: 16px; }
+  .stage b { font-size: 12px; }
+  .stage span { font-size: 11px; }
+  .control-head { font-size: 13px; }
+  .energy { font-size: 13px; }
+  .equation { font-size: 14px; }
+}
+
+
+/* Ajuste automático para que o exercício caiba na janela em monitores */
+@media (min-width: 1051px) {
+  html, body { width: 100%; }
+  body { transform-origin: top left; }
+  main { width: 100%; }
+  .panel { min-height: 0; }
+}
+
+</style>
+</head>
+<body>
+<header>
+ <div><h1>Exercício 6.41 · Água e alumínio: equilíbrio térmico</h1><p>Calor sensível · Calor latente · Mudança de fase</p></div>
+ <a class="index-return" href="index.html">← Voltar</a>
+</header>
+<main>
+ <section class="panel">
+  <div><div class="eyebrow">Visualização do fenômeno</div><h2>O alumínio transfere energia para a água</h2></div>
+  <div class="scene-wrap">
+   <svg id="scene" viewBox="0 0 560 390" role="img" aria-label="Recipiente com água e bloco de alumínio quente, termômetro e setas de transferência de calor">
+    <defs>
+     <linearGradient id="water" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#bfdbfe" stop-opacity=".72"/><stop offset="1" stop-color="#60a5fa" stop-opacity=".52"/></linearGradient>
+     <linearGradient id="metal" x1="0" x2="1" y1="0" y2="1"><stop offset="0" stop-color="#f59e0b"/><stop offset=".55" stop-color="#dc6545"/><stop offset="1" stop-color="#a63f32"/></linearGradient>
+     <marker id="heatArrow" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto"><path d="M0 0L6 3L0 6Z" fill="#ea580c"/></marker>
+     <clipPath id="beakerClip"><path d="M112 82 L112 326 Q112 345 132 345 L340 345 Q360 345 360 326 L360 82Z"/></clipPath>
+    </defs>
+    <g id="sceneArtwork" transform="translate(-22 -16) scale(1.15)">
+    <text x="236" y="34" text-anchor="middle" fill="#64748b" font-size="13" font-weight="700">SISTEMA ÁGUA–ALUMÍNIO</text>
+    <path d="M104 77 L104 326 Q104 353 132 353 L340 353 Q368 353 368 326 L368 77" fill="none" stroke="#7892aa" stroke-width="7" stroke-linecap="round"/>
+    <path d="M104 80 Q236 87 368 80" fill="none" stroke="#7892aa" stroke-width="5"/>
+    <g clip-path="url(#beakerClip)">
+     <rect id="waterFill" x="108" y="174" width="256" height="180" fill="url(#water)"/>
+     <path id="waterSurface" d="M108 174 Q170 169 236 174 T364 174" fill="none" stroke="#60a5fa" stroke-width="3"/>
+     <g id="waterRipples" opacity=".55" stroke="#fff" stroke-width="2" fill="none">
+      <path d="M132 202q28 -7 56 0t56 0"/><path d="M262 220q25 -6 50 0"/>
+     </g>
+     <g id="steam" opacity="0" fill="none" stroke="#94a3b8" stroke-width="4" stroke-linecap="round">
+      <path d="M165 160q-13 -13 0 -26t0 -26"/><path d="M235 155q-13 -13 0 -26t0 -26"/><path d="M305 160q-13 -13 0 -26t0 -26"/>
+     </g>
+     <g id="heatArrows" stroke="#ea580c" stroke-width="4" fill="none" marker-end="url(#heatArrow)" opacity=".9">
+      <path d="M204 253 Q184 237 202 216"/><path d="M236 253 Q218 235 236 211"/><path d="M268 253 Q288 237 270 216"/>
+     </g>
+     <g id="metalBlock">
+      <rect id="metalBody" x="190" y="258" width="92" height="48" rx="7" fill="url(#metal)" stroke="#8b4937" stroke-width="2"/>
+      <path d="M203 270h65M203 280h65" stroke="#fff" stroke-opacity=".28" stroke-width="2"/>
+      <text id="metalLabel" x="236" y="323" text-anchor="middle" font-size="11" font-weight="900" fill="#fff" stroke="#8b4937" stroke-width="2.5" paint-order="stroke" stroke-linejoin="round">Al</text>
+     </g>
+    </g>
+    <g id="thermometer" transform="translate(420 105)">
+     <rect x="0" y="0" width="18" height="190" rx="9" fill="#fff" stroke="#94a3b8" stroke-width="2"/>
+     <circle cx="9" cy="192" r="17" fill="#fff" stroke="#94a3b8" stroke-width="2"/>
+     <rect id="thermoMercury" x="6" y="38" width="6" height="150" rx="3" fill="#dc6254"/>
+     <circle cx="9" cy="192" r="11" fill="#dc6254"/>
+     <g stroke="#94a3b8" stroke-width="1"><path d="M19 30h9M19 65h9M19 100h9M19 135h9M19 170h9"/></g>
+    </g>
+    <text id="waterTempText" x="450" y="330" text-anchor="middle" fill="#1d4ed8" font-size="13" font-weight="800">22,0 °C</text>
+    <text x="236" y="377" text-anchor="middle" fill="#64748b" font-size="11">Recipiente idealizado · sem troca de calor com o ambiente</text>
+    <text id="phaseLabel" x="236" y="238" text-anchor="middle" fill="#9a3412" font-size="11" font-weight="800" opacity="0">ALUMÍNIO NA TEMPERATURA DE FUSÃO</text>
+    </g>
+   </svg>
+  </div>
+  <div class="stage-strip">
+   <div class="stage active" id="stage1"><b>1 · Solidificação</b><span>Liberação de calor latente</span></div>
+   <div class="stage" id="stage2"><b>2 · Resfriamento</b><span>Alumínio sólido perde calor</span></div>
+   <div class="stage" id="stage3"><b>3 · Equilíbrio</b><span>Mesma temperatura final</span></div>
+  </div>
+  <div class="playrow"><button class="primary" id="playBtn" onclick="toggleAnimation()">▶ Iniciar</button></div>
+  <input class="timeline" id="timeline" type="range" min="0" max="1000" value="0" aria-label="Progresso da animação">
+  <div class="note" id="phaseStatus">Aguardando início: alumínio a 932 K e água a 22 °C.</div>
+ </section>
+
+ <section class="panel">
+  <div><div class="eyebrow">Evolução térmica</div><h2>Temperatura em função do calor</h2></div>
+  <div class="graph-card cooling">
+   <div class="graph-title"><b>Água · temperatura × calor recebido</b><span>Q recebido →</span></div>
+   <svg class="graph" id="waterGraph" viewBox="0 0 500 250" role="img" aria-label="Temperatura da água em função do calor recebido, com aquecimento, possível vaporização e aquecimento do vapor">
+    <path d="M55 18V205H475" fill="none" stroke="#475569" stroke-width="2"/>
+    <text x="18" y="24" font-size="13" fill="#475569" font-weight="700">T (K)</text>
+    <text x="265" y="238" text-anchor="middle" font-size="12" fill="#475569" font-weight="700">Calor recebido pela água →</text>
+    <g stroke="#e2e8f0" stroke-width="1"><path d="M55 55H470M55 125H470M55 195H470"/></g>
+    <text x="48" y="59" text-anchor="end" font-size="10" fill="#64748b">573</text>
+    <text x="48" y="129" text-anchor="end" font-size="10" fill="#64748b">423</text>
+    <text x="48" y="199" text-anchor="end" font-size="10" fill="#64748b">273</text>
+    <path id="waterCurve" d="M65 185L190 145L350 145L420 55" fill="none" stroke="#2563a6" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="75" y="170" font-size="10" fill="#1d4ed8" font-weight="800" paint-order="stroke" stroke="#ffffff" stroke-width="4px" stroke-linejoin="round">Água</text>
+    <text x="230" y="140" text-anchor="middle" font-size="10" fill="#1d4ed8" font-weight="800" paint-order="stroke" stroke="#ffffff" stroke-width="4px" stroke-linejoin="round">Vaporização</text>
+    <text x="410" y="90" text-anchor="end" font-size="10" fill="#1d4ed8" font-weight="800" paint-order="stroke" stroke="#ffffff" stroke-width="4px" stroke-linejoin="round">Vapor</text>
+    <line id="waterCursor" x1="65" y1="175" x2="65" y2="195" stroke="#0f172a" stroke-width="2"/>
+    <circle id="waterDot" cx="65" cy="185" r="6" fill="#fff" stroke="#2563a6" stroke-width="3"/>
+   </svg>
+   <div class="legend"><span><i class="dot" style="background:#2563a6"></i>A água recebe energia: aquece, pode vaporizar e, se toda evaporar, o vapor aquece.</span></div>
+  </div>
+  <div class="graph-card cooling">
+   <div class="graph-title"><b>Alumínio · temperatura × calor cedido</b><span>Q cedido →</span></div>
+   <svg class="graph" id="coolingGraph" viewBox="0 0 500 250" role="img" aria-label="Temperatura do alumínio em função do calor cedido, com patamar de solidificação e resfriamento do sólido">
+    <path d="M55 18V205H475" fill="none" stroke="#475569" stroke-width="2"/>
+    <text x="18" y="24" font-size="13" fill="#475569" font-weight="700">T (K)</text>
+    <text x="265" y="238" text-anchor="middle" font-size="12" fill="#475569" font-weight="700">Calor cedido pelo alumínio →</text>
+    <g stroke="#e2e8f0" stroke-width="1"><path d="M55 55H470M55 125H470M55 195H470"/></g>
+    <text x="48" y="59" text-anchor="end" font-size="10" fill="#64748b">932</text>
+    <text x="48" y="129" text-anchor="end" font-size="10" fill="#64748b">≈ 600</text>
+    <text x="48" y="199" text-anchor="end" font-size="10" fill="#64748b">273</text>
+    <path id="alCurve" d="M65 55L190 55L420 195" fill="none" stroke="#dc6545" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="125" y="40" text-anchor="middle" font-size="10" fill="#9a3412" font-weight="800" paint-order="stroke" stroke="#ffffff" stroke-width="4px" stroke-linejoin="round">Solidificação</text>
+    <text x="310" y="110" text-anchor="middle" font-size="10" fill="#9a3412" font-weight="800" paint-order="stroke" stroke="#ffffff" stroke-width="4px" stroke-linejoin="round">Resfriamento do sólido</text>
+    <line id="coolCursor" x1="65" y1="44" x2="65" y2="66" stroke="#0f172a" stroke-width="2"/>
+    <circle id="coolDot" cx="65" cy="55" r="6" fill="#fff" stroke="#dc6545" stroke-width="3"/>
+   </svg>
+   <div class="legend"><span><i class="dot" style="background:#dc6545"></i>Patamar em 932 K durante a solidificação; depois a temperatura diminui.</span></div>
+  </div>
+ </section>
+
+ <aside class="panel">
+  <div><div class="eyebrow">Dados e resultados</div><h2>Parâmetros do exercício</h2></div>
+  <div class="controls">
+   <div class="control"><div class="control-head"><label for="alMass">Massa de alumínio</label><output id="alMassOut">100 g</output></div><input id="alMass" type="range" min="20" max="2000" step="10" value="100"><div class="range-limits"><span>20 g</span><span>2000 g</span></div></div>
+   <div class="control"><div class="control-head"><label for="waterVol">Volume de água</label><output id="waterVolOut">1,00 L</output></div><input id="waterVol" type="range" min="0.25" max="2" step="0.05" value="1"><div class="range-limits"><span>0,25 L</span><span>2,00 L</span></div></div>
+   <div class="control"><div class="control-head"><label for="waterTemp">Temperatura inicial da água</label><output id="waterTempOut">22 °C</output></div><input id="waterTemp" type="range" min="5" max="40" step="1" value="22"><div class="range-limits"><span>5 °C</span><span>40 °C</span></div></div>
+  </div>
+  <div class="metric-grid">
+   <div class="metric blue"><div class="label">Temperatura final</div><div class="value" id="finalTemp">44,6 °C</div><div class="unit">Equilíbrio térmico</div></div>
+   <div class="metric orange"><div class="label">Água evaporada</div><div class="value" id="evapMass">0 g</div><div class="unit">Não atinge ebulição</div></div>
+   <div class="metric green"><div class="label">Alumínio solidificado</div><div class="value" id="solidMass">100 g</div><div class="unit">Massa total</div></div>
+   <div class="metric"><div class="label">Calor recebido</div><div class="value" id="waterHeat">94,9</div><div class="unit">kJ pela água</div></div>
+  </div>
+  <div class="answer"><div class="eyebrow">Temperatura de equilíbrio</div><strong id="answerTemp">44,6 °C</strong><p id="answerText">O alumínio solidifica completamente. A água permanece líquida e não entra em ebulição.</p></div>
+  <div class="energy">
+   <b>Balanço energético</b>
+   <div id="energyEquations">
+    <div class="equation">\[Q_{\mathrm{Al}}+Q_{\mathrm{água}}=0\]</div>
+    <div class="equation">\[m_{\mathrm{Al}}L_f+m_{\mathrm{Al}}c_{\mathrm{Al}}(T_f-T_m)+m_ac_a(T_f-T_i)=0\]</div>
+   </div>
+  </div>
+  <div class="data-table">
+   <div class="data-columns">
+    <section class="data-column">
+     <h4>Alumínio</h4>
+     <div class="data-equation">\[L_f=396\,\mathrm{kJ/kg}\]</div>
+     <div class="data-equation">\[c_{\mathrm{Al}}=0{,}900\,\mathrm{kJ/(kg\cdot K)}\]</div>
+     <div class="data-equation">\[T_m=932\,\mathrm{K}\]</div>
+    </section>
+    <section class="data-column">
+     <h4>Água</h4>
+     <div class="data-equation">\[c_a=4{,}19\,\mathrm{kJ/(kg\cdot K)}\]</div>
+     <div class="data-equation">\[L_v=2256\,\mathrm{kJ/kg}\]</div>
+     <div class="data-equation">\[c_v=2{,}01\,\mathrm{kJ/(kg\cdot K)}\]</div>
+    </section>
+   </div>
+  </div>
+ </aside>
+</main>
+<script>
+const $=id=>document.getElementById(id);
+const fmt=(n,d=1)=>n.toLocaleString('pt-BR',{minimumFractionDigits:d,maximumFractionDigits:d});
+const Tm=932, cAl=.900, L=396, cw=4.19, waterBoil=373.15;
+let progress=0,playing=false,raf=0,last=0;
+function calculate(){
+ const ma=+$('alMass').value/1000, mw=+$('waterVol').value, Ti=+$('waterTemp').value+273.15;
+ const Tb=373.15, Lv=2256, cv=2.01;
+ // Energia que o alumínio libera ao solidificar e esfriar até 100 °C.
+ const qAlToBoil=ma*(L+cAl*(Tm-Tb));
+ const qWaterToBoil=mw*cw*(Tb-Ti);
+ let Tf, evap=0, allVapor=false;
+ if(qAlToBoil<=qWaterToBoil){
+   // A água não chega à ebulição: equilíbrio abaixo de 100 °C.
+   Tf=(ma*(L+cAl*Tm)+mw*cw*Ti)/(ma*cAl+mw*cw);
+ }else{
+   const excess=qAlToBoil-qWaterToBoil;
+   evap=excess/Lv;
+   if(evap<mw){
+     // Ebulição durante parte do processo: temperatura fica em 100 °C.
+     Tf=Tb;
+   }else{
+     // Toda a água vaporiza; o vapor pode então aquecer acima de 100 °C.
+     allVapor=true; evap=mw;
+     Tf=(ma*(L+cAl*Tm)-mw*(cw*(Tb-Ti)+Lv-cv*Tb))/(ma*cAl+mw*cv);
+   }
+ }
+ const qWater=allVapor
+   ? mw*(cw*(Tb-Ti)+Lv+cv*(Tf-Tb))
+   : (Tf>=Tb ? mw*cw*(Tb-Ti)+evap*Lv : mw*cw*(Tf-Ti));
+ return {ma,mw,Ti,Tf,qWater,evap,allVapor,boiling:evap>0};
+}
+function updateEnergyEquation(d){
+ const box=$('energyEquations');
+ let equations='';
+ if(!d.boiling){
+   equations=String.raw`
+    <div class="equation">\[Q_{\mathrm{Al}}+Q_{\mathrm{água}}=0\]</div>
+    <div class="equation">\[m_{\mathrm{Al}}L_f+m_{\mathrm{Al}}c_{\mathrm{Al}}(T_f-T_m)+m_ac_a(T_f-T_i)=0\]</div>
+    <div class="equation note-math">A água permanece líquida: não há termo de calor latente de vaporização.</div>`;
+ }else if(!d.allVapor){
+   equations=String.raw`
+    <div class="equation">\[Q_{\mathrm{Al}}+Q_{\mathrm{água}}=0\]</div>
+    <div class="equation">\[-m_{\mathrm{Al}}\!\left(L_f+c_{\mathrm{Al}}(T_m-T_b)\right)+m_ac_a(T_b-T_i)+m_{\mathrm{evap}}L_v=0\]</div>
+    <div class="equation note-math">Ebulição parcial: somente a massa \(m_{\mathrm{evap}}\) recebe calor latente de vaporização.</div>`;
+ }else{
+   equations=String.raw`
+    <div class="equation">\[Q_{\mathrm{Al}}+Q_{\mathrm{água}}=0\]</div>
+    <div class="equation">\[-m_{\mathrm{Al}}\!\left(L_f+c_{\mathrm{Al}}(T_m-T_f)\right)+m_ac_a(T_b-T_i)+m_aL_v+m_ac_v(T_f-T_b)=0\]</div>
+    <div class="equation note-math">Toda a água vaporiza; o último termo representa o aquecimento do vapor acima de \(T_b\).</div>`;
+ }
+ box.innerHTML=equations;
+ if(window.MathJax?.typesetPromise) window.MathJax.typesetPromise([box]);
+}
+function updateNumbers(){
+ const d=calculate(),tfC=d.Tf-273.15;
+ updateEnergyEquation(d);
+ $('alMassOut').textContent=fmt(d.ma*1000,0)+' g';
+ $('waterVolOut').textContent=fmt(d.mw,2)+' L';
+ $('waterTempOut').textContent=fmt(d.Ti-273.15,0)+' °C';
+ $('finalTemp').textContent=fmt(tfC,1)+' °C';
+ $('answerTemp').textContent=fmt(tfC,1)+' °C';
+ $('solidMass').textContent=fmt(d.ma*1000,0)+' g';
+ $('waterHeat').textContent=fmt(d.qWater,1);
+ $('evapMass').textContent=fmt(d.evap*1000,1)+' g';
+ $('evapMass').nextElementSibling.textContent=d.allVapor?'Toda a água vaporizou':(d.boiling?'Ebulição parcial a 100 °C':'Sem ebulição');
+ $('answerText').textContent=d.allVapor?'Toda a água vaporiza; o vapor aquece acima de 100 °C.':(d.boiling?'A água atinge 100 °C e parte dela vaporiza. O alumínio termina sólido.':'O alumínio solidifica completamente. A água aquece, mas não entra em ebulição.');
+ updateScene(); updateGraph();
+}
+function setProgress(p){progress=Math.max(0,Math.min(1,p));$('timeline').value=Math.round(progress*1000);updateScene();updateGraph();}
+function updateScene(){
+ const d=calculate(),p=progress,tf=d.Tf-273.15;
+ const qLatent=d.ma*L, qSensible=d.ma*cAl*(Tm-d.Tf);
+ const aluminumSplit=qLatent/(qLatent+qSensible||1);
+ const qToBoil=d.ma*(L+cAl*(Tm-373.15));
+ const qWaterToBoil=d.mw*cw*(373.15-d.Ti);
+ const evapStart=qToBoil>qWaterToBoil?(qWaterToBoil/qToBoil):1;
+ const evapProgress=d.boiling?Math.max(0,Math.min(1,(p-evapStart)/(1-evapStart||1))):0;
+ const waterLevel=174+125*(d.evap/d.mw)*evapProgress;
+ // A superfície desce e o preenchimento acompanha: a água desaparece de cima para baixo.
+ $('waterFill').setAttribute('y',String(waterLevel));
+ $('waterFill').setAttribute('height',String(Math.max(0,354-waterLevel)));
+ $('waterSurface').setAttribute('transform',`translate(0 ${waterLevel-174})`);
+ $('waterRipples').style.opacity=String(1-evapProgress);
+ $('steam').style.opacity=String(d.boiling?Math.min(.95,evapProgress*1.25):0);
+ const waterT=Math.min(100,(d.Ti-273.15)+(Math.min(p,evapStart)/(evapStart||1))*(Math.min(tf,100)-(d.Ti-273.15)))+
+   (d.allVapor?Math.max(0,tf-100)*evapProgress:0);
+ $('waterTempText').textContent=fmt(waterT,1)+' °C';
+ const thermoH=Math.max(0,Math.min(150,(waterT/300)*150));
+ $('thermoMercury').setAttribute('y',String(188-thermoH));
+ $('thermoMercury').setAttribute('height',String(thermoH));
+ $('metalBody').setAttribute('fill',p<aluminumSplit?'url(#metal)':'#8996a3');
+ $('metalLabel').textContent=p<aluminumSplit?'Em solidificação':'Sólido';
+ $('heatArrows').style.opacity=String(.9*(1-p*.55));
+ $('phaseLabel').textContent=p<=aluminumSplit?'ALUMÍNIO SOLIDIFICA E CEDE CALOR':(d.boiling&&p<1?'ÁGUA EM EBULIÇÃO · VAPORIZAÇÃO':(p<1?'ALUMÍNIO SÓLIDO · RESFRIAMENTO':'EQUILÍBRIO TÉRMICO'));
+ $('stage1').classList.toggle('active',p<=aluminumSplit);
+ $('stage2').classList.toggle('active',p>aluminumSplit&&p<1);
+ $('stage3').classList.toggle('active',p>=.999);
+ $('phaseStatus').textContent=p===0?'Aguardando início: alumínio a 932 K e água a '+fmt(d.Ti-273.15,0)+' °C.':(d.boiling&&p>evapStart?'A água ferve: '+fmt(d.evap*1000,1)+' g evaporam no estado final.':(p<=aluminumSplit?'O alumínio libera calor latente ao solidificar.':'O alumínio sólido esfria; a água recebe energia e pode atingir a ebulição.'));
+}
+function updateGraph(){
+ const d=calculate(),p=progress;
+ // Água: a curva e o marcador usam exatamente os mesmos segmentos.
+ const TiK=d.Ti, TfK=d.Tf;
+ const waterY=t=>195-Math.max(0,Math.min(300,t-273.15))/300*140;
+ const qHeat=d.mw*cw*Math.max(0,373.15-TiK);
+ const qVap=d.evap*2256;
+ const qSteam=d.allVapor?d.mw*2.01*Math.max(0,TfK-373.15):0;
+ let waterPts=[], waterSegments=[], qTot;
+ if(d.boiling || d.allVapor){
+   qTot=Math.max(.001,qHeat+qVap+qSteam);
+   const xQ=q=>65+355*Math.max(0,Math.min(1,q/qTot));
+   waterPts=[[65,waterY(TiK)],[xQ(qHeat),waterY(373.15)],[xQ(qHeat+qVap),waterY(373.15)]];
+   waterSegments.push({q:qHeat,a:waterPts[0],b:waterPts[1]});
+   waterSegments.push({q:qVap,a:waterPts[1],b:waterPts[2]});
+   if(d.allVapor){
+     waterPts.push([420,waterY(TfK)]);
+     waterSegments.push({q:qSteam,a:waterPts[2],b:waterPts[3]});
+   }
+ }else{
+   const qLiquid=d.mw*cw*Math.max(0,TfK-TiK);
+   qTot=Math.max(.001,qLiquid);
+   waterPts=[[65,waterY(TiK)],[420,waterY(TfK)]];
+   waterSegments.push({q:qLiquid,a:waterPts[0],b:waterPts[1]});
+ }
+ const waterPath=waterPts.map((pt,i)=>(i?'L':'M')+pt[0].toFixed(1)+' '+pt[1].toFixed(1)).join('');
+ $('waterCurve').setAttribute('d',waterPath);
+ let remaining=Math.max(0,Math.min(1,p))*qTot;
+ let chosen=waterSegments[waterSegments.length-1];
+ for(const seg of waterSegments){
+   chosen=seg;
+   if(remaining<=seg.q) break;
+   remaining-=seg.q;
+ }
+ const f=chosen.q>0?Math.max(0,Math.min(1,remaining/chosen.q)):1;
+ let wx=chosen.a[0]+(chosen.b[0]-chosen.a[0])*f;
+ let wy=chosen.a[1]+(chosen.b[1]-chosen.a[1])*f;
+ if(p>=.999){wx=waterPts[waterPts.length-1][0];wy=waterPts[waterPts.length-1][1];}
+ $('waterDot').setAttribute('cx',wx);$('waterDot').setAttribute('cy',wy);
+ $('waterCursor').setAttribute('x1',wx);$('waterCursor').setAttribute('x2',wx);
+ $('waterCursor').setAttribute('y1',wy-11);$('waterCursor').setAttribute('y2',wy+11);
+
+ // Alumínio: patamar de solidificação e resfriamento até Tf.
+ const latent=d.ma*L,sensible=d.ma*cAl*(Tm-d.Tf),split=latent/(latent+sensible||1);
+ const finalY=195-Math.max(0,Math.min(659,TfK-273.15))/659*140;
+ const splitX=65+355*split;
+ const alPath=`M65 55 L${splitX.toFixed(1)} 55 L420 ${finalY.toFixed(1)}`;
+ $('alCurve').setAttribute('d',alPath);
+ let ax,ay;
+ if(p<=split){ax=65+355*p;ay=55;}
+ else{
+   const fAl=(p-split)/(1-split||1);
+   ax=splitX+(420-splitX)*fAl;
+   ay=55+(finalY-55)*fAl;
+ }
+ $('coolDot').setAttribute('cx',ax);$('coolDot').setAttribute('cy',ay);
+ $('coolCursor').setAttribute('x1',ax);$('coolCursor').setAttribute('x2',ax);
+ $('coolCursor').setAttribute('y1',ay-11);$('coolCursor').setAttribute('y2',ay+11);
+}
+function animate(ts){if(!playing)return;if(!last)last=ts;const dt=ts-last;last=ts;setProgress(progress+dt/2500);if(progress>=1){playing=false;$('playBtn').textContent='▶ Reproduzir novamente';last=0;return;}raf=requestAnimationFrame(animate);}
+function toggleAnimation(){if(playing){playing=false;cancelAnimationFrame(raf);$('playBtn').textContent='▶ Continuar';last=0;}else{if(progress>=1)setProgress(0);playing=true;$('playBtn').textContent='Ⅱ Pausar';last=0;raf=requestAnimationFrame(animate);}}
+function resetAnimation(){playing=false;cancelAnimationFrame(raf);last=0;$('playBtn').textContent='▶ Iniciar processo';setProgress(0);}
+['alMass','waterVol','waterTemp'].forEach(id=>$(id).addEventListener('input',()=>{resetAnimation();updateNumbers();}));
+$('timeline').addEventListener('input',e=>{playing=false;cancelAnimationFrame(raf);last=0;$('playBtn').textContent='▶ Continuar';setProgress(+e.target.value/1000);});
+updateNumbers();setProgress(0);
+</script>
+
+
+// Reescala o conjunto da página conforme a altura útil do monitor.
+// Em telas estreitas, mantém o layout responsivo em colunas e rolagem natural.
+function fitExerciseToViewport(){
+  const body = document.body;
+  if (window.innerWidth < 1051) {
+    body.style.zoom = '1';
+    return;
+  }
+  body.style.zoom = '1';
+  requestAnimationFrame(() => {
+    const header = document.querySelector('header');
+    const main = document.querySelector('main');
+    const panels = [...document.querySelectorAll('main > .panel, main > aside')];
+    if (!header || !main || !panels.length) return;
+    const panelContentHeight = Math.max(...panels.map(panel => panel.scrollHeight));
+    const mainStyle = getComputedStyle(main);
+    const verticalPadding = parseFloat(mainStyle.paddingTop) + parseFloat(mainStyle.paddingBottom);
+    const requiredHeight = header.getBoundingClientRect().height + panelContentHeight + verticalPadding + 8;
+    const availableHeight = window.innerHeight - 6;
+    const scale = Math.min(1, availableHeight / requiredHeight);
+    body.style.zoom = String(Math.max(0.68, scale));
+  });
+}
+window.addEventListener('resize', fitExerciseToViewport);
+window.addEventListener('load', fitExerciseToViewport);
+if (window.MathJax && MathJax.startup && MathJax.startup.promise) {
+  MathJax.startup.promise.then(() => setTimeout(fitExerciseToViewport, 80));
+}
+const fitObserver = new MutationObserver(() => fitExerciseToViewport());
+fitObserver.observe(document.querySelector('main'), {subtree:true, childList:true, characterData:true});
+setTimeout(fitExerciseToViewport, 250);
+
+</body>
+</html>
