@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Exercício 6.72 — Janela térmica | Física II</title>
+<script>window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]}};</script>
+<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+<style>
+:root{--navy:#183454;--blue:#397db5;--ink:#243b56;--muted:#617b98;--line:#d8e3ee;--bg:#f2f6fa;--warm:#e77b35;--cold:#4a91c4}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:Arial,sans-serif;min-height:100vh}
+header{background:var(--navy);color:white;padding:10px 20px;display:flex;justify-content:space-between;align-items:center;gap:14px}h1{font-size:clamp(19px,1.5vw,25px);margin:0 0 4px}.sub{font-size:clamp(12px,.95vw,15px);color:#d7e4f1}.back{color:white;text-decoration:none;border:1px solid #7189a3;border-radius:8px;padding:8px 12px;font-size:13px;white-space:nowrap}
+main{width:min(96vw,1800px);margin:auto;padding:clamp(8px,1vw,18px)}.tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:10px}button{font:inherit;cursor:pointer}.tab{background:white;border:1px solid var(--line);border-radius:8px;padding:10px 6px;color:var(--ink);font-weight:700;font-size:clamp(12px,1vw,15px)}.tab.active{background:#eaf2f9;border-color:var(--blue);box-shadow:inset 3px 0 var(--blue)}
+.layout{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(320px,.8fr);gap:10px;align-items:stretch}.panel{background:white;border:1px solid var(--line);border-radius:10px;padding:clamp(12px,1.1vw,17px);min-width:0}h2{font-size:clamp(18px,1.35vw,22px);margin:0 0 5px;color:var(--navy)}h3{font-size:12px;letter-spacing:.09em;text-transform:uppercase;color:#7189a3;margin:0 0 9px}.lead,.note,.panel p{font-size:clamp(13px,1vw,16px);line-height:1.45;color:var(--muted)}.lead{margin:0 0 10px}.figure{background:#f8fbfe;border:1px solid #dce7f1;border-radius:8px;padding:9px}.fighead{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;font-size:11px;color:#7189a3;font-weight:bold;letter-spacing:.07em}svg{display:block;width:100%;height:auto;max-height:clamp(230px,54vh,520px)}
+/* Transições entre janela dupla, vidro único e janela evacuada */
+#glassLeft,#airGap,#glassRight,#labelGlassLeft,#labelGlassRight,#thickLeft,#thickRight,#singleGlass,#singleLabel,#singleThickness,#bentLeft,#bentRight,#pressureArrows,#pressureLabel{transition:all 1.25s cubic-bezier(.2,.75,.25,1)}
+#labelAir,#thickAir,#heatPath,#heatDirection,#interfaces,#interfaceNumbers,#interfaceTicks,#vacuumCaption,#singleGlass,#singleLabel,#singleThickness,#bentLeft,#bentRight,#pressureArrows,#pressureLabel{opacity:0;transition:opacity .45s ease}
+/* As rachaduras e os fragmentos só podem aparecer no item D, após a ruptura. */
+#fractureMarks,#shatteredPieces{opacity:0!important;transition:opacity .35s ease}
+svg.c-mode #glassLeft,svg.c-mode #glassRight,svg.c-mode #airGap,svg.c-mode #labelGlassLeft,svg.c-mode #labelGlassRight,svg.c-mode #thickLeft,svg.c-mode #thickRight,svg.c-mode #labelAir,svg.c-mode #thickAir,svg.c-mode #heatPath,svg.c-mode #interfaces,svg.c-mode #interfaceNumbers,svg.c-mode #interfaceTicks{opacity:0!important;visibility:hidden}
+svg.c-mode #singleGlass,svg.c-mode #singleLabel,svg.c-mode #singleThickness{visibility:visible}
+svg.c-mode #singleGlass,svg.c-mode #singleLabel,svg.c-mode #singleThickness{opacity:1}
+svg:not(.d-mode) #heatDirection{opacity:.68}
+svg.d-mode #airGap,svg.d-mode #labelAir,svg.d-mode #thickAir,svg.d-mode #heatPath,svg.d-mode #heatDirection,svg.d-mode #interfaces,svg.d-mode #interfaceNumbers,svg.d-mode #interfaceTicks{opacity:0}
+/* As duas vidraças permanecem visíveis desde o primeiro quadro da evacuação. */
+svg.d-mode #glassLeft,svg.d-mode #glassRight{opacity:1}
+svg.d-mode #pressureReadout{opacity:1}
+svg.d-mode #vacuumCaption{opacity:1}
+svg.d-mode #airMolecules{opacity:1}
+svg.d-mode #pressureArrows{opacity:.18}
+svg.d-mode #pressureLabel{opacity:1}
+svg.d-mode.evacuating #pressureArrows{opacity:.18}
+svg.d-mode.pressure-rising #pressureArrows{opacity:1}
+svg.d-mode.pressure-rising #pressureArrows path{stroke-width:4.5}
+svg.d-mode.bending #bentLeft,svg.d-mode.bending #bentRight{opacity:1}
+svg.d-mode.bending #fractureMarks{opacity:var(--crack-progress,0)!important}
+svg.d-mode.bending #glassLeft,svg.d-mode.bending #glassRight{opacity:0}
+svg.d-mode.broken #fractureMarks{opacity:1!important}
+svg.d-mode.broken #shatteredPieces{opacity:1!important}
+.legend{display:flex;gap:14px;flex-wrap:wrap;color:var(--muted);font-size:12px}.note{margin:9px 0 0}.right{display:grid;grid-template-rows:auto 1fr;gap:10px}.equation{font-family:Georgia,serif;font-size:clamp(22px,2vw,30px);color:#153d68;margin:12px 0 8px;text-align:center}.equation-note{margin:0!important}.data{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}.datum{background:#f6f9fc;border:1px solid #e3ebf3;border-radius:7px;padding:8px;min-width:0}.datum span{display:block;color:#7189a3;font-size:10px;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px}.datum b{font-size:clamp(12px,.95vw,14px)}.reveal-result{margin-top:12px;width:100%;padding:10px 12px;border:1px solid #b9cfe2;border-radius:7px;background:#edf4fa;color:#214f78;font-weight:700;font-size:13px;transition:background .2s,border-color .2s}.reveal-result:hover{background:#e1edf7;border-color:#7fa8ca}.reveal-result:focus-visible{outline:3px solid #9fc5e5;outline-offset:2px}.result[hidden]{display:none}.result{margin-top:10px;padding:11px 12px;background:#f2f7fb;border:1px solid #dce8f2;border-left:3px solid var(--blue);border-radius:7px}.result-label{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:#7189a3;font-weight:bold}.result-value{font-size:clamp(17px,1.35vw,22px);font-weight:700;color:#1b4e79;margin:7px 0}.result p{margin:0;font-size:clamp(12px,.95vw,14px)}.result .detail{margin-top:6px}.result .answer-list{display:grid;gap:5px;margin-top:8px}.answer-list div{display:flex;justify-content:space-between;gap:12px;border-bottom:1px solid #dce6ef;padding:4px 0;font-size:clamp(12px,.95vw,14px)}.answer-list strong{color:#1b4e79;white-space:nowrap}
+@media(max-width:900px){main{width:100%}.layout{grid-template-columns:1fr}.right{grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:auto}.figure svg{max-height:none}}
+@media(max-width:580px){header{padding:10px 12px;align-items:flex-start}.back{font-size:11px;padding:7px}main{padding:8px}.tabs{grid-template-columns:repeat(2,1fr)}.right{grid-template-columns:1fr}.data{grid-template-columns:repeat(2,minmax(0,1fr))}.panel{padding:11px}.fighead{font-size:10px}.lead,.note,.panel p{font-size:13px}}
+@media(min-width:1400px){main{width:min(96vw,1800px)}.layout{grid-template-columns:minmax(0,1.55fr) minmax(360px,.8fr)}.panel{padding:clamp(16px,1.25vw,24px)}.tab{padding:clamp(10px,.8vw,15px)}.datum{padding:clamp(8px,.7vw,13px)}}
+@media(max-height:650px) and (min-width:901px){svg{max-height:42vh}.panel{padding:9px}.figure{padding:6px}.lead,.note{margin-top:5px;margin-bottom:5px}}
+@media(min-width:851px) and (max-height:760px){header{padding-top:6px;padding-bottom:6px}main{padding:8px}.tab{padding:8px}.panel{padding:10px 12px}.figure{padding:6px}.note{margin-top:6px}}
+</style></head>
+<body>
+<header><div><h1>Exercício 6.72 · Janela de vidro duplo</h1><div class="sub">Condução térmica</div></div><a class="back" href="../aula7/index.html">← Voltar</a></header>
+<main>
+<nav class="tabs" aria-label="Itens do exercício"><button class="tab active" data-k="a">A · Interfaces</button><button class="tab" data-k="b">B · Fluxo de calor</button><button class="tab" data-k="c">C · Vidro único</button><button class="tab" data-k="d">D · Discussão</button></nav>
+<section class="layout">
+<article class="panel"><h2 id="title">A janela e suas camadas</h2><p class="lead" id="lead">Duas placas de vidro separam o interior aquecido do exterior frio. Entre elas há uma camada de ar.</p>
+<div class="figure"><div class="fighead"></div>
+<svg viewBox="0 0 760 350" role="img" aria-label="Janela com duas placas de vidro e uma camada de ar">
+<defs><linearGradient id="g1"><stop stop-color="#e98a50"/><stop offset="1" stop-color="#f3c39f"/></linearGradient><linearGradient id="ga"><stop stop-color="#f4f8fc"/><stop offset="1" stop-color="#e4eff7"/></linearGradient><linearGradient id="g2"><stop stop-color="#b9d5e8"/><stop offset="1" stop-color="#6ea6ca"/></linearGradient><marker id="arr" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0 0L6 3L0 6" fill="none" stroke="#d97736" stroke-width="1.4"/></marker></defs>
+<rect x="20" y="35" width="112" height="270" rx="10" fill="#f9e7dc"/><rect x="628" y="35" width="112" height="270" rx="10" fill="#e3eff7"/>
+<text x="76" y="22" text-anchor="middle" font-size="14" font-weight="bold" fill="#b95e2b">INTERIOR</text><text x="684" y="22" text-anchor="middle" font-size="14" font-weight="bold" fill="#397cae">EXTERIOR</text>
+<text x="76" y="178" text-anchor="middle" font-size="21" font-weight="bold" fill="#a64f24">20 °C</text><text x="684" y="178" text-anchor="middle" font-size="21" font-weight="bold" fill="#28658f">0 °C</text>
+<rect id="glassLeft" x="190" y="76" width="42" height="188" rx="4" fill="url(#g1)" stroke="#b96e43" stroke-width="2"/><rect id="airGap" x="232" y="76" width="296" height="188" fill="url(#ga)" stroke="#c9d8e5"/><rect id="glassRight" x="528" y="76" width="42" height="188" rx="4" fill="url(#g2)" stroke="#5c8fb3" stroke-width="2"/>
+<rect id="singleGlass" x="338" y="76" width="84" height="188" rx="5" fill="url(#g1)" stroke="#668eae" stroke-width="2"/><text id="singleLabel" x="380" y="58" text-anchor="middle" font-size="14" font-weight="bold" fill="#397cae">VIDRO ÚNICO</text><text id="singleThickness" x="380" y="285" text-anchor="middle" font-size="13" fill="#397cae">6,00 mm</text>
+<path id="bentLeft" d="M190 76 L232 76 L232 264 L190 264 Z" fill="url(#g1)" stroke="#b96e43" stroke-width="2">
+ <animate id="bendLeftAnim" attributeName="d" begin="indefinite" dur="3.2s" fill="freeze" values="M190 76 L232 76 L232 264 L190 264 Z;M190 76 L232 76 Q258 170 232 264 L190 264 Z"/>
+</path><path id="bentRight" d="M528 76 L570 76 L570 264 L528 264 Z" fill="url(#g2)" stroke="#5c8fb3" stroke-width="2">
+ <animate id="bendRightAnim" attributeName="d" begin="indefinite" dur="3.2s" fill="freeze" values="M528 76 L570 76 L570 264 L528 264 Z;M528 76 L570 76 L570 264 L528 264 Q502 170 528 76 Z"/>
+</path>
+<g id="pressureArrows" fill="none" stroke="#b95e2b" stroke-width="3" stroke-linecap="round">
+ <g><path d="M142 112 H180 M172 104 L180 112 L172 120 M142 170 H180 M172 162 L180 170 L172 178 M142 228 H180 M172 220 L180 228 L172 236"/><animateTransform attributeName="transform" type="translate" values="0 0;10 0;0 0" dur="1.4s" repeatCount="indefinite"/></g>
+ <g><path d="M618 112 H580 M588 104 L580 112 L588 120 M618 170 H580 M588 162 L580 170 L588 178 M618 228 H580 M588 220 L580 228 L588 236"/><animateTransform attributeName="transform" type="translate" values="0 0;-10 0;0 0" dur="1.4s" repeatCount="indefinite"/></g>
+</g>
+<g id="pressureReadout" opacity="0" font-size="12" font-weight="bold" text-anchor="middle">
+ <rect x="285" y="286" width="190" height="29" rx="7" fill="#ffffff" stroke="#d8e3ee"/>
+ <text id="pressureInsideText" x="380" y="298" fill="#617b98">Pressão interna: 1 atm</text>
+ <text id="pressureDiffText" x="380" y="310" fill="#b95e2b">ΔP: 0 atm</text>
+</g>
+<text id="pressureLabel" x="380" y="340" text-anchor="middle" font-size="14" font-weight="bold" fill="#9b542f">A PRESSÃO EXTERNA PASSA A COMPRIMIR AS VIDRAÇAS</text>
+<g font-size="14" font-weight="bold" text-anchor="middle"><text id="labelGlassLeft" x="211" y="58" fill="#a95b31">VIDRO</text><text id="labelAir" x="380" y="58" fill="#617b98">AR</text><text id="labelGlassRight" x="549" y="58" fill="#397cae">VIDRO</text></g>
+<g font-size="13" text-anchor="middle"><text id="thickLeft" x="211" y="285" fill="#805c48">3,00 mm</text><text id="thickAir" x="380" y="285" fill="#617b98">1,00 cm</text><text id="thickRight" x="549" y="285" fill="#397cae">3,00 mm</text></g>
+<path id="heatPath" d="M145 170H180 M580 170H615 M250 170H510" stroke="#d97736" stroke-width="3" stroke-dasharray="7 5" marker-end="url(#arr)"/><path id="heatDirection" d="M145 170 H615" fill="none" stroke="#d97736" stroke-width="3.5" stroke-dasharray="5 7" stroke-linecap="round" marker-end="url(#arr)" opacity=".68"/>
+<g id="interfaces" fill="#fff" stroke="#557f9e" stroke-width="1.5"><circle cx="190" cy="170" r="6"/><circle cx="232" cy="170" r="6"/><circle cx="528" cy="170" r="6"/><circle cx="570" cy="170" r="6"/></g>
+<g id="interfaceNumbers" font-size="12" font-weight="bold" fill="#244d70" text-anchor="middle"><text x="190" y="326">1</text><text x="232" y="326">2</text><text x="528" y="326">3</text><text x="570" y="326">4</text></g>
+<path id="interfaceTicks" d="M190 305V315 M232 305V315 M528 305V315 M570 305V315" stroke="#7b94ac"/>
+<g id="airMolecules" fill="#8aa8c1" opacity=".8">
+ <circle cx="275" cy="112" r="4"/><circle cx="330" cy="145" r="3"/><circle cx="390" cy="105" r="3.5"/><circle cx="455" cy="145" r="4"/><circle cx="300" cy="210" r="3"/><circle cx="365" cy="235" r="3.5"/><circle cx="430" cy="205" r="3"/><circle cx="480" cy="235" r="3"/>
+</g>
+<text id="vacuumCaption" x="380" y="174" text-anchor="middle" font-size="17" font-weight="bold" fill="#526f89">VÁCUO ENTRE AS VIDRAÇAS</text>
+<g id="fractureMarks" fill="none" stroke="#6b8297" stroke-width="2.2" stroke-linecap="round">
+ <path d="M211 145 l-9 -12 7 -10 -5 -13 M202 133 l-12 2 M209 123 l12 -7 3 -12 M211 145 l8 10 -4 12 8 9"/>
+ <path d="M549 145 l9 -12 -7 -10 5 -13 M558 133 l12 2 M551 123 l-12 -7 -3 -12 M549 145 l-8 10 4 12 -8 9"/>
+</g>
+<g id="shatteredPieces" stroke-width="1.5">
+ <path d="M190 76 L211 76 L207 145 L190 132 Z" fill="#e9a77f" stroke="#b96e43"><animateTransform attributeName="transform" type="translate" begin="indefinite" dur="1.1s" values="0 0;12 5;18 9" fill="freeze"/></path>
+ <path d="M232 76 L211 76 L215 145 L232 132 Z" fill="#f3c39f" stroke="#b96e43"><animateTransform attributeName="transform" type="translate" begin="indefinite" dur="1.1s" values="0 0;10 -4;16 -8" fill="freeze"/></path>
+ <path d="M190 264 L211 264 L207 195 L190 208 Z" fill="#e9a77f" stroke="#b96e43"><animateTransform attributeName="transform" type="translate" begin="indefinite" dur="1.1s" values="0 0;12 -5;18 -9" fill="freeze"/></path>
+ <path d="M232 264 L211 264 L215 195 L232 208 Z" fill="#f3c39f" stroke="#b96e43"><animateTransform attributeName="transform" type="translate" begin="indefinite" dur="1.1s" values="0 0;10 4;16 8" fill="freeze"/></path>
+ <path d="M528 76 L549 76 L553 145 L528 132 Z" fill="#9fc2da" stroke="#5c8fb3"><animateTransform attributeName="transform" type="translate" begin="indefinite" dur="1.1s" values="0 0;-12 5;-18 9" fill="freeze"/></path>
+ <path d="M570 76 L549 76 L545 145 L570 132 Z" fill="#c5ddeb" stroke="#5c8fb3"><animateTransform attributeName="transform" type="translate" begin="indefinite" dur="1.1s" values="0 0;-10 -4;-16 -8" fill="freeze"/></path>
+ <path d="M528 264 L549 264 L553 195 L528 208 Z" fill="#9fc2da" stroke="#5c8fb3"><animateTransform attributeName="transform" type="translate" begin="indefinite" dur="1.1s" values="0 0;-12 -5;-18 -9" fill="freeze"/></path>
+ <path d="M570 264 L549 264 L545 195 L570 208 Z" fill="#c5ddeb" stroke="#5c8fb3"><animateTransform attributeName="transform" type="translate" begin="indefinite" dur="1.1s" values="0 0;-10 4;-16 8" fill="freeze"/></path>
+</g></svg>
+<div class="legend"><span>🟠 Região quente</span><span>🔵 Região fria</span></div></div>
+<p class="note" id="figureNote">O calor atravessa sucessivamente o primeiro vidro, o espaço de ar e o segundo vidro. As temperaturas nas superfícies internas são determinadas pelas resistências térmicas de cada camada.</p>
+</article>
+<aside class="right">
+<article class="panel"><h3>Condução térmica</h3><div class="equation">\[\frac{P_{\mathrm{cond}}}{A}=k\frac{T_h-T_c}{L}\]</div></article>
+<article class="panel"><h3>Dados do exercício</h3><div class="data">
+<div class="datum"><span>Temperatura interna</span><b>20,00 °C</b></div><div class="datum"><span>Temperatura externa</span><b>0,00 °C</b></div>
+<div class="datum"><span>Vidro · espessura</span><b>3,00 mm</b></div><div class="datum"><span>Ar · espessura</span><b>1,00 cm</b></div>
+<div class="datum"><span>Condutividade do vidro</span><b>1,00 W/(m·K)</b></div><div class="datum"><span>Condutividade do ar</span><b>0,0260 W/(m·K)</b></div></div>
+<button type="button" class="reveal-result" id="revealResult" aria-expanded="false">Resultado</button>
+<div class="result" id="resultBox" aria-live="polite" hidden><div class="result-label" id="resultLabel">Resultado · item (a)</div><div id="resultContent"><div class="answer-list"><div><span>Interface 1</span><strong>20,00 °C</strong></div><div><span>Interface 2</span><strong>19,85 °C</strong></div><div><span>Interface 3</span><strong>0,15 °C</strong></div><div><span>Interface 4</span><strong>0,00 °C</strong></div></div><p class="detail">A maior queda de temperatura ocorre na camada de ar.</p></div></div>
+</article>
+</aside></section>
+</main>
+<script>
+const results={
+a:{label:'Resultado · item (a)',html:'<div class="answer-list"><div><span>Interface 1 · face interna</span><strong>20,00 °C</strong></div><div><span>Interface 2 · vidro/ar</span><strong>19,85 °C</strong></div><div><span>Interface 3 · ar/vidro</span><strong>0,15 °C</strong></div><div><span>Interface 4 · face externa</span><strong>0,00 °C</strong></div></div><p class="detail">A maior queda de temperatura ocorre no espaço de ar.</p>'},
+b:{label:'Resultado · item (b)',html:'<div class=\"result-value\">\\(\\frac{P_{\\mathrm{cond}}}{A}\\approx51{,}3\\;\\mathrm{W/m^2}\\)</div><p>Taxa de perda de calor por unidade de área da janela.</p>'},
+c:{label:'Resultado · item (c)',html:'<div class=\"result-value\">\\(\\frac{P_{\\mathrm{cond}}}{A}\\approx3{,}33\\times10^3\\;\\mathrm{W/m^2}\\)</div><p>Para o vidro único de 6,00 mm, sob a mesma diferença de temperatura.</p>'},
+d:{label:'Resultado · item (d)',html:'<p>A retirada do ar reduz a pressão entre as placas. A pressão atmosférica externa produz uma força resultante para dentro, podendo deformar e romper as vidraças caso a estrutura não suporte a diferença de pressão.</p><p class="detail">O vácuo elimina a convecção e reduz a condução entre as placas, mas <b>não impede a transferência de energia por radiação térmica</b>.</p>'}
+};
+const content={
+a:{title:'A janela e suas camadas',lead:'Duas placas de vidro separam o interior aquecido do exterior frio. Entre elas há uma camada de ar.',note:'O calor atravessa sucessivamente o primeiro vidro, o espaço de ar e o segundo vidro. As temperaturas nas superfícies internas são determinadas pelas resistências térmicas de cada camada.'},
+b:{title:'Fluxo de calor através da janela',lead:'No item (b), queremos determinar a taxa de calor perdida por metro quadrado de janela.',note:'Em regime estacionário, a mesma taxa de calor atravessa cada camada. O espaço de ar representa a maior resistência térmica do conjunto.'},
+c:{title:'Comparação com uma única placa de vidro',lead:'No item (c), substituímos as duas placas e o espaço de ar por uma única camada de vidro de 6,00 mm.',note:'A camada de ar é retirada e as duas placas são substituídas por uma única placa de vidro de 6,00 mm.'},
+d:{title:'Discussão: uma janela a vácuo',lead:'Uma bomba retira o ar gradualmente do espaço entre as placas. A pressão interna diminui, enquanto a pressão atmosférica externa permanece praticamente constante. A diferença de pressão cresce até deformar e romper os vidros.',note:'Sequência: bombeamento gradual do ar → redução progressiva da pressão interna → aumento da diferença de pressão → flexão das placas para dentro → trincas e ruptura. A quebra é uma ilustração qualitativa; o resultado real depende da espessura, dimensões, apoio e resistência do vidro. Mesmo no vácuo, a radiação térmica continua atravessando o espaço.'}
+};
+const windowSvg=document.querySelector('.figure svg');
+let evacuationFrame=null;
+function stopEvacuation(){if(evacuationFrame!==null){cancelAnimationFrame(evacuationFrame);evacuationFrame=null;}}
+function setWindowState(k){
+  stopEvacuation();
+  windowSvg.classList.remove('evacuating','pressure-rising','bending','broken');
+  windowSvg.style.removeProperty('--crack-progress');
+  document.getElementById('fractureMarks').style.opacity='0';
+  document.getElementById('shatteredPieces').style.opacity='0';
+  const left=document.getElementById('glassLeft'), gap=document.getElementById('airGap'), right=document.getElementById('glassRight');
+  const leftLabel=document.getElementById('labelGlassLeft'), rightLabel=document.getElementById('labelGlassRight');
+  const leftThick=document.getElementById('thickLeft'), rightThick=document.getElementById('thickRight');
+  const molecules=document.getElementById('airMolecules');
+  const circles=[...molecules.querySelectorAll('circle')];
+  windowSvg.classList.toggle('c-mode',k==='c');
+  windowSvg.classList.toggle('d-mode',k==='d');
+  document.getElementById('bentLeft').setAttribute('d','M190 76 L232 76 L232 264 L190 264 Z');
+  document.getElementById('bentRight').setAttribute('d','M528 76 L570 76 L570 264 L528 264 Z');
+  document.getElementById('bentLeft').style.opacity=''; document.getElementById('bentRight').style.opacity='';
+  document.getElementById('pressureInsideText').textContent='Pressão interna: 1,0 atm';
+  document.getElementById('vacuumCaption').textContent='';
+  document.getElementById('pressureDiffText').textContent='ΔP: 0,0 atm';
+  circles.forEach(c=>{c.style.opacity='1';});
+  molecules.style.opacity='1';
+  left.setAttribute('x','190'); left.setAttribute('width','42'); left.style.opacity=''; left.style.visibility='';
+  gap.setAttribute('x','232'); gap.setAttribute('width','296'); gap.style.opacity=''; gap.style.visibility='';
+  right.setAttribute('x','528'); right.setAttribute('width','42'); right.style.opacity=''; right.style.visibility='';
+  leftLabel.setAttribute('x','211'); rightLabel.setAttribute('x','549');
+  leftThick.setAttribute('x','211'); rightThick.setAttribute('x','549');
+  if(k==='d'){
+    document.getElementById('vacuumCaption').textContent='Removendo ar';
+    windowSvg.classList.add('evacuating');
+    const duration=10500, start=performance.now();
+    const leftBent=document.getElementById('bentLeft'), rightBent=document.getElementById('bentRight');
+    const inside=document.getElementById('pressureInsideText'), diff=document.getElementById('pressureDiffText');
+    const crack=document.getElementById('fractureMarks'), pieces=document.getElementById('shatteredPieces');
+    function animate(now){
+      if(!windowSvg.classList.contains('d-mode')){stopEvacuation();return;}
+      const t=Math.min(1,(now-start)/duration);
+      // Evacuação, pressão, flexão e dano compartilham o mesmo parâmetro temporal.
+      const p=Math.max(0.002,Math.pow(1-t,2.15));
+      const dp=1-p;
+      const deformation=Math.max(0,(dp-0.08)/0.92);
+      const bend=deformation*25;
+      const leftPath=`M190 76 L232 76 Q${232+bend} 170 232 264 L190 264 Z`;
+      const rightPath=`M528 76 L570 76 L570 264 L528 264 Q${528-bend} 170 528 76 Z`;
+      leftBent.setAttribute('d',leftPath); rightBent.setAttribute('d',rightPath);
+      leftBent.style.opacity=deformation>0.015?'1':'0'; rightBent.style.opacity=deformation>0.015?'1':'0';
+      left.style.opacity=deformation>0.015?'0':'1'; right.style.opacity=deformation>0.015?'0':'1';
+      inside.textContent=`Pressão interna: ${p<0.01?'≈ 0':p.toFixed(2).replace('.',',')} atm`;
+      diff.textContent=`ΔP: ${dp.toFixed(2).replace('.',',')} atm`;
+      circles.forEach((c,i)=>{c.style.opacity=String(Math.max(0,1-t*1.45-i*0.075));});
+      molecules.style.opacity=String(Math.max(0,1-t*1.35));
+      const crackProgress=Math.max(0,Math.min(1,(dp-0.68)/0.27));
+      crack.style.opacity=String(crackProgress);
+      windowSvg.style.setProperty('--crack-progress',String(crackProgress));
+      if(dp>0.15)windowSvg.classList.add('pressure-rising');
+      if(deformation>0.015)windowSvg.classList.add('bending');
+      // A ruptura ocorre somente quando a diferença de pressão se aproxima do máximo.
+      if(dp>=0.97){windowSvg.classList.add('broken');pieces.style.opacity=String(Math.min(1,(dp-0.97)/0.03));}
+      if(t<1)evacuationFrame=requestAnimationFrame(animate);else{evacuationFrame=null;document.getElementById('vacuumCaption').textContent='VÁCUO';}
+    }
+    evacuationFrame=requestAnimationFrame(animate);
+  }
+}
+const resultBox=document.getElementById('resultBox');
+const revealButton=document.getElementById('revealResult');
+function hideResult(){resultBox.hidden=true;revealButton.hidden=false;revealButton.textContent='Resultado';revealButton.setAttribute('aria-expanded','false');}
+revealButton.addEventListener('click',()=>{resultBox.hidden=false;revealButton.hidden=true;revealButton.setAttribute('aria-expanded','true');if(window.MathJax?.typesetPromise)MathJax.typesetPromise([resultBox]);});
+document.querySelectorAll('.tab').forEach(btn=>btn.addEventListener('click',()=>{const k=btn.dataset.k;document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x===btn));setWindowState(k);document.getElementById('title').textContent=content[k].title;document.getElementById('lead').textContent=content[k].lead;document.getElementById('figureNote').textContent=content[k].note;document.getElementById('resultLabel').textContent=results[k].label;document.getElementById('resultContent').innerHTML=results[k].html;hideResult();}));
+</script></body></html>
