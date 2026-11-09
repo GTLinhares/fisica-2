@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Leis empíricas dos gases — Física II</title>
+<style>
+:root{--navy:#172f52;--blue:#3d76ab;--ink:#243a52;--muted:#70859c;--line:#dce5ee;--bg:#f3f6fa;--orange:#d97736;--red:#c95b4b;--green:#438b78;--purple:#7188b7}
+*{box-sizing:border-box}html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);font-family:Inter,Segoe UI,Arial,sans-serif;color:var(--ink)}
+header{min-height:56px;background:var(--navy);color:#fff;padding:11px 23px;display:flex;align-items:center;justify-content:space-between;gap:14px;border-bottom:3px solid #719ac4}
+header h1{font-size:1.4rem;margin:0 0 3px;font-weight:700;letter-spacing:-.035em}header p{margin:0;font-size:.8rem;color:#c6d9ec}
+.index-link{display:inline-flex;align-items:center;justify-content:center;padding:7px 11px;border:1px solid rgba(255,255,255,.35);border-radius:7px;color:#fff;text-decoration:none;font-size:.78rem;font-weight:600;white-space:nowrap}.index-link:hover{background:rgba(255,255,255,.12)}
+main{max-width:1500px;height:calc(100vh - 56px);min-height:0;margin:auto;padding:8px 14px 10px;display:grid;grid-template-rows:auto minmax(0,1fr);gap:8px}
+.tabs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px}
+.tab{border:1px solid var(--line);border-radius:8px;background:#fff;color:var(--ink);padding:8px 7px;font-size:.8rem;font-weight:650;cursor:pointer;transition:background .15s,border-color .15s}
+.tab:hover{background:#f7fafd}.tab.active{background:#eaf2fb;border:1px solid var(--blue);color:#234f7a;box-shadow:inset 3px 0 var(--blue)}
+.layout{display:grid;grid-template-columns:minmax(0,1.02fr) minmax(0,.92fr) minmax(0,1.02fr);gap:10px;align-items:start;min-height:0;overflow:hidden}.column-piston,.column-chart,.column-info{min-width:0;display:flex;flex-direction:column;gap:8px}.column-piston .card,.column-chart .card,.column-info .card,.column-info .info{padding:10px}.column-piston .model-svg{height:230px}.column-piston .microscope{height:clamp(150px,22vh,205px)}.column-chart .law-chart-wrap{margin:0;padding:8px}.column-chart .law-chart-wrap svg{height:clamp(260px,48vh,430px)}.column-info{gap:7px;min-height:0;overflow:auto}.column-info .side{overflow:visible}.summary-card .model-note{margin:0 0 5px}.summary-card .metrics{margin-top:5px}.summary-card .concept{margin-top:7px!important}
+.card,.info{background:#fff;border:1px solid var(--line);border-radius:10px;padding:11px;box-shadow:0 2px 10px rgba(20,45,75,.035);min-width:0}
+.card h2{font-size:1rem;margin:0 0 3px;color:#1e426b}.sub{font-size:.78rem;color:var(--muted);margin:0 0 7px;line-height:1.45}
+.modelbox{background:#f8fbff;border:1px solid #e5edf4;border-radius:8px;padding:9px 10px}
+.modelhead{display:flex;justify-content:space-between;gap:8px;align-items:center;font-size:.68rem;color:var(--muted);font-weight:700;margin-bottom:6px}
+.model-svg{width:100%;height:230px;display:block}.microscope{height:clamp(150px,22vh,205px);background:#f8fbff;border:1px solid #e5edf4;border-radius:8px;overflow:hidden}.microscope canvas{width:100%;height:100%;display:block}.controls{display:flex;gap:9px;align-items:center;flex-wrap:nowrap;margin:5px 1px 8px;padding:8px 9px;background:#fff;border:1px solid #dce5ee;border-radius:8px}.controls label{white-space:nowrap;font-size:.82rem;color:#294d73}.controls strong{white-space:nowrap;font-size:.82rem;color:#173c65;min-width:52px;text-align:right}
+.model-note{font-size:.70rem;color:#526b85;margin:9px 2px 0;line-height:1.5}
+.legend{display:flex;gap:12px;flex-wrap:wrap;color:var(--muted);font-size:.69rem;margin-top:5px}.legend i{display:inline-block;width:13px;height:4px;margin-right:5px;vertical-align:middle;border-radius:2px}
+.side{display:flex;flex-direction:column;gap:7px;min-height:0;overflow:auto}.eyebrow{font-size:.65rem;color:#71859c;font-weight:750;text-transform:uppercase;letter-spacing:.07em}
+.formula{font-size:1.12rem;font-weight:700;color:#173c65;margin:8px 0;padding:10px;background:#f5f8fc;border:1px solid #e5edf4;border-radius:8px;text-align:center;overflow-x:auto}
+.info p{font-size:.77rem;line-height:1.38;color:#536985;margin:5px 0 0}
+.bullets{margin:5px 0 0;padding-left:17px;color:#536985;font-size:.76rem;line-height:1.38}
+.bottom{display:grid;grid-template-columns:1fr;gap:8px}.bottom .info{padding:10px 12px}
+button.action{border:0;border-radius:7px;background:#285e92;color:#fff;padding:9px 12px;font-size:.76rem;font-weight:650;cursor:pointer}button.action:hover{background:#214f7d}button.secondary{background:#e9f0f7;color:#2b5279}button.secondary:hover{background:#dfe9f3}
+input[type=range]{accent-color:var(--blue);flex:1;min-width:100px;cursor:pointer}
+.metric{border:1px solid #e5edf4;border-radius:7px;padding:5px;text-align:center;background:#f8fafc}.metric span{display:block;font-size:.62rem;color:#7d90a5;font-weight:700;text-transform:uppercase;letter-spacing:.04em;margin-bottom:4px}.metric strong{font-size:.84rem;color:#25486e}
+.metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px;margin-top:6px}
+.law-chart-wrap{margin-top:6px;padding:6px 8px;background:#fff;border:1px solid #e5edf4;border-radius:8px}
+.law-chart-wrap svg{width:100%;height:clamp(125px,18vh,165px);display:block;background:#fbfdff;border:1px solid #edf2f7;border-radius:7px}
+.chart-caption{font-size:.72rem;color:#60758d;line-height:1.45;margin:7px 2px 0}
+.formula mjx-container{margin:.1em 0!important;max-width:100%;overflow-x:auto;overflow-y:hidden}
+svg text{font-family:Inter,Segoe UI,Arial,sans-serif}
+@keyframes flow{to{stroke-dashoffset:-24}}.flow{stroke-dasharray:6 6;animation:flow 1.2s linear infinite}
+@media(max-width:1100px){main{height:auto;min-height:calc(100vh - 56px);grid-template-rows:auto auto}.layout{grid-template-columns:minmax(0,1fr) minmax(0,1fr);overflow:visible}.column-info{grid-column:1/-1;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);overflow:visible}.column-info .side{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));grid-column:1/-1}.column-info .side .bottom{grid-column:1/-1}.column-chart .law-chart-wrap svg{height:260px}}@media(max-width:650px){.layout{grid-template-columns:1fr}.column-info{grid-column:auto;display:flex}.column-info .side{display:flex}.column-chart .law-chart-wrap svg{height:190px}}
+@media(max-width:600px){.controls{flex-wrap:wrap}.controls input[type=range]{order:3;flex-basis:100%}.controls label{flex:1}header{padding:10px 12px}header h1{font-size:1.08rem}header p{font-size:.7rem}.index-link{font-size:.7rem;padding:7px 9px}.tabs{grid-template-columns:repeat(2,minmax(0,1fr))}.tab{font-size:.73rem;padding:10px 5px}main{padding:8px}.card,.info{padding:11px}.metrics{grid-template-columns:1fr}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;scroll-behavior:auto!important;transition:none!important}}
+/* Ajuste tipográfico: aumento moderado sem alterar o layout */
+header p{font-size:.86rem}
+.index-link{font-size:.83rem}
+.tab{font-size:.86rem}
+.card h2{font-size:1.07rem}
+.sub{font-size:.84rem}
+.modelhead{font-size:.73rem}
+.controls label,.controls strong{font-size:.88rem}
+.model-note{font-size:.77rem}
+.legend{font-size:.75rem}
+.eyebrow{font-size:.70rem}
+.formula{font-size:1.18rem}
+.info p{font-size:.83rem;line-height:1.42}
+.bullets{font-size:.82rem;line-height:1.42}
+button.action{font-size:.82rem}
+.metric span{font-size:.67rem}
+.metric strong{font-size:.90rem}
+.chart-caption{font-size:.78rem}
+.concept{font-size:.84rem!important}
+@media(max-width:600px){header p{font-size:.74rem}.index-link{font-size:.74rem}.tab{font-size:.78rem}}
+</style>
+<script>
+window.MathJax={
+  startup:{typeset:false},
+  tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},
+  options:{skipHtmlTags:['script','noscript','style','textarea','pre','code']}
+};
+</script>
+<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+<body>
+<header><div><h1>Leis empíricas dos gases</h1><p>Relações entre pressão, volume, temperatura e quantidade de matéria</p></div><a class="index-link" href="index.html">← Voltar</a></header>
+<main>
+<nav class="tabs" aria-label="Selecionar lei dos gases">
+<button class="tab active" data-law="boyle" aria-pressed="true">1. Lei de Boyle</button>
+<button class="tab" data-law="charles" aria-pressed="false">2. Lei de Charles</button>
+<button class="tab" data-law="gay" aria-pressed="false">3. Lei de Gay-Lussac</button>
+<button class="tab" data-law="avogadro" aria-pressed="false">4. Lei de Avogadro</button>
+</nav>
+<section class="layout">
+  <div class="column-piston"><article class="card">
+<h2 id="lawTitle">Lei de Boyle</h2>
+<p class="sub" id="lawSubtitle">Para uma quantidade fixa de gás, a temperatura constante, pressão e volume são inversamente proporcionais.</p>
+<div class="modelbox">
+<div class="modelhead"><span id="modelLabel">COMPRESSÃO ISOTÉRMICA</span><span id="modelState">TEMPERATURA CONSTANTE</span></div>
+<div class="microscope">
+  <canvas id="gasModel" aria-label="Modelo microscópico de um gás em cilindro com pistão móvel"></canvas>
+ </div>
+<div class="controls" id="controls">
+<label id="sliderLabel" for="lawSlider">Volume</label>
+<input id="lawSlider" type="range" min="1" max="8" step=".1" value="4">
+<strong id="sliderValue">4,0 L</strong>
+<button class="action secondary" id="resetBtn" type="button">↺ Reiniciar</button>
+</div>
+<div class="legend" id="legend"><span><i style="background:#3d76ab"></i>Partículas do gás</span><span><i style="background:#d97736"></i>Energia fornecida / compressão</span></div>
+
+</div>
+
+</article>
+    <article class="card summary-card"><p class="model-note" id="modelNote">Ao comprimir o gás lentamente e manter a temperatura constante, o volume diminui e a pressão aumenta.</p>
+<div class="metrics">
+<div class="metric"><span id="metric1Label">Volume</span><strong id="metric1">4,0 L</strong></div>
+<div class="metric"><span id="metric2Label">Pressão</span><strong id="metric2">1,0 atm</strong></div>
+<div class="metric"><span id="metric3Label">Grandeza constante</span><strong id="metric3">PV = 4,0</strong></div>
+</div>
+<div class="concept" id="concept" style="margin-top:10px;background:#f5f8fc;border-left:3px solid var(--blue);border-radius:0 7px 7px 0;padding:9px 11px;font-size:.78rem;line-height:1.5;color:#405b78"><strong>Ideia central:</strong> mantendo a temperatura e a quantidade de gás constantes, diminuir o volume exige aumento da pressão.</div>
+</article></div>
+  <div class="column-chart">
+    <article class="card chart-card">
+      <div class="law-chart-wrap">
+  <div class="modelhead"><span id="chartTitle">GRÁFICO DA LEI · P EM FUNÇÃO DE V</span><span id="chartRelation">RELAÇÃO INVERSA</span></div>
+  <svg id="lawChart" viewBox="0 0 560 250" role="img" aria-label="Gráfico que representa a relação entre as grandezas da lei selecionada">
+    <g id="chartGrid"></g><g id="chartAxes"></g><path id="chartCurve" d="" fill="none" stroke="#3d76ab" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+    <path id="chartGuide" d="" fill="none" stroke="#d97736" stroke-width="2" stroke-dasharray="5 5"/>
+    <circle id="chartPoint" cx="0" cy="0" r="6" fill="#d97736" stroke="#fff" stroke-width="2"/>
+    <g id="chartLabels"></g>
+  </svg>
+  <p class="chart-caption" id="chartCaption">A curva mostra que, mantendo a temperatura constante, a pressão aumenta quando o volume diminui.</p>
+</div>
+    </article>
+  </div>
+  <div class="column-info">
+
+    <div class="side">
+<article class="info"><div class="eyebrow" id="formulaLabel">Equação da lei de Boyle</div><div class="formula" id="formula">\(P_1V_1=P_2V_2\)</div><p id="formulaText">Para uma quantidade fixa de gás a temperatura constante, o produto entre pressão e volume permanece constante: \(PV=\text{constante}\).</p></article>
+<article class="info"><div class="eyebrow">Condições da lei</div><ul class="bullets" id="conditions"><li>Temperatura constante (transformação isotérmica).</li><li>Quantidade de matéria constante.</li><li>Modelo de gás ideal ou comportamento aproximadamente ideal.</li></ul></article>
+<article class="info"><div class="eyebrow">Interpretação física</div><strong id="exampleTitle">Por que a pressão aumenta?</strong><p id="exampleText">Em menor volume, as moléculas percorrem distâncias menores entre colisões com as paredes. Mantida a temperatura, a frequência de colisões por área aumenta.</p></article>
+
+</div>
+  </div>
+</section>
+
+</main>
+<script>
+const laws={
+boyle:{
+title:'Lei de Boyle',subtitle:'Para uma quantidade fixa de gás, a temperatura constante, pressão e volume são inversamente proporcionais.',
+label:'COMPRESSÃO ISOTÉRMICA',state:'TEMPERATURA CONSTANTE',scene:'boyleScene',
+formula:'\\(P_1V_1=P_2V_2\\)',formulaLabel:'Equação da lei de Boyle',
+formulaText:'Para uma quantidade fixa de gás a temperatura constante, o produto entre pressão e volume permanece constante: \\(PV=\\text{constante}\\).',
+conditions:['Temperatura constante (transformação isotérmica).','Quantidade de matéria constante.','Modelo de gás ideal ou comportamento aproximadamente ideal.'],
+exampleTitle:'Por que a pressão aumenta?',exampleText:'Em menor volume, as moléculas percorrem distâncias menores entre colisões com as paredes. Mantida a temperatura, a frequência de colisões por área aumenta.',
+note:'Ao comprimir o gás lentamente e manter a temperatura constante, o volume diminui e a pressão aumenta.',
+concept:'<strong>Ideia central:</strong> mantendo a temperatura e a quantidade de gás constantes, diminuir o volume exige aumento da pressão.',
+relationTitle:'Proporcionalidade inversa',relationText:'Se o volume é reduzido à metade, a pressão dobra, desde que a temperatura e a quantidade de gás permaneçam constantes.',
+attentionTitle:'Temperatura constante',attentionText:'A lei de Boyle descreve uma transformação isotérmica: a temperatura não muda durante a compressão ou expansão.',
+sliderLabel:'Volume',min:1,max:8,value:4,unit:'L',
+metrics:['Volume','Pressão','Produto PV'],
+chartTitle:'GRÁFICO P × V',chartRelation:'RELAÇÃO INVERSA',
+chartCaption:'Hipérbole: ao diminuir o volume, a pressão aumenta de modo que o produto PV permanece constante.',
+xLabel:'V',yLabel:'P',chartType:'boyle',
+update(v){const p=4/v;return [fmt(v)+' L',fmt(p)+' atm',fmt(v*p)+' atm·L'];}
+},
+charles:{
+title:'Lei de Charles',subtitle:'Para uma quantidade fixa de gás a pressão constante, o volume é diretamente proporcional à temperatura absoluta.',
+label:'AQUECIMENTO A PRESSÃO CONSTANTE',state:'PRESSÃO CONSTANTE',scene:'charlesScene',
+formula:'\\(\\dfrac{V_1}{T_1}=\\dfrac{V_2}{T_2}\\)',formulaLabel:'Equação da lei de Charles',
+formulaText:'A razão entre o volume e a temperatura absoluta permanece constante: \\(V/T=\\text{constante}\\).',
+conditions:['Pressão constante (transformação isobárica).','Quantidade de matéria constante.','Temperatura expressa em kelvin (K).'],
+exampleTitle:'Por que o balão expande?',exampleText:'Ao aquecer o gás, seu volume aumenta. Em um sistema com fronteira móvel, o gás se expande até que a pressão interna se iguale à pressão externa.',
+note:'Ao aquecer o gás sob pressão constante, o pistão pode se deslocar: o volume aumenta junto com a temperatura absoluta.',
+concept:'<strong>Ideia central:</strong> mantendo a pressão e a quantidade de gás constantes, aumentar a temperatura absoluta aumenta o volume na mesma proporção.',
+relationTitle:'Proporcionalidade direta',relationText:'Se a temperatura absoluta dobra, o volume também dobra, desde que pressão e quantidade de gás permaneçam constantes.',
+attentionTitle:'Use kelvin',attentionText:'A proporcionalidade é com a temperatura absoluta. Não se deve substituir diretamente a temperatura em graus Celsius na razão.',
+sliderLabel:'Temperatura',min:200,max:600,value:300,unit:'K',
+metrics:['Temperatura','Volume','Razão V/T'],
+chartTitle:'GRÁFICO V × T',chartRelation:'RELAÇÃO DIRETA',
+chartCaption:'Reta crescente: a pressão constante, o volume aumenta proporcionalmente à temperatura absoluta.',
+xLabel:'T',yLabel:'V',chartType:'direct',
+update(v){const vol=4*v/300;return [fmt(v)+' K',fmt(vol)+' L',fmt(vol/v)+' L/K'];}
+},
+gay:{
+title:'Lei de Gay-Lussac',subtitle:'Para uma quantidade fixa de gás a volume constante, a pressão é diretamente proporcional à temperatura absoluta.',
+label:'AQUECIMENTO EM RECIPIENTE RÍGIDO',state:'VOLUME CONSTANTE',scene:'gayScene',
+formula:'\\(\\dfrac{P_1}{T_1}=\\dfrac{P_2}{T_2}\\)',formulaLabel:'Equação da lei de Gay-Lussac',
+formulaText:'A razão entre a pressão e a temperatura absoluta permanece constante: \\(P/T=\\text{constante}\\).',
+conditions:['Volume constante (transformação isovolumétrica).','Quantidade de matéria constante.','Temperatura expressa em kelvin (K).'],
+exampleTitle:'Por que a pressão aumenta?',exampleText:'Em um recipiente rígido, o volume não pode aumentar. Ao elevar a temperatura, as moléculas ficam, em média, mais rápidas e as colisões com as paredes tornam-se mais intensas.',
+note:'O recipiente rígido impede a expansão. O aquecimento aumenta a temperatura e, consequentemente, a pressão do gás.',
+concept:'<strong>Ideia central:</strong> mantendo o volume e a quantidade de gás constantes, aumentar a temperatura absoluta aumenta a pressão na mesma proporção.',
+relationTitle:'Proporcionalidade direta',relationText:'Se a temperatura absoluta dobra, a pressão também dobra, desde que o volume e a quantidade de gás permaneçam constantes.',
+attentionTitle:'Recipiente rígido',attentionText:'A condição de volume constante é essencial. Em um recipiente que pode se expandir, a relação não se aplica dessa forma.',
+sliderLabel:'Temperatura',min:200,max:600,value:300,unit:'K',
+metrics:['Temperatura','Pressão','Razão P/T'],
+chartTitle:'GRÁFICO P × T',chartRelation:'RELAÇÃO DIRETA',
+chartCaption:'Reta crescente: a volume constante, a pressão aumenta proporcionalmente à temperatura absoluta.',
+xLabel:'T',yLabel:'P',chartType:'direct',
+update(v){const pr=2*v/300;return [fmt(v)+' K',fmt(pr)+' atm',fmt(pr/v)+' atm/K'];}
+},
+avogadro:{
+title:'Lei de Avogadro',subtitle:'À mesma pressão e temperatura, o volume de um gás ideal é diretamente proporcional à quantidade de matéria.',
+label:'QUANTIDADE DE GÁS VARIÁVEL',state:'PRESSÃO E TEMPERATURA CONSTANTES',scene:'avogadroScene',
+formula:'\\(\\dfrac{V_1}{n_1}=\\dfrac{V_2}{n_2}\\)',formulaLabel:'Equação da lei de Avogadro',
+formulaText:'Para pressão e temperatura constantes, o volume por quantidade de matéria permanece constante: \\(V/n=\\text{constante}\\).',
+conditions:['Pressão constante.','Temperatura constante e expressa em kelvin.','Comparação entre gases ideais nas mesmas condições.'],
+exampleTitle:'O que significa mesmo volume molar?',exampleText:'Nas mesmas condições de pressão e temperatura, volumes iguais de gases ideais contêm a mesma quantidade de moléculas. Adicionar gás, mantendo P e T, exige aumento do volume.',
+note:'Com pressão e temperatura mantidas constantes, acrescentar mais quantidade de gás faz o volume aumentar proporcionalmente.',
+concept:'<strong>Ideia central:</strong> sob as mesmas condições de pressão e temperatura, dobrar a quantidade de matéria dobra o volume.',
+relationTitle:'Proporcionalidade direta',relationText:'Se a quantidade de matéria dobra, o volume também dobra, mantendo pressão e temperatura constantes.',
+attentionTitle:'Quantidade de matéria',attentionText:'A variável n representa a quantidade de matéria, medida em mol. Ela é proporcional ao número de partículas.',
+sliderLabel:'Quantidade de matéria',min:1,max:8,value:4,unit:'mol',
+metrics:['Quantidade n','Volume','Razão V/n'],
+chartTitle:'GRÁFICO V × n',chartRelation:'RELAÇÃO DIRETA',
+chartCaption:'Reta crescente: mantendo pressão e temperatura constantes, o volume aumenta proporcionalmente à quantidade de matéria.',
+xLabel:'Quantidade n (mol)',yLabel:'Volume V (L)',chartType:'direct',
+update(v){const vol=2*v;return [fmt(v)+' mol',fmt(vol)+' L',fmt(vol/v)+' L/mol'];}
+}
+};
+const $=id=>document.getElementById(id);
+const fmt=n=>Number(n).toLocaleString('pt-BR',{maximumFractionDigits:2});
+let current='boyle';
+function typeset(nodes){
+ if(!window.MathJax||!window.MathJax.typesetPromise)return;
+ const list=(nodes||[$('formula'),$('formulaText'),$('conditions'),$('concept'),$('attentionText')]).filter(Boolean);
+ if(!list.length)return;
+ if(window.MathJax.typesetClear)window.MathJax.typesetClear(list);
+ window.MathJax.typesetPromise(list).catch(e=>console.error('MathJax:',e));
+}
+const gasCanvas=$('gasModel');
+let particlePositions=Array.from({length:120},()=>({x:.06+Math.random()*.88,y:.08+Math.random()*.84,vx:(Math.random()-.5)*2,vy:(Math.random()-.5)*2}));
+let lastFrame=0;
+function modelState(){
+ const v=Number($('lawSlider').value);
+ if(current==='boyle')return {T:300,V:v,n:1};
+ if(current==='charles')return {T:v,V:4*v/300,n:1};
+ if(current==='gay')return {T:v,V:4,n:1};
+ return {T:300,V:Math.min(8,2*v),n:v};
+}
+function drawGasModel(){
+ const r=gasCanvas.getBoundingClientRect(),dpr=window.devicePixelRatio||1;
+ if(!r.width||!r.height)return;
+ const cwpx=Math.round(r.width*dpr),chpx=Math.round(r.height*dpr);if(gasCanvas.width!==cwpx||gasCanvas.height!==chpx){gasCanvas.width=cwpx;gasCanvas.height=chpx;}
+ const ctx=gasCanvas.getContext('2d');ctx.setTransform(dpr,0,0,dpr,0,0);
+ const w=r.width,h=r.height;ctx.clearRect(0,0,w,h);
+ const s=modelState(),V=Math.max(1,Math.min(8,s.V));
+ // Câmara compacta: a altura útil varia com V nas leis de Boyle e Charles.
+ const cw=Math.min(w*.43,260),ch=h*.69,left=(w-cw)/2,top=h*.12,bottom=top+ch;
+ const frac=(V-1)/7;
+ const movableTop=bottom-ch*(.22+.70*frac);
+ const rigid=(current==='gay');
+ const pistonY=rigid?top+8:movableTop;
+ const gasL=left+9,gasR=left+cw-9,gasT=rigid?top+12:pistonY+9,gasB=bottom-9;
+ // Fundo e paredes do recipiente.
+ ctx.fillStyle='#fff';ctx.fillRect(left,top,cw,ch);
+ ctx.fillStyle=current==='gay'?'#f4f7fb':'#eaf2fb';
+ ctx.fillRect(gasL,gasT,gasR-gasL,gasB-gasT);
+ ctx.strokeStyle='#8098b3';ctx.lineWidth=4;
+ ctx.beginPath();ctx.moveTo(left,top);ctx.lineTo(left,bottom);ctx.lineTo(left+cw,bottom);ctx.lineTo(left+cw,top);ctx.stroke();
+ if(rigid){
+   // Gay-Lussac: tampa rígida, sem pistão móvel.
+   ctx.strokeStyle='#526f8d';ctx.lineWidth=8;ctx.beginPath();ctx.moveTo(left-2,top+2);ctx.lineTo(left+cw+2,top+2);ctx.stroke();
+   ctx.fillStyle='#8098b3';ctx.font='600 11px Inter,Arial';ctx.textAlign='center';
+   ctx.fillText('RECIPIENTE RÍGIDO · V FIXO',w/2,top-7);
+ }else{
+   // Boyle, Charles e Avogadro: pistão móvel e haste.
+   ctx.fillStyle='#9aafc5';ctx.strokeStyle='#526f8d';ctx.lineWidth=1.5;
+   ctx.fillRect(left+2,pistonY-6,cw-4,12);ctx.strokeRect(left+2,pistonY-6,cw-4,12);
+   ctx.fillStyle='#8098b3';ctx.fillRect(w/2-4,top-12,8,Math.max(0,pistonY-top+7));
+ }
+ // Mais partículas em Avogadro; velocidade visual acompanha a temperatura.
+ const count=Math.max(12,Math.min(100,Math.round( current==='avogadro' ? 12+11*s.n : 42 )));
+ const radius=Math.max(2.1,Math.min(3.2,cw/85));
+ for(let i=0;i<count;i++){
+  const p=particlePositions[i];
+  const x=gasL+(.04+p.x*.92)*(gasR-gasL);
+  const y=gasT+(.04+p.y*.90)*(gasB-gasT);
+  ctx.beginPath();ctx.arc(x,y,radius,0,Math.PI*2);
+  ctx.fillStyle=s.T>400?'#c95b4b':(s.T<260?'#5684ad':'#3d76ab');ctx.fill();
+ }
+ ctx.fillStyle='#526b82';ctx.font='600 11px Inter,Arial';ctx.textAlign='center';
+ ctx.fillText(rigid?'VOLUME FIXO':(current==='boyle'?'PISTÃO COMPRIME / EXPANDE':'PISTÃO MÓVEL'),w/2,bottom+17);
+ ctx.font='11px Inter,Arial';ctx.fillText(`T = ${fmt(s.T)} K   ·   n = ${fmt(s.n)} mol`,w/2,h-7);
+}
+function animateGas(timestamp){
+ if(!lastFrame)lastFrame=timestamp;
+ const dt=Math.min((timestamp-lastFrame)/1000,.04);lastFrame=timestamp;
+ const s=modelState(),speed=.34*Math.sqrt(s.T/300);
+ particlePositions.forEach(p=>{
+  p.x+=p.vx*speed*dt;p.y+=p.vy*speed*dt;
+  if(p.x<.035){p.x=.035;p.vx=Math.abs(p.vx)}if(p.x>.965){p.x=.965;p.vx=-Math.abs(p.vx)}
+  if(p.y<.055){p.y=.055;p.vy=Math.abs(p.vy)}if(p.y>.945){p.y=.945;p.vy=-Math.abs(p.vy)}
+ });
+ drawGasModel();requestAnimationFrame(animateGas);
+}
+function drawLawChart(d,v){
+ const L=62,R=22,T=18,B=48,W=560,H=250,pw=W-L-R,ph=H-T-B;
+ const x0=L, y0=T+ph, x1=W-R, y1=T;
+ const xScale=x=>L+x*pw, yScale=y=>T+(1-y)*ph;
+ let grid='';
+ for(let i=0;i<=4;i++){
+  const x=L+i*pw/4, y=T+i*ph/4;
+  grid+=`<line x1="${x}" y1="${T}" x2="${x}" y2="${y0}" stroke="#e6edf4"/>`;
+  grid+=`<line x1="${L}" y1="${y}" x2="${x1}" y2="${y}" stroke="#e6edf4"/>`;
+ }
+ $('chartGrid').innerHTML=grid;
+ $('chartAxes').innerHTML=`<path d="M ${L} ${T} V ${y0} H ${x1}" fill="none" stroke="#536985" stroke-width="1.7"/><path d="M ${x1-7} ${y0-4} L ${x1} ${y0} L ${x1-7} ${y0+4} M ${L-4} ${T+7} L ${L} ${T} L ${L+4} ${T+7}" fill="none" stroke="#536985" stroke-width="1.7"/>`;
+ $('chartLabels').innerHTML=`<text x="${(L+x1)/2}" y="${H-10}" text-anchor="middle" fill="#536985" font-size="18">${d.xLabel}</text><text x="15" y="${T-15}" fill="#536985" font-size="18">${d.yLabel}</text>`;
+ let pts=[];
+ if(d.chartType==='boyle'){
+  // P=4/V. Eixos normalizados: x=V/8 e y=P/4; a curva e o marcador usam a mesma escala.
+  for(let i=0;i<=100;i++){const x=.125+i/100*.875;const y=1/(8*x);pts.push([xScale(x),yScale(y)]);}
+ }else{
+  // As leis diretas passam pela origem quando a temperatura está em kelvin.
+  for(let i=0;i<=100;i++){const x=i/100;pts.push([xScale(x),yScale(x)]);}
+ }
+ $('chartCurve').setAttribute('d',pts.map((q,i)=>(i?'L':'M')+q[0].toFixed(2)+' '+q[1].toFixed(2)).join(' '));
+ let xn,yn;
+ if(d.chartType==='boyle'){xn=v/8;yn=1/v;}
+ else if(current==='charles'){xn=v/600;yn=v/600;}
+ else if(current==='gay'){xn=v/600;yn=v/600;}
+ else {xn=v/8;yn=v/8;}
+ xn=Math.max(0,Math.min(1,xn));yn=Math.max(0,Math.min(1,yn));
+ const px=xScale(xn),py=yScale(yn);
+ $('chartPoint').setAttribute('cx',px);$('chartPoint').setAttribute('cy',py);
+ $('chartGuide').setAttribute('d',`M ${px} ${py} V ${y0} M ${L} ${py} H ${px}`);
+ $('chartTitle').textContent=d.chartTitle;$('chartRelation').textContent=d.chartRelation;$('chartCaption').textContent=d.chartCaption;
+}
+function updateLaw(){
+ const d=laws[current],v=Number($('lawSlider').value);
+ const values=d.update(v);
+ $('sliderValue').textContent=fmt(v)+' '+d.unit;
+ $('metric1').textContent=values[0];$('metric2').textContent=values[1];$('metric3').textContent=values[2];
+ drawLawChart(d,v);drawGasModel();
+}
+function selectLaw(key){
+ current=key;const d=laws[key];
+ document.querySelectorAll('.tab').forEach(b=>{const active=b.dataset.law===key;b.classList.toggle('active',active);b.setAttribute('aria-pressed',String(active));});
+ $('lawTitle').textContent=d.title;$('lawSubtitle').textContent=d.subtitle;$('modelLabel').textContent=' '+d.label.replace('MODELO FÍSICO · ','');$('modelState').textContent=d.state;
+ $('formulaLabel').textContent=d.formulaLabel;$('formula').innerHTML=d.formula;$('formulaText').innerHTML=d.formulaText;
+ $('conditions').innerHTML=d.conditions.map(x=>`<li>${x}</li>`).join('');
+ $('exampleTitle').textContent=d.exampleTitle;$('exampleText').textContent=d.exampleText;
+ $('modelNote').textContent=d.note;$('concept').innerHTML=d.concept;
+ // Os painéis de relação/atenção foram removidos do HTML; atualizá-los era
+ // lançar uma exceção e interromper a inicialização das animações.
+ if($('relationTitle'))$('relationTitle').textContent=d.relationTitle;
+ if($('relationText'))$('relationText').textContent=d.relationText;
+ if($('attentionTitle'))$('attentionTitle').textContent=d.attentionTitle;
+ if($('attentionText'))$('attentionText').textContent=d.attentionText;
+ $('sliderLabel').textContent=d.sliderLabel;$('lawSlider').min=d.min;$('lawSlider').max=d.max;$('lawSlider').value=d.value;$('lawSlider').step=key==='boyle'?'.1':(key==='avogadro'?'.1':'10');
+ $('metric1Label').textContent=d.metrics[0];$('metric2Label').textContent=d.metrics[1];$('metric3Label').textContent=d.metrics[2];
+
+ updateLaw();typeset();
+}
+document.querySelectorAll('.tab').forEach(b=>b.addEventListener('click',()=>selectLaw(b.dataset.law)));
+$('lawSlider').addEventListener('input',updateLaw);
+$('resetBtn').addEventListener('click',()=>{const d=laws[current];$('lawSlider').value=d.value;updateLaw();});
+window.addEventListener('resize',()=>{drawGasModel();drawLawChart(laws[current],Number($('lawSlider').value));});
+window.addEventListener('load',()=>{
+ if(window.MathJax&&window.MathJax.startup&&window.MathJax.startup.promise){
+  window.MathJax.startup.promise.then(()=>window.MathJax.typesetPromise()).catch(e=>console.error('MathJax startup:',e));
+ }
+});
+selectLaw('boyle');
+// Inicialização explícita após configurar lei, controles, gráfico e modelo.
+updateLaw();
+requestAnimationFrame(animateGas);
+</script>
+</body>
+</html>

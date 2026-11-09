@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Exercício 7.52 — Mistura de gases</title>
+<script>
+window.MathJax = {
+  tex: {inlineMath: [['\\(','\\)'], ['$', '$']], displayMath: [['\\[','\\]']]},
+  chtml: { scale: 0.92 }
+};
+</script>
+<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+<style>
+:root{
+  --navy:#183653; --blue:#347db7; --orange:#d97736; --ink:#183653;
+  --muted:#66809b; --line:#d5e2ef; --bg:#f2f6fa; --panel:#fff;
+  --soft:#f6f9fc;
+}
+*{box-sizing:border-box}
+html{font-size:clamp(13px, .82vw + 7px, 17px)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:Arial,Helvetica,sans-serif}
+header{background:var(--navy);color:white;padding:12px clamp(16px,2.2vw,34px);display:flex;align-items:center;justify-content:space-between;gap:16px}
+header h1{font-size:1.22rem;margin:0 0 3px;font-weight:700}
+header p{margin:0;color:#d5e4f3;font-size:.78rem}
+.back{color:white;text-decoration:none;border:1px solid #6f8ba6;border-radius:7px;padding:8px 12px;font-size:.78rem}
+main{width:min(1500px,96vw);margin:clamp(12px,1.5vw,22px) auto;display:grid;grid-template-columns:minmax(0,1.12fr) minmax(340px,.88fr);gap:12px}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:clamp(14px,1.3vw,21px);min-width:0}
+h2{font-size:1.15rem;margin:0 0 7px}
+.sub{color:var(--muted);font-size:.88rem;line-height:1.45;margin:0 0 14px}
+.kicker{font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;color:#7890a8;font-weight:700;margin-bottom:9px}
+.gas-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.gas{background:var(--soft);border:1px solid var(--line);border-radius:8px;padding:10px;text-align:center}
+.gas h3{font-size:.9rem;margin:0 0 4px}
+.gas.mono h3{color:var(--orange)} .gas.dia h3{color:var(--blue)}
+.gas svg{width:100%;height:150px;display:block}
+.gas .math{font-size:1rem;margin-top:2px}
+.mixture{margin-top:12px;border:1px solid var(--line);border-radius:8px;padding:10px;background:#fbfdff}
+.mix-head{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:5px}
+.mix-head strong{font-size:.88rem}
+.mix-head span{font-size:.75rem;color:var(--muted)}
+.mixture svg{width:100%;height:150px;display:block}
+.legend{display:flex;justify-content:center;gap:18px;flex-wrap:wrap;font-size:.72rem;color:var(--muted);margin-top:4px}
+.dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:5px}
+.explain{font-size:.83rem;color:var(--muted);line-height:1.5;margin:11px 0 0}
+.right{display:flex;flex-direction:column;gap:12px}
+.equation{background:var(--soft);border:1px solid var(--line);border-radius:8px;padding:12px 14px;text-align:center;margin:8px 0}
+.equation .mjx-container{font-size:95%!important}
+.eq-line{padding:5px 0;border-bottom:1px solid #e4edf5}
+.eq-line:last-child{border:0}
+.control{background:var(--soft);border:1px solid var(--line);border-radius:8px;padding:13px}
+.control-top{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.control-top label{font-weight:700;font-size:.88rem}
+.value{font-size:1.25rem;font-weight:700;color:var(--blue);font-variant-numeric:tabular-nums}
+input[type=range]{width:100%;accent-color:var(--blue);margin:13px 0 5px;cursor:pointer}
+.range-labels{display:flex;justify-content:space-between;font-size:.7rem;color:var(--muted)}
+.metrics{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:11px}
+.metric{background:white;border:1px solid var(--line);border-radius:7px;padding:9px}
+.metric small{display:block;color:var(--muted);font-size:.67rem;text-transform:uppercase;letter-spacing:.04em;margin-bottom:4px}
+.metric strong{font-size:1.03rem;font-variant-numeric:tabular-nums}
+.target{border-left:3px solid var(--orange);padding:8px 11px;background:#fff8f2;border-radius:0 7px 7px 0;margin-top:10px;font-size:.82rem;line-height:1.45}
+.result{border:1px solid var(--line);border-radius:8px;padding:12px;background:#f8fbfe}
+.result button{background:var(--navy);color:white;border:0;border-radius:7px;padding:9px 13px;font-size:.82rem;font-weight:700;cursor:pointer}
+.result-content{display:none;margin-top:12px;line-height:1.55;font-size:.88rem}
+.result-content.show{display:block}
+.answer{font-size:1.3rem;color:var(--blue);font-weight:700;margin:6px 0}
+.note{font-size:.74rem;color:var(--muted);line-height:1.45}
+@media(max-width:850px){main{grid-template-columns:1fr;width:min(96vw,720px)}}
+@media(max-width:480px){header{align-items:flex-start}.back{white-space:nowrap}.gas-grid{gap:7px}.gas{padding:7px}.metrics{grid-template-columns:1fr 1fr}}
+@media(min-width:1200px) and (min-height:760px){main{align-items:start}.panel{padding:clamp(18px,1.4vw,24px)}}
+</style>
+</head>
+<body>
+<header>
+  <div><h1>Exercício 7.52 · Mistura de gases</h1><p>Termodinâmica · Gases ideais</p></div>
+  <a class="back" href="../aula8/index.html">← Voltar</a>
+</header>
+<main>
+<section class="panel">
+  <div class="kicker">Modelo físico</div>
+  <h2>Misturando gases monoatômicos e diatômicos</h2>
+  <p class="sub">Uma mistura ideal pode apresentar um coeficiente adiabático que não corresponde ao de nenhum dos gases puros.</p>
+  <div class="gas-grid">
+    <div class="gas mono">
+      <h3>Gás monoatômico</h3>
+      <svg viewBox="0 0 220 145" role="img" aria-label="Representação de um átomo isolado">
+        <defs>
+          <radialGradient id="monoSphere" cx="32%" cy="25%" r="72%">
+            <stop offset="0" stop-color="#ffd4e2"/><stop offset=".48" stop-color="#ed91ad"/><stop offset="1" stop-color="#b94f78"/>
+          </radialGradient>
+        </defs>
+        <ellipse cx="110" cy="126" rx="25" ry="5" fill="#dce5ee" opacity=".65"/>
+        <circle cx="110" cy="65" r="31" fill="url(#monoSphere)" stroke="#c87593" stroke-width="1"/>
+        <ellipse cx="99" cy="52" rx="9" ry="6" fill="#fff" opacity=".28"/>
+      </svg>
+      <div class="math">\(C_{V}=\dfrac{3}{2}R\)</div>
+    </div>
+    <div class="gas dia">
+      <h3>Gás diatômico</h3>
+      <svg viewBox="0 0 220 165" role="img" aria-label="Molécula diatômica com eixos cartesianos e setas de rotação">
+        <defs>
+          <radialGradient id="diaSphere" cx="32%" cy="25%" r="72%">
+            <stop offset="0" stop-color="#c9e4fb"/><stop offset=".5" stop-color="#6ba5d2"/><stop offset="1" stop-color="#28649a"/>
+          </radialGradient>
+          <marker id="axisArrow" markerWidth="6" markerHeight="6" refX="4.8" refY="3" orient="auto">
+            <path d="M0 0 L6 3 L0 6" fill="#555"/>
+          </marker>
+          <marker id="rotationArrow" markerWidth="6" markerHeight="6" refX="4.8" refY="3" orient="auto">
+            <path d="M0 0 L6 3 L0 6" fill="#ed8b79"/>
+          </marker>
+        </defs>
+
+        <!-- Eixos cartesianos completos, cruzando-se continuamente na origem -->
+        <g stroke="#555" stroke-width="1.25" fill="none">
+          <!-- z: semieixo positivo para cima e negativo para baixo -->
+          <path d="M110 151 L110 8" marker-end="url(#axisArrow)"/>
+          <!-- x: reta diagonal; a molécula fica alinhada ao mesmo eixo -->
+          <path d="M194 57 L26 101" marker-end="url(#axisArrow)"/>
+          <!-- y: reta contínua, com os dois sentidos, sem interrupção na origem -->
+          <path d="M28 32 L192 126" marker-end="url(#axisArrow)"/>
+        </g>
+        <g fill="#444" font-size="11" font-family="Georgia,serif" font-style="italic">
+          <text x="104" y="9">z</text>
+          <text x="15" y="109">x</text>
+          <text x="196" y="132">y</text>
+        </g>
+
+        <!-- Molécula diatômica alinhada ao eixo x -->
+        <path d="M78 87 L142 71" stroke="#315f88" stroke-width="11" stroke-linecap="round"/>
+        <path d="M78 85 L142 69" stroke="#b7d5ec" stroke-width="4" stroke-linecap="round"/>
+        <circle cx="78" cy="87" r="27" fill="url(#diaSphere)" stroke="#28649a" stroke-width="1"/>
+        <circle cx="142" cy="71" r="27" fill="url(#diaSphere)" stroke="#28649a" stroke-width="1"/>
+        <ellipse cx="68" cy="75" rx="9" ry="5" fill="#fff" opacity=".3"/>
+        <ellipse cx="132" cy="59" rx="9" ry="5" fill="#fff" opacity=".3"/>
+
+
+      </svg>
+      <div class="math">\(C_{V}=\dfrac{5}{2}R\)</div>
+    </div>
+  </div>
+  <div class="mixture">
+    <div class="mix-head"><strong>Mistura dos dois gases</strong><span>representação esquemática</span></div>
+    <svg id="mixtureSvg" viewBox="0 0 560 150" role="img" aria-label="Composição da mistura: a quantidade de moléculas diatômicas e monoatômicas acompanha a fração escolhida no controle">
+      <rect x="4" y="5" width="552" height="138" rx="9" fill="#fff" stroke="#dce7f1"/>
+      <g id="particles"></g>
+    </svg>
+    <div class="legend"><span><i class="dot" style="background:#e78b4e"></i>Monoatômicas</span><span><i class="dot" style="background:#6ba5d2"></i>Diatômicas</span></div>
+  </div>
+  <p class="explain">Se \(x\) é a fração molar de moléculas diatômicas, então \(1-x\) é a fração molar de átomos monoatômicos. A composição determina as capacidades térmicas molares da mistura.</p>
+</section>
+
+<aside class="right">
+  <section class="panel">
+    <div class="kicker">Relações termodinâmicas</div>
+    <h2>Capacidades térmicas da mistura</h2>
+    <div class="equation">
+      <div class="eq-line">\(\displaystyle C_{V}^{mist}=(1-x)\frac{3R}{2}+x\frac{5R}{2}\)</div>
+      <div class="eq-line">\(\displaystyle C_{P}^{mist}=C_{V}^{mist}+R\)</div>
+      <div style="padding-top:8px">\(\displaystyle \gamma=\frac{C_{P}^{mist}}{C_{V}^{mist}}=1+\frac{1}{\frac{3}{2}+x}\)</div>
+    </div>
+    <p class="note">A relação \(C_{P}-C_{V}=R\) vale para a mistura de gases ideais, por mol de mistura.</p>
+  </section>
+
+  <section class="panel">
+    <div class="kicker">Explore a composição</div>
+    <div class="control">
+      <div class="control-top"><label for="fraction">Fração molar diatômica, \(x\)</label><span class="value" id="xValue">50,0%</span></div>
+      <input id="fraction" type="range" min="0" max="100" step="0.5" value="50">
+      <div class="range-labels"><span>0% diatômico</span><span>100% diatômico</span></div>
+      <div class="metrics">
+        <div class="metric"><small>Fração monoatômica</small><strong id="monoValue">50,0%</strong></div>
+        <div class="metric"><small>Coeficiente γ</small><strong id="gammaValue">1,500</strong></div>
+      </div>
+      <div class="target">Valor desejado no enunciado: <strong>\(\gamma=1,60\)</strong>. Ajuste o controle e observe qual composição produz esse valor.</div>
+    </div>
+  </section>
+
+  <section class="panel result">
+    <div class="kicker">Verificação</div>
+    <button id="reveal" type="button" aria-expanded="false">Resultado</button>
+    <div class="result-content" id="answer">
+      <strong>Determinação da fração diatômica</strong>
+      <div class="equation">
+        \(\displaystyle 1,60=1+\frac{1}{\frac{3}{2}+x}\)
+        \(\displaystyle \frac{1}{0,60}=\frac{3}{2}+x\)
+        \(\displaystyle x=\frac{1}{6}\approx0,167\)
+      </div>
+      <div class="answer">\(x\approx16,7\%\)</div>
+      Portanto, a mistura deve conter aproximadamente <strong>16,7% de moléculas diatômicas</strong> e <strong>83,3% de moléculas monoatômicas</strong>, em fração molar.
+    </div>
+  </section>
+</aside>
+</main>
+<script>
+const slider=document.getElementById('fraction');
+const xValue=document.getElementById('xValue');
+const monoValue=document.getElementById('monoValue');
+const gammaValue=document.getElementById('gammaValue');
+function update(){
+  const x=Number(slider.value)/100;
+  const gamma=1+1/(1.5+x);
+  xValue.textContent=(x*100).toFixed(1).replace('.',',')+'%';
+  monoValue.textContent=((1-x)*100).toFixed(1).replace('.',',')+'%';
+  gammaValue.textContent=gamma.toFixed(3).replace('.',',');
+
+  // 50 símbolos representam 50 moléculas da mistura. O último símbolo
+  // pode ser parcialmente preenchido para acompanhar também frações intermediárias.
+  const total=50;
+  const diatomicExact=x*total;
+  const fullDiatomic=Math.floor(diatomicExact);
+  const partialDiatomic=diatomicExact-fullDiatomic;
+  const particles=document.getElementById('particles');
+  const ns='http://www.w3.org/2000/svg';
+  particles.replaceChildren();
+
+  for(let i=0;i<total;i++){
+    const col=i%10, row=Math.floor(i/10);
+    const cx=34+col*54.5, cy=20+row*27.2;
+    const isDiatomic=i<fullDiatomic;
+    const isPartial=i===fullDiatomic && partialDiatomic>0.001;
+    const group=document.createElementNS(ns,'g');
+
+    if(isDiatomic || isPartial){
+      const opacity=isDiatomic?1:partialDiatomic;
+      const bond=document.createElementNS(ns,'path');
+      bond.setAttribute('d',`M ${cx-3.2} ${cy} L ${cx+3.2} ${cy}`);
+      bond.setAttribute('stroke','#347db7');
+      bond.setAttribute('stroke-width','2.2');
+      bond.setAttribute('stroke-linecap','round');
+      bond.setAttribute('opacity',opacity);
+      group.appendChild(bond);
+      for(const dx of [-3.2,3.2]){
+        const atom=document.createElementNS(ns,'circle');
+        atom.setAttribute('cx',cx+dx);
+        atom.setAttribute('cy',cy);
+        atom.setAttribute('r','3.2');
+        atom.setAttribute('fill','#6ba5d2');
+        atom.setAttribute('stroke','#347db7');
+        atom.setAttribute('stroke-width','.7');
+        atom.setAttribute('opacity',opacity);
+        group.appendChild(atom);
+      }
+    }else{
+      const atom=document.createElementNS(ns,'circle');
+      atom.setAttribute('cx',cx);
+      atom.setAttribute('cy',cy);
+      atom.setAttribute('r','4.1');
+      atom.setAttribute('fill','#e78b4e');
+      atom.setAttribute('stroke','#c66c31');
+      atom.setAttribute('stroke-width','.8');
+      group.appendChild(atom);
+    }
+    particles.appendChild(group);
+  }
+  const diaPercent=(x*100).toFixed(1).replace('.',',');
+  const monoPercent=((1-x)*100).toFixed(1).replace('.',',');
+  document.getElementById('mixtureSvg').setAttribute(
+    'aria-label',`Mistura ilustrada com ${diaPercent}% de moléculas diatômicas e ${monoPercent}% de moléculas monoatômicas`
+  );
+}
+slider.addEventListener('input',update);
+update();
+const reveal=document.getElementById('reveal');
+const answer=document.getElementById('answer');
+reveal.addEventListener('click',()=>{
+  const shown=answer.classList.toggle('show');
+  reveal.textContent=shown?'Ocultar resultado':'Revelar resultado final';
+  reveal.setAttribute('aria-expanded',String(shown));
+  if(shown && window.MathJax?.typesetPromise) MathJax.typesetPromise([answer]);
+});
+</script>
+</body>
+</html>

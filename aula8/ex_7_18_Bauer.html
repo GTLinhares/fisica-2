@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Exercício 7.18 — Ciclo termodinâmico</title>
+<script>
+window.MathJax={tex:{inlineMath:[['\\(','\\)'],['$','$']],displayMath:[['\\[','\\]'],['$$','$$']]},options:{skipHtmlTags:['script','noscript','style','textarea','pre','code']}};
+</script>
+<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+<style>
+:root{--navy:#173c65;--blue:#2563a6;--blue2:#60a5fa;--ink:#1e293b;--muted:#64748b;--line:#dbe3ec;--bg:#f1f5f9;--orange:#ea580c;--green:#15803d;--purple:#7c3aed}
+*{box-sizing:border-box}body{margin:0;height:100vh;overflow:hidden;background:var(--bg);color:var(--ink);font-family:Inter,Arial,sans-serif}
+header{height:58px;background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:space-between;padding:7px 19px;gap:12px;box-shadow:0 2px 8px #0f172a22}
+header h1{font-size:17px;margin:0;font-weight:800}header p{margin:3px 0 0;color:#c9ddf2;font-size:10px}
+main{height:calc(100vh - 58px);padding:9px;display:grid;grid-template-columns:minmax(270px,.82fr) minmax(390px,1.18fr) minmax(340px,1fr);gap:9px;max-width:1750px;margin:auto}
+.panel{background:#fff;border:1px solid var(--line);border-radius:11px;box-shadow:0 1px 3px #0f172a0a;min-width:0;min-height:0;padding:10px;display:flex;flex-direction:column;gap:7px;overflow:hidden}
+.eyebrow{font-size:9px;text-transform:uppercase;letter-spacing:1px;font-weight:800;color:#94a3b8}.panel h2{font-size:13px;margin:0;color:#334155}.sub{font-size:10px;color:var(--muted);line-height:1.4;margin:1px 0 0}
+.scene-wrap{flex:0 0 430px;height:430px;min-height:0;border:1px solid #dbe5ef;border-radius:9px;background:linear-gradient(180deg,#f8fbff,#eef5fb);overflow:hidden}
+#scene{width:100%;height:100%;display:block}
+.stage-list{display:grid;grid-template-columns:1fr;gap:5px}
+.stage{border:1px solid var(--line);border-radius:7px;padding:6px 8px;background:#f8fafc;text-align:left;color:#334155;cursor:pointer}
+.stage b{display:block;font-size:10px}.stage span{font-size:9px;color:#64748b}.stage.active{border-color:#7aa9d8;background:#eff6ff}
+button{border:0;border-radius:7px;padding:8px 10px;font-size:10px;font-weight:800;cursor:pointer}button:disabled{opacity:.55;cursor:not-allowed}.primary{background:var(--blue);color:#fff}.secondary{background:#eaf2fb;color:#1e4e7b}.playrow{display:flex;gap:6px}.playrow button{flex:1}
+.graph-card{flex:1 1 0%;min-height:0;min-width:0;border:1px solid var(--line);border-radius:9px;padding:6px;display:flex;flex-direction:column}
+.graph-title{display:flex;justify-content:space-between;align-items:center;flex:0 0 auto;font-size:11px;font-weight:800}.graph-title small{font-size:9px;color:var(--muted);font-weight:500}
+.pv-stage{position:relative;width:100%;max-width:none;flex:1 1 0%;min-width:0;min-height:0;height:100%;margin:2px auto;display:flex;align-items:stretch;justify-content:stretch}
+#pv{display:block;flex:1 1 auto;width:100%;height:100%;min-width:0;min-height:0;max-width:none;max-height:100%;}
+.pv-label{position:absolute;z-index:2;display:block;white-space:nowrap;color:#334155;font-size:12px;line-height:1;pointer-events:none}
+.axis-p{left:0.6%;top:11.7%;font-size:15px;font-weight:700}
+.axis-v{left:92.9%;top:89.4%;font-size:15px;font-weight:700;transform:translateX(-100%)}
+.label-p1{left:6.8%;top:20.2%;transform:translate(-100%,-50%);color:#64748b}
+.label-p2{left:6.8%;top:20.2%;transform:translate(-100%,-50%);color:#64748b}
+.label-v1{left:24.8%;top:87.2%;transform:translate(-50%,0);color:#64748b}
+.label-v2{left:73.2%;top:87.2%;transform:translate(-50%,0);color:#64748b}
+.pv-label mjx-container{margin:0!important;display:inline-block!important}
+.legend{display:flex;flex:0 0 auto;gap:10px;flex-wrap:wrap;font-size:9px;color:#64748b}.legend i{display:inline-block;width:16px;height:3px;vertical-align:middle;margin-right:4px}
+.params{border:1px solid var(--line);border-radius:8px;background:#f8fafc;padding:8px}
+.control{margin:4px 0 8px}.control:last-child{margin-bottom:0}.control-head{display:flex;justify-content:space-between;font-size:10px;font-weight:700;color:#475569}.control-head output{color:var(--navy);font-weight:800}
+input[type=range]{width:100%;accent-color:var(--blue);margin:5px 0 0}
+.process-box{border:1px solid var(--line);border-radius:9px;padding:10px;background:#fff;overflow:auto;flex:1;min-height:0}
+.process-head{display:flex;align-items:center;gap:8px;margin-bottom:7px}.tag{font-size:9px;font-weight:800;padding:4px 7px;border-radius:20px;background:#eaf2fb;color:#245f9e}
+.process-box h3{margin:0;font-size:13px;color:#173c65}.lead{font-size:10px;line-height:1.45;color:#475569;margin:5px 0 8px}
+.equation{font-size:12px;line-height:1.6;margin:6px 0;overflow-x:auto}.equation mjx-container[display=true]{margin:.25em 0!important}
+/*.prompt{padding:8px;border-left:3px solid #93b8df;background:#f4f8fc;border-radius:0 6px 6px 0;font-size:10px;color:#475569;line-height:1.5;margin:7px 0}*/
+.reveal{margin-top:7px;width:100%}.solution{display:none;border-top:1px solid var(--line);margin-top:9px;padding-top:8px}.solution.show{display:block}
+.solution-title{font-size:10px;font-weight:800;color:#173c65;margin:5px 0}
+.note{font-size:9px;color:#64748b;line-height:1.4}
+
+@media(max-height:740px) and (min-width:1101px){header{height:52px}main{height:calc(100vh - 52px);padding:6px;gap:6px}.panel{padding:8px;gap:5px}.stage{padding:4px 7px}.params{padding:6px}}
+
+/* Ajustes de leitura na coluna da ilustração */
+.panel:first-child h2{font-size:15px}
+.panel:first-child .sub{font-size:12px;line-height:1.5}
+.panel:first-child .stage-list{gap:6px}
+.panel:first-child .stage{padding:8px 10px}
+.panel:first-child .stage b{font-size:12px}
+.panel:first-child .stage span{font-size:11px;line-height:1.35}
+.panel:first-child .playrow button{font-size:12px;padding:10px 12px}
+
+
+
+/* Ampliação da tipografia nas colunas do diagrama e da resolução */
+.panel:nth-child(2) .eyebrow,
+.panel:nth-child(3) .eyebrow{font-size:10px}
+.panel:nth-child(2) h2,
+.panel:nth-child(3) h2{font-size:15px}
+.panel:nth-child(2) .sub,
+.panel:nth-child(3) .sub{font-size:12px;line-height:1.5}
+
+.panel:nth-child(2) .graph-title{font-size:13px}
+.panel:nth-child(2) .graph-title small{font-size:10px}
+.panel:nth-child(2) .legend{font-size:11px;gap:13px}
+.panel:nth-child(2) .pv-label{font-size:14px}
+
+.panel:nth-child(3) .control-head{font-size:12px}
+.panel:nth-child(3) .params{padding:10px}
+.panel:nth-child(3) .process-box{padding:12px}
+.panel:nth-child(3) .tag{font-size:10px}
+.panel:nth-child(3) .process-box h3{font-size:15px}
+.panel:nth-child(3) .lead{font-size:12px;line-height:1.55}
+.panel:nth-child(3) .equation{font-size:14px;line-height:1.7}
+.panel:nth-child(3) .prompt{font-size:12px;line-height:1.55;padding:10px}
+.panel:nth-child(3) .solution-title{font-size:12px}
+.panel:nth-child(3) .note{font-size:11px;line-height:1.5}
+.panel:nth-child(3) button{font-size:12px;padding:9px 11px}
+
+
+/* Mantém o tamanho das equações e permite rolagem sem exibir barras */
+.process-box,
+.equation{
+  scrollbar-width:none;
+  -ms-overflow-style:none;
+}
+.process-box::-webkit-scrollbar,
+.equation::-webkit-scrollbar{
+  display:none;
+  width:0;
+  height:0;
+}
+.equation{overflow-x:auto}
+.process-box{overflow:auto}
+
+
+
+/* Layout responsivo: prioriza manter o painel completo visível em monitores */
+html{min-width:320px}
+body{height:100vh;height:100dvh;overflow:hidden}
+header{height:clamp(48px,7.2vh,58px);min-height:0;flex-wrap:nowrap;padding:6px clamp(10px,1.2vw,19px)}
+header h1{font-size:clamp(14px,1.15vw,17px)}
+header p{font-size:clamp(9px,.72vw,10px)}
+main{
+  width:100%;
+  height:calc(100vh - clamp(48px,7.2vh,58px));
+  height:calc(100dvh - clamp(48px,7.2vh,58px));
+  grid-template-columns:minmax(245px,.82fr) minmax(340px,1.18fr) minmax(300px,1fr);
+  padding:clamp(5px,.65vw,10px);
+  gap:clamp(5px,.6vw,9px);
+}
+.panel{min-width:0;min-height:0;padding:clamp(6px,.7vw,10px);gap:clamp(4px,.5vw,7px)}
+.scene-wrap{flex:1 1 0;height:auto;min-height:0;width:100%;max-width:100%}
+#scene{width:100%;height:100%;display:block}
+.graph-card{min-height:0}
+.graph-title{font-size:clamp(10px,.9vw,13px)}
+.legend{font-size:clamp(8px,.72vw,11px)}
+.process-box{min-height:0;overflow:auto}
+.equation{max-width:100%;overflow-x:auto}
+.panel h2{font-size:clamp(12px,.95vw,15px)}
+.sub,.lead{font-size:clamp(9px,.76vw,12px)}
+
+/* Em telas desktop de menor altura, compacta a distribuição vertical sem zoom */
+@media (min-width:980px) and (max-height:820px){
+  header{height:48px;padding-top:4px;padding-bottom:4px}
+  main{height:calc(100vh - 48px);height:calc(100dvh - 48px);padding:5px;gap:6px}
+  .panel{padding:7px;gap:5px}
+  .panel:first-child .stage-list{grid-template-columns:1fr 1fr;gap:4px}
+  .panel:first-child .stage{padding:5px 6px;min-height:42px}
+  .panel:first-child .stage b{font-size:clamp(9px,.72vw,11px)}
+  .panel:first-child .stage span{font-size:clamp(8px,.65vw,10px);line-height:1.2}
+  .panel:first-child .playrow button{padding:7px 9px;font-size:10px}
+  .panel:nth-child(2) .graph-card{padding:5px}
+  .panel:nth-child(3) .params{padding:6px}
+  .panel:nth-child(3) .process-box{padding:8px}
+  .panel:nth-child(3) .lead{font-size:clamp(9px,.72vw,11px);line-height:1.35;margin:4px 0 6px}
+  .panel:nth-child(3) .equation{font-size:clamp(11px,.9vw,13px);line-height:1.45;margin:4px 0}
+  .panel:nth-child(3) .solution-title{font-size:clamp(9px,.72vw,11px);margin:4px 0}
+  .panel:nth-child(3) button{font-size:10px;padding:7px 8px}
+  .panel:nth-child(3) .note{font-size:9px}
+}
+
+/* Em larguras realmente estreitas, reorganiza em duas colunas; abaixo disso, uma */
+@media (max-width:979px){
+  body{height:auto;min-height:100vh;overflow:auto}
+  header{height:auto;min-height:52px;flex-wrap:wrap}
+  main{height:auto;min-height:calc(100vh - 52px);grid-template-columns:minmax(260px,.82fr) minmax(340px,1.18fr);max-width:1100px}
+  .panel{overflow:visible}
+  .scene-wrap{height:clamp(300px,42vw,430px);flex:none}
+  .graph-card{height:clamp(350px,48vw,430px);min-height:350px;flex:none}
+  .panel:nth-child(3){grid-column:1/-1;min-height:350px}
+  .process-box{overflow:visible;flex:none}
+}
+@media (max-width:700px){
+  main{grid-template-columns:minmax(0,1fr);padding:8px;gap:8px}
+  .panel:nth-child(3){grid-column:auto}
+  .scene-wrap{height:min(88vw,430px);min-height:290px}
+  .graph-card{height:min(88vw,390px);min-height:300px}
+}
+
+
+/* Botão de retorno ao índice da disciplina */
+header .back-index{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  white-space:nowrap;
+  padding:8px 12px;
+  border:1px solid #7898b8;
+  border-radius:7px;
+  color:#fff;
+  background:rgba(255,255,255,.08);
+  text-decoration:none;
+  font-size:clamp(10px,.78vw,12px);
+  font-weight:750;
+  transition:background .18s ease,border-color .18s ease;
+}
+header .back-index:hover{background:rgba(255,255,255,.17);border-color:#c9ddf2}
+</style>
+</head>
+<body>
+<header>
+ <div><h1>Exercício 7.18 · Ciclo termodinâmico</h1><p>Gás ideal monoatômico · Primeira Lei da Termodinâmica · Diagrama \(pV\)</p></div>
+ <a class="back-index" href="../aula8/index.html">← Voltar</a>
+</header>
+<main>
+<section class="panel">
+ <div><div class="eyebrow">Visualização</div><h2>O gás ideal percorre um ciclo</h2></div>
+ <div class="scene-wrap">
+ <svg id="scene" viewBox="0 0 420 430" role="img" aria-label="Cilindro com gás e pistão móvel">
+  <defs><linearGradient id="gas" x2="0" y2="1"><stop stop-color="#bfdbfe" stop-opacity=".8"/><stop offset="1" stop-color="#60a5fa" stop-opacity=".55"/></linearGradient></defs>
+  <text x="210" y="34" text-anchor="middle" fill="#315879" font-size="13" font-weight="800">CILINDRO COM GÁS IDEAL</text>
+  <rect x="104" y="75" width="212" height="290" rx="12" fill="#fff" stroke="#7893ad" stroke-width="7"/>
+  <rect id="gasFill" x="112" y="202" width="196" height="155" fill="url(#gas)"/>
+  <g id="particles" fill="#2563a6" opacity=".72">
+   <circle cx="145" cy="322" r="4"/><circle cx="184" cy="294" r="4"/><circle cx="228" cy="330" r="4"/><circle cx="274" cy="302" r="4"/><circle cx="158" cy="250" r="4"/><circle cx="210" cy="268" r="4"/><circle cx="260" cy="238" r="4"/><circle cx="294" cy="340" r="4"/>
+  </g>
+  <rect id="piston" x="108" y="190" width="204" height="17" rx="4" fill="#64748b" stroke="#334155" stroke-width="2"/>
+  <path id="rod" d="M210 190 V105" stroke="#64748b" stroke-width="8" stroke-linecap="round"/>
+  <rect x="190" y="72" width="40" height="34" rx="5" fill="#94a3b8" stroke="#475569" stroke-width="2"/>
+  <text id="sceneStage" x="210" y="397" text-anchor="middle" font-size="12" font-weight="800" fill="#245f9e">1 → 2 · EXPANSÃO ISOTÉRMICA</text>
+  <text id="sceneTemp" x="210" y="416" text-anchor="middle" font-size="10" fill="#64748b">Temperatura constante</text>
+ </svg>
+ </div>
+ <div class="stage-list">
+  <button class="stage active" data-stage="0"><b>1 → 2 · Isotérmico</b><span>Expansão: \((P_1,V_1,T_1)\rightarrow(P_2,V_2,T_1)\)</span></button>
+  <button class="stage" data-stage="1"><b>2 → 3 · Isocórico</b><span>Aquecimento: \((P_2,V_2,T_1)\rightarrow(P_1,V_2,T_2)\)</span></button>
+  <button class="stage" data-stage="2"><b>3 → 1 · Isobárico</b><span>Compressão:\((P_1,V_2,T_2)\rightarrow(P_1,V_1,T_1)\)</span></button>
+  <button class="stage" data-stage="3"><b>Ciclo completo</b><span> </span></button>
+ </div>
+ <div class="playrow"><button class="primary" id="play">▶ Iniciar</button></div>
+</section>
+
+<section class="panel">
+ <div><div class="eyebrow">Representação</div><h2>Diagrama pressão × volume</h2></div>
+ <div class="graph-card">
+  <div class="graph-title"><span>Diagrama \(pV\)</span><small id="graphStage">Etapa 1 → 2</small></div>
+  <div class="pv-stage">
+  <svg id="pv" viewBox="45 15 560 410" preserveAspectRatio="xMidYMid meet">
+   <defs><marker id="arrBlue" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0 0 L7 4 L0 8" fill="#2563a6"/></marker><marker id="arrGreen" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0 0 L7 4 L0 8" fill="#15803d"/></marker><marker id="arrOrange" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0 0 L7 4 L0 8" fill="#ea580c"/></marker></defs>
+   <g stroke="#e2e8f0" stroke-width="1"><path d="M78 90H580M78 190H580M78 290H580M78 390H580"/><path d="M180 55V390M272 55V390M363 55V390M455 55V390"/></g>
+   <path d="M78 40V390H590" fill="none" stroke="#475569" stroke-width="2.2"/>
+   <g fill="#334155" font-family="Georgia,serif" font-size="14">
+    <text x="55" y="32" font-style="italic" font-weight="700">p</text>
+    <text x="592" y="420" font-style="italic" font-weight="700">V</text>
+   </g>
+   <g fill="#64748b" font-family="Georgia,serif" font-size="12">
+    <text x="65" y="125" text-anchor="end" font-style="italic">p₁</text>
+    <text id="p2axisSvg" x="65" y="294" text-anchor="end" font-style="italic">p₂</text>
+    <text x="180" y="410" text-anchor="middle" font-style="italic">V₁</text>
+    <text id="v2axisSvg" x="455" y="410" text-anchor="middle" font-style="italic">V₂</text>
+   </g>
+   <path id="isoCurve" d="" fill="none" stroke="#2563a6" stroke-width="5" stroke-linecap="round"/>
+   <path id="isochoric" d="" fill="none" stroke="#15803d" stroke-width="5" stroke-linecap="round"/>
+   <path id="isobaric" d="" fill="none" stroke="#ea580c" stroke-width="5" stroke-linecap="round"/>
+   <path id="arrow12" d="" fill="none" stroke="#2563a6" stroke-width="3" marker-end="url(#arrBlue)"/><path id="arrow23" d="" fill="none" stroke="#15803d" stroke-width="3" marker-end="url(#arrGreen)"/><path id="arrow31" d="" fill="none" stroke="#ea580c" stroke-width="3" marker-end="url(#arrOrange)"/>
+   <circle id="point1" r="7" fill="#fff" stroke="#173c65" stroke-width="3"/><circle id="point2" r="7" fill="#fff" stroke="#173c65" stroke-width="3"/><circle id="point3" r="7" fill="#fff" stroke="#173c65" stroke-width="3"/>
+   <text id="label1" font-size="13" font-weight="800" fill="#173c65">1</text><text id="label2" font-size="13" font-weight="800" fill="#173c65">2</text><text id="label3" font-size="13" font-weight="800" fill="#173c65">3</text>
+   <circle id="movingPoint" r="6" fill="#f59e0b" stroke="#fff" stroke-width="2.5" opacity="0"/>
+  </svg>
+  </div>
+  <div class="legend"><span><i style="background:#2563a6"></i>Isotérmico</span><span><i style="background:#15803d"></i>Isocórico</span><span><i style="background:#ea580c"></i>Isobárico</span></div>
+ </div>
+
+</section>
+
+<section class="panel">
+ <div><div class="eyebrow">Desenvolvimento do exercício</div><h2 id="workTitle">Processo 1 → 2 · Isotérmico</h2></div>
+ <div class="process-box">
+  <div class="process-head"><span class="tag" id="processTag">ETAPA 1</span><h3 id="processName">Expansão isotérmica</h3></div>
+  <p class="lead" id="processLead">O gás ideal monoatômico expande de \((p_1,V_1,T_1)\) para \((p_2,V_2,T_1)\), mantendo a temperatura constante.</p>
+  <div class="prompt" id="prompt">**Para calcular:** determine \(\Delta U_{12}\), o trabalho \(W_{12}\) realizado pelo gás e o calor \(Q_{12}\) recebido.</div>
+  <div class="equation" id="givenEq">\[p_1V_1=p_2V_2=nRT_1\]</div>
+  <button class="secondary reveal" id="reveal">Mostrar desenvolvimento desta etapa</button>
+  <div class="solution" id="solution"></div>
+ </div>
+ <div class="note">Convenção adotada: \(W>0\) quando o gás realiza trabalho. Portanto, \(Q=\Delta U+W\).</div>
+</section>
+</main>
+<script>
+const $=id=>document.getElementById(id);
+let stage=0, playing=false, timer=null, revealed=false;
+const configs=[
+ {tag:'ETAPA 1',title:'Processo 1 → 2 · Isotérmico',name:'Expansão isotérmica',lead:'O gás ideal monoatômico expande de \\((p_1,V_1,T_1)\\) para \\((p_2,V_2,T_1)\\), mantendo a temperatura constante.',given:'\\[p_1V_1=p_2V_2=nRT_1\\, \\qquad U(T) = \\frac{3}{2}nRT\\]',solution:'<div class="solution-title">1. Energia interna</div><div class="equation">\\[\\Delta U_{12}=0\\qquad (T_2=T_1)\\]</div><div class="solution-title">2. Trabalho realizado pelo gás</div><div class="equation">\\[W_{12}=\\int_{V_1}^{V_2}p\\,dV=nRT_1\\ln\\!\\left(\\frac{V_2}{V_1}\\right)\\]</div><div class="equation">\\[\\boxed{W_{12}=p_1V_1\\ln\\!\\left(\\frac{V_2}{V_1}\\right)}\\]</div><div class="solution-title">3. Primeira Lei</div><div class="equation">\\[Q_{12}=\\Delta U_{12}+W_{12}=W_{12}\\]</div>'},
+ {tag:'ETAPA 2',title:'Processo 2 → 3 · Isocórico',name:'Aquecimento isocórico',lead:'O volume permanece fixo em \\(V_2\\). A pressão aumenta de \\(p_2\\) para \\(p_1\\), levando o gás ao estado intermediário 3.',given:'\\[\\qquad \\frac{p_2}{T_1}=\\frac{p_1}{T_2}=\\frac{nR}{V_2} \\qquad U(T) = \\frac{3}{2}nRT\\]',solution:'<div class="solution-title">1. Trabalho</div><div class="equation">\\[W_{23}=\\int_{V_2}^{V_2}p\\,dV=0\\]</div><div class="solution-title">2. Variação da energia interna</div><div class="equation">\\[\\Delta U_{23}=\\frac{3}{2}nR(T_2-T_1)\\]</div><div class="equation">\\[nR(T_2-T_1)=p_1V_2-p_2V_2\\]</div><div class="equation">\\[\\boxed{\\Delta U_{23}=\\frac{3}{2}V_2(p_1-p_2) = \\frac{3}{2}p_1(V_2-V_1)} \\]</div><div class="solution-title">3. Primeira Lei</div><div class="equation">\\[\\boxed{Q_{23}=\\Delta U_{23}=\\frac{3}{2}V_2(p_1-p_2) =\\frac{3}{2}p_1(V_2-V_1)}\\]</div>'},
+ {tag:'ETAPA 3',title:'Processo 3 → 1 · Isobárico',name:'Compressão isobárica',lead:'A pressão permanece constante em \\(p_1\\), enquanto o volume diminui de \\(V_2\\) para \\(V_1\\). O gás retorna ao estado inicial.',given:'\\[\\qquad \\frac{V_2}{T_2}=\\frac{V_1}{T_1}=\\frac{nR}{p_1}\\qquad U(T) = \\frac{3}{2}nRT\\]',solution:'<div class="solution-title">1. Trabalho realizado sobre o gás</div><div class="equation">\\[W_{31}=p_1(V_1-V_2)\\]</div><div class="solution-title">2. Variação da energia interna</div><div class="equation">\\[\\Delta U_{31}=\\frac{3}{2}nR(T_1-T_2)\\]</div><div class="equation">\\[\\boxed{\\Delta U_{31}=\\frac{3}{2}p_1(V_1-V_2)}\\]</div><div class="solution-title">3. Primeira Lei</div><div class="equation">\\[Q_{31}=\\Delta U_{31}+W_{31}\\]</div><div class="equation">\\[\\boxed{Q_{31}=-\\frac{5}{2}p_1(V_2-V_1)}\\]</div>'},
+ {tag:'CICLO',title:'Ciclo completo · 1 → 2 → 3 → 1',name:'Balanço do ciclo',lead:'Ao final, o gás retorna ao estado inicial. As funções de estado recuperam seus valores iniciais, mas há troca líquida de calor e trabalho.',given:'\\[\\Delta U_{\\mathrm{ciclo}}=0\\]',solution:'<div class="solution-title">1. Energia interna no ciclo</div><div class="equation">\\[\\boxed{\\Delta U_{\\mathrm{ciclo}}=0}\\]</div><div class="solution-title">2. Trabalho líquido</div><div class="equation">\\[W_{\\mathrm{ciclo}}=W_{12}+W_{23}+W_{31}\\]</div><div class="equation">\\[\\boxed{W_{\\mathrm{ciclo}}=p_1V_1\\ln\\!\\left(\\frac{V_2}{V_1}\\right)+p_1(V_1-V_2)}\\]</div><div class="solution-title">3. Calor líquido</div><div class="equation">\\[\\boxed{Q_{\\mathrm{ciclo}}=W_{\\mathrm{ciclo}}}\\]</div><div class="prompt">Como \\(V_2>V_1\\), o ciclo é percorrido no sentido anti-horário: o trabalho líquido realizado pelo gás é negativo. A área interna do ciclo corresponde ao módulo desse trabalho.</div>'}
+];
+function setStage(n){stage=n;document.querySelectorAll('.stage').forEach((b,i)=>b.classList.toggle('active',i===n));const c=configs[n];$('workTitle').textContent=c.title;$('processTag').textContent=c.tag;$('processName').textContent=c.name;$('processLead').textContent=c.lead;$('prompt').textContent=c.prompt;$('givenEq').innerHTML=c.given;$('solution').innerHTML=c.solution;$('solution').classList.remove('show');$('reveal').textContent='Mostrar desenvolvimento desta etapa';revealed=false;$('graphStage').textContent=['Etapa 1 → 2','Etapa 2 → 3','Etapa 3 → 1','Ciclo completo'][n];$('sceneStage').textContent=['1 → 2 · EXPANSÃO ISOTÉRMICA','2 → 3 · AQUECIMENTO ISOCÓRICO','3 → 1 · COMPRESSÃO ISOBÁRICA','CICLO COMPLETO'][n];$('sceneTemp').textContent=['Temperatura constante · o gás recebe calor','Volume constante · pressão e temperatura aumentam','Pressão constante · o gás é comprimido e esfria','O gás retorna ao estado inicial'][n];draw();$('play').disabled=false;$('play').textContent=n===3?'▶ Iniciar':'▶ Iniciar';if(window.MathJax?.typesetPromise)MathJax.typesetPromise([$('givenEq'),$('solution'),$('processLead'),$('prompt')]);}
+function draw(){
+ const x1=180,x2=455,y1=125,y2=295;
+ const curve=[];
+ for(let i=0;i<=60;i++){
+   const f=i/60;
+   const x=x1+(x2-x1)*f;
+   // Smooth, monotonically decreasing isotherm; diagram is schematic, not to scale.
+   const y=y1+(y2-y1)*(Math.log(1+f)/Math.log(2));
+   curve.push((i?'L':'M')+x.toFixed(1)+' '+y.toFixed(1));
+ }
+ $('isoCurve').setAttribute('d',curve.join(' '));
+ // Setas posicionadas no meio de cada transformação, indicando o sentido do ciclo.
+ const fA=.48, fB=.60;
+ const curvePoint=f=>({x:x1+(x2-x1)*f,y:y1+(y2-y1)*(Math.log(1+f)/Math.log(2))});
+ const a=curvePoint(fA),b=curvePoint(fB);
+ $('arrow12').setAttribute('d',`M${a.x} ${a.y} L${b.x} ${b.y}`);
+ const ym=(y1+y2)/2, xm=(x1+x2)/2;
+ $('arrow23').setAttribute('d',`M${x2} ${ym+13} V${ym-13}`);
+ $('arrow31').setAttribute('d',`M${xm+15} ${y1} H${xm-15}`);
+
+ $('isochoric').setAttribute('d',`M${x2} ${y2} V${y1}`);
+ $('isobaric').setAttribute('d',`M${x2} ${y1} H${x1}`);
+ $('point1').setAttribute('cx',x1);$('point1').setAttribute('cy',y1);
+ $('point2').setAttribute('cx',x2);$('point2').setAttribute('cy',y2);
+ $('point3').setAttribute('cx',x2);$('point3').setAttribute('cy',y1);
+ $('label1').setAttribute('x',x1-19);$('label1').setAttribute('y',y1-15);
+ $('label2').setAttribute('x',x2+10);$('label2').setAttribute('y',y2+18);
+ $('label3').setAttribute('x',x2+10);$('label3').setAttribute('y',y1-14);
+ $('p2axisSvg').textContent='p₂';$('p2axisSvg').setAttribute('y',y2+4);
+ $('v2axisSvg').textContent='V₂';
+ ['isoCurve','isochoric','isobaric'].forEach((id,i)=>$(id).setAttribute('opacity',stage===3?1:(i===stage?1:.25)));
+ ['arrow12','arrow23','arrow31'].forEach((id,i)=>$(id).setAttribute('opacity',stage===3?1:(i===stage?1:.18)));
+
+ updateMotion(stage===0?0:stage===1?1:stage===2?2:3);
+}
+function updateMotion(t){
+ const x1=180,x2=455,y1=125,y2=295;
+ let x,y,volumeFraction;
+ if(t<=1){
+   const f=t;
+   x=x1+(x2-x1)*f;
+   y=y1+(y2-y1)*(Math.log(1+f)/Math.log(2));
+   volumeFraction=f;
+ }else if(t<=2){
+   const f=t-1;
+   x=x2;y=y2+(y1-y2)*f;volumeFraction=1;
+ }else{
+   const f=t-2;
+   x=x2-(x2-x1)*f;y=y1;volumeFraction=1-f;
+ }
+ const point=$('movingPoint');
+ point.setAttribute('cx',x);point.setAttribute('cy',y);point.setAttribute('opacity',1);
+ const pistonY=190-90*volumeFraction;
+ $('piston').setAttribute('y',pistonY);
+ $('gasFill').setAttribute('y',pistonY+17);
+ $('gasFill').setAttribute('height',Math.max(20,357-(pistonY+17)));
+ $('rod').setAttribute('d',`M210 ${pistonY} V105`);
+ const descriptions=['Temperatura constante · expansão','Volume constante · aquecimento','Pressão constante · compressão'];
+ const current=t<1?0:t<2?1:2;
+ $('sceneTemp').textContent=descriptions[current];
+ $('sceneStage').textContent=['1 → 2 · EXPANSÃO ISOTÉRMICA','2 → 3 · AQUECIMENTO ISOCÓRICO','3 → 1 · COMPRESSÃO ISOBÁRICA'][current];
+ $('graphStage').textContent=['Etapa 1 → 2','Etapa 2 → 3','Etapa 3 → 1'][current];
+}
+document.querySelectorAll('.stage').forEach(b=>b.addEventListener('click',()=>{stop();setStage(+b.dataset.stage)}));
+$('reveal').addEventListener('click',()=>{revealed=!revealed;$('solution').classList.toggle('show',revealed);$('reveal').textContent=revealed?'Ocultar desenvolvimento':'Mostrar desenvolvimento desta etapa';if(revealed&&window.MathJax?.typesetPromise)MathJax.typesetPromise([$('solution')]);});
+function stop(){
+ playing=false;
+ if(timer){clearInterval(timer);timer=null;}
+ $('play').textContent=stage===3?'▶ Animar ciclo completo':'▶ Animar processo';
+}
+$('play').addEventListener('click',()=>{
+ if(playing){stop();return;}
+ playing=true;
+ const fullCycle=stage===3;
+ const startT=fullCycle?0:stage;
+ const processCount=fullCycle?3:1;
+ const duration=1100;
+ const totalDuration=duration*processCount;
+ const started=Date.now();
+ $('play').textContent='Ⅱ Pausar';
+ updateMotion(startT);
+ timer=setInterval(()=>{
+   const elapsed=Date.now()-started;
+   const progress=Math.min(processCount,elapsed/duration);
+   updateMotion(startT+progress);
+   if(elapsed>=totalDuration){
+     stop();
+     updateMotion(fullCycle?3:startT+1);
+   }
+ },25);
+});
+setStage(0);
+</script>
+</body></html>
